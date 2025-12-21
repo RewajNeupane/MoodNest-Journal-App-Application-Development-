@@ -1,0 +1,108 @@
+@page "/journaltoday"
+@layout TestLayout
+
+<div class="journal-editor-page">
+
+    <!-- LEFT META PANEL -->
+    <aside class="entry-sidebar">
+
+        <button class="new-btn">＋ New Entry</button>
+
+        <div class="entry-meta">
+            <h4>Today</h4>
+            <p class="meta-date">Monday, March 25</p>
+        </div>
+
+        <div class="entry-meta">
+            <h4>Primary Mood *</h4>
+            <div class="mood-list">
+                <span class="mood active">😊 Happy</span>
+                <span class="mood">😌 Calm</span>
+                <span class="mood">😐 Neutral</span>
+                <span class="mood">😔 Sad</span>
+                <span class="mood">😠 Angry</span>
+            </div>
+        </div>
+
+        <div class="entry-meta">
+            <h4>Secondary Moods</h4>
+            <div class="mood-list subtle">
+                <span class="mood active">😴 Tired</span>
+                <span class="mood">😬 Anxious</span>
+                <span class="mood">🤔 Thoughtful</span>
+            </div>
+            <p class="hint">Up to 2 moods</p>
+        </div>
+
+        <div class="entry-meta">
+            <h4>Category</h4>
+            <select class="dropdown">
+                <option selected>Personal</option>
+                <option>Work</option>
+                <option>Health</option>
+                <option>Relationships</option>
+                <option>Reflection</option>
+            </select>
+        </div>
+
+        <div class="entry-meta">
+            <h4>Tags</h4>
+            <div class="tags">
+                <span class="tag active">#gratitude</span>
+                <span class="tag">#work</span>
+                <span class="tag">#family</span>
+            </div>
+            <input class="tag-input" placeholder="Add tag…" />
+        </div>
+
+        <div class="entry-meta timestamps">
+            <p>Created: 25/03/2025 · 10:15</p>
+            <p>Updated: 25/03/2025 · 10:15</p>
+        </div>
+
+    </aside>
+
+    <!-- MAIN EDITOR -->
+    <main class="editor-container">
+
+        <!-- TOOLBAR -->
+        <div class="editor-toolbar">
+
+            <div class="tool-group">
+                <button class="tool-btn bold">B</button>
+                <button class="tool-btn italic">I</button>
+                <button class="tool-btn underline">U</button>
+                <button class="tool-btn heading">H</button>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="tool-group">
+                <button class="tool-btn">• List</button>
+                <button class="tool-btn">1. List</button>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="tool-group">
+                <button class="tool-btn">Link</button>
+            </div>
+
+        </div>
+
+        <!-- TITLE -->
+        <input class="entry-title" placeholder="Add a title…" />
+
+        <!-- CONTENT -->
+        <textarea class="editor-canvas"
+                  placeholder="It’s empty here… write freely using Markdown."></textarea>
+
+        <!-- ACTIONS -->
+        <div class="editor-actions">
+            <button class="primary">Save Entry</button>
+            <button class="danger">Delete</button>
+        </div>
+
+    </main>
+
+</div>

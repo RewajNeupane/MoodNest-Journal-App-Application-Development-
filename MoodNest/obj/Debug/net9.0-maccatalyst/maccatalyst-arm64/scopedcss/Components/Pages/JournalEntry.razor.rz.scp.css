@@ -1,0 +1,227 @@
+.journal-editor-page[b-3rg7ssqe1p] {
+    display: flex;
+    height: 100%;
+    background: #f7f3eb;
+    font-family: "Inter", system-ui, sans-serif;
+}
+
+/* ===============================
+   SIDEBAR
+   =============================== */
+
+.entry-sidebar[b-3rg7ssqe1p] {
+    width: 320px;
+    padding: 32px 24px;
+    background: #fbf8f2;
+    border-right: 1px solid #e7e0d6;
+    overflow-y: auto;
+}
+
+.new-btn[b-3rg7ssqe1p] {
+    width: 100%;
+    padding: 14px;
+    border-radius: 999px;
+    border: none;
+    background: #1c1c1c;
+    color: #fff;
+    font-weight: 600;
+    margin-bottom: 28px;
+}
+
+.entry-meta[b-3rg7ssqe1p] {
+    margin-bottom: 26px;
+}
+
+.entry-meta h4[b-3rg7ssqe1p] {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #7a6f5c;
+    margin-bottom: 8px;
+}
+
+.meta-date[b-3rg7ssqe1p] {
+    font-size: 14px;
+    color: #1c1c1c;
+}
+
+.mood-list[b-3rg7ssqe1p] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.mood[b-3rg7ssqe1p] {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #eee7dc;
+    font-size: 13px;
+}
+
+.mood.active[b-3rg7ssqe1p] {
+    background: #d8cfc2;
+}
+
+.mood-list.subtle .mood[b-3rg7ssqe1p] {
+    background: #f1ece4;
+}
+
+.hint[b-3rg7ssqe1p] {
+    font-size: 11px;
+    opacity: 0.6;
+    margin-top: 6px;
+}
+
+.dropdown[b-3rg7ssqe1p] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid #ddd5c9;
+    background: #f3eee5;
+}
+
+.tags[b-3rg7ssqe1p] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag[b-3rg7ssqe1p] {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #eee7dc;
+    font-size: 12px;
+}
+
+.tag.active[b-3rg7ssqe1p] {
+    background: #cfc7bb;
+}
+
+.tag-input[b-3rg7ssqe1p] {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid #ddd5c9;
+}
+
+.timestamps[b-3rg7ssqe1p] {
+    font-size: 11px;
+    opacity: 0.6;
+}
+
+/* ===============================
+   EDITOR
+   =============================== */
+
+.editor-container[b-3rg7ssqe1p] {
+    flex: 1;
+    padding: 40px 60px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===============================
+   TOOLBAR (MATCHES REFERENCE)
+   =============================== */
+
+.editor-toolbar[b-3rg7ssqe1p] {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 10px 14px;
+    margin-bottom: 18px;
+
+    background: #fbf8f2;
+    border: 1px solid #e7e0d6;
+    border-radius: 14px;
+}
+
+.tool-group[b-3rg7ssqe1p] {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.divider[b-3rg7ssqe1p] {
+    width: 1px;
+    height: 22px;
+    background: #ddd5c9;
+}
+
+/* Buttons */
+.tool-btn[b-3rg7ssqe1p] {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 10px;
+
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+
+    font-size: 14px;
+    font-weight: 600;
+    color: #1c1c1c;
+
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.tool-btn:hover[b-3rg7ssqe1p] {
+    background: rgba(0,0,0,0.06);
+}
+
+/* Typography hints */
+.bold[b-3rg7ssqe1p] { font-weight: 700; }
+.italic[b-3rg7ssqe1p] { font-style: italic; }
+.underline[b-3rg7ssqe1p] { text-decoration: underline; }
+
+/* ===============================
+   TITLE + CONTENT
+   =============================== */
+
+.entry-title[b-3rg7ssqe1p] {
+    font-size: 28px;
+    font-weight: 600;
+    border: none;
+    outline: none;
+    margin-bottom: 16px;
+    background: transparent;
+}
+
+.editor-canvas[b-3rg7ssqe1p] {
+    flex: 1;
+    border: none;
+    outline: none;
+    resize: none;
+    font-size: 16px;
+    line-height: 1.7;
+    background: transparent;
+}
+
+/* ===============================
+   ACTIONS
+   =============================== */
+
+.editor-actions[b-3rg7ssqe1p] {
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+    margin-top: 20px;
+}
+
+.primary[b-3rg7ssqe1p] {
+    padding: 14px 28px;
+    border-radius: 999px;
+    background: #1c1c1c;
+    color: #fff;
+    border: none;
+}
+
+.danger[b-3rg7ssqe1p] {
+    padding: 14px 28px;
+    border-radius: 999px;
+    border: 1px solid #e0caca;
+    background: transparent;
+    color: #b44;
+}

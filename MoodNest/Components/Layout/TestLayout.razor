@@ -1,0 +1,37 @@
+@inherits LayoutComponentBase
+
+<div class="layout-root">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <TestNav />
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="layout-main">
+
+        <!-- HEADER -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <span class="page-title">Dashboard</span>
+            </div>
+
+            <div class="topbar-right">
+                <button class="icon-btn">🌙</button>
+                <button class="icon-btn">🔒</button>
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <main class="content-area">
+            @Body
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <p>© 2025 MoodNest · CS6004 Application Development</p>
+        </footer>
+
+    </div>
+
+</div>

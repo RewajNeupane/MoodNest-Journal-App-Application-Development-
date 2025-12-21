@@ -1,0 +1,93 @@
+@page "/journal"
+@layout TestLayout
+
+<div class="journal-list-page">
+
+    <!-- PAGE HEADER -->
+    <div class="list-header">
+        <div>
+            <h2>Journal Entries</h2>
+            <p class="subtitle">Browse and revisit your past reflections</p>
+        </div>
+
+        <span class="sort-indicator">
+            Sorted by <strong>Latest first</strong>
+        </span>
+    </div>
+
+    <!-- MONTH / YEAR NAV -->
+    <div class="month-nav">
+        <button class="nav-btn">‹</button>
+
+        <div class="current-period">
+            <span class="month">March</span>
+            <span class="year">2025</span>
+        </div>
+
+        <button class="nav-btn">›</button>
+    </div>
+
+    <!-- ENTRIES -->
+    <div class="timeline">
+
+        <div class="timeline-entry clickable">
+            <div class="timeline-date">
+                <span class="day">25</span>
+                <span class="month">MAR</span>
+            </div>
+
+            <div class="timeline-content">
+                <h4>Feeling calm and productive</h4>
+                <p>
+                    Today felt balanced. I managed to finish my tasks early and
+                    had time to reflect in the evening…
+                </p>
+            </div>
+
+            <div class="timeline-mood positive">😊</div>
+        </div>
+
+        <div class="timeline-entry clickable">
+            <div class="timeline-date">
+                <span class="day">24</span>
+                <span class="month">MAR</span>
+            </div>
+
+            <div class="timeline-content">
+                <h4>Overwhelmed but learning</h4>
+                <p>
+                    The workload was intense, but I learned how to manage my
+                    priorities better…
+                </p>
+            </div>
+
+            <div class="timeline-mood neutral">😐</div>
+        </div>
+
+        <div class="timeline-entry clickable">
+            <div class="timeline-date">
+                <span class="day">23</span>
+                <span class="month">MAR</span>
+            </div>
+
+            <div class="timeline-content">
+                <h4>Low energy day</h4>
+                <p>
+                    Didn’t feel very motivated today. Took things slow and tried
+                    not to be too hard on myself…
+                </p>
+            </div>
+
+            <div class="timeline-mood negative">😔</div>
+        </div>
+
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="pagination">
+        <button class="page-btn">‹ Prev</button>
+        <span class="page-info">Page 1 of 5</span>
+        <button class="page-btn">Next ›</button>
+    </div>
+
+</div>

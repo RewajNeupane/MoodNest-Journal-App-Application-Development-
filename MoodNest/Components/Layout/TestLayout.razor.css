@@ -1,0 +1,82 @@
+/* ===============================
+   ROOT LAYOUT
+   =============================== */
+
+.layout-root {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;            /* 🔒 lock global scroll */
+    background: #f7f4ee;
+    font-family: "Inter", system-ui, sans-serif;
+}
+
+/* ===============================
+   SIDEBAR
+   =============================== */
+
+.sidebar {
+    width: 320px;
+    background: #f3eee3;
+    border-right: 1px solid #e0d8c8;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===============================
+   MAIN AREA
+   =============================== */
+
+.layout-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #f7f4ee;
+}
+
+/* ===============================
+   HEADER
+   =============================== */
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+}
+
+.page-title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* Header buttons */
+.icon-btn {
+    background: #fdfcf9;
+    border: 1px solid #e6e1d8;
+    border-radius: 999px;
+    padding: 10px 14px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+/* ===============================
+   CONTENT AREA
+   =============================== */
+
+.content-area {
+    flex: 1;
+    padding: 40px 60px;
+    overflow-y: auto;            /* ✅ scroll only content */
+}
+
+/* ===============================
+   FOOTER
+   =============================== */
+
+.footer {
+    padding: 16px;
+    font-size: 13px;
+    color: #777;
+    text-align: center;
+    border-top: 1px solid #e6e1d8;
+}

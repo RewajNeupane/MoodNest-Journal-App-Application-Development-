@@ -1,0 +1,95 @@
+@page "/test"
+@layout TestLayout
+@inject NavigationManager Nav
+
+<div class="dashboard">
+
+    <!-- LEFT: STATS & ANALYTICS -->
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <h4>🔥 Current Streak</h4>
+            <p class="stat-value">5 Days</p>
+        </div>
+
+        <div class="stat-card">
+            <h4>🏆 Longest Streak</h4>
+            <p class="stat-value">14 Days</p>
+        </div>
+
+        <div class="stat-card">
+            <h4>❌ Missed Days</h4>
+            <p class="stat-value">3</p>
+        </div>
+
+        <div class="stat-card">
+            <h4>😊 Most Frequent Mood</h4>
+            <p class="stat-value">Calm</p>
+        </div>
+
+        <!-- QUICK ANALYTICS -->
+        <div class="stat-card wide">
+            <h4>📊 Mood Breakdown</h4>
+
+            <ul class="mood-stats">
+                <li><span class="dot positive"></span> Positive — 45%</li>
+                <li><span class="dot neutral"></span> Neutral — 35%</li>
+                <li><span class="dot negative"></span> Negative — 20%</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <!-- RIGHT: HERO + SHORTCUTS -->
+    <div class="dashboard-hero">
+
+        <span class="badge">Dashboard</span>
+
+        <img src="images/sunflower.png"
+             alt="Sunflower"
+             class="hero-image" />
+
+        <h1>
+            Reflect on your <br />
+            <span>thoughts & moods</span>
+        </h1>
+
+        <p class="subtitle">
+            A simple daily habit to understand yourself better,
+            track emotional patterns, and grow mindfully over time.
+        </p>
+
+        <div class="quick-actions">
+            <button class="primary" @onclick="GoToToday">
+                ✍️ Today’s Entry
+            </button>
+
+            <button class="secondary" @onclick="GoToCalendar">
+                📅 Calendar
+            </button>
+
+            <button class="secondary" @onclick="GoToAnalytics">
+                📊 Analytics
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+@code {
+    void GoToToday()
+    {
+        Nav.NavigateTo("/journal/today");
+    }
+
+    void GoToCalendar()
+    {
+        Nav.NavigateTo("/calendar");
+    }
+
+    void GoToAnalytics()
+    {
+        Nav.NavigateTo("/analytics");
+    }
+}

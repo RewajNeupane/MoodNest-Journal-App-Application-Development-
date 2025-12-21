@@ -1,0 +1,89 @@
+@page "/calendar"
+
+<div class="calendar-page">
+
+    <!-- CALENDAR CARD -->
+    <div class="calendar-card">
+
+        <div class="calendar-header">
+            <span class="arrow">‹</span>
+            <h3>December 2025</h3>
+            <span class="arrow">›</span>
+        </div>
+
+        <div class="weekdays">
+            <span>S</span><span>M</span><span>T</span>
+            <span>W</span><span>T</span><span>F</span><span>S</span>
+        </div>
+
+        <div class="days">
+            @for (int i = 1; i <= 31; i++)
+            {
+                <div class="day has-entry">
+                    @i
+                    <span class="calendar-dot positive"></span>
+                </div>
+            }
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <span class="legend-dot positive"></span> Positive
+            </div>
+            <div class="legend-item">
+                <span class="legend-dot neutral"></span> Neutral
+            </div>
+            <div class="legend-item">
+                <span class="legend-dot negative"></span> Negative
+            </div>
+        </div>
+
+        <p class="hint">Click a date to view or write a journal entry</p>
+    </div>
+
+    <!-- YEAR CARD -->
+    <div class="year-card">
+        <h2>2025</h2>
+
+        <div class="year-image">
+            <img src="/images/flower.png" alt="Year illustration" />
+        </div>
+
+        <p class="year-caption">Year overview of journal entries</p>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="right-column">
+
+        <div class="today-card">
+            <div class="today-header">
+                <div class="today-icon">📅</div>
+                <h3>Today</h3>
+            </div>
+
+            <div class="today-status">
+                <span class="status-dot"></span>
+                Today’s entry not written
+            </div>
+
+            <button class="today-btn">✍️ Write Today’s Entry</button>
+        </div>
+
+        <div class="missed-card">
+            <h3>Missed Days</h3>
+            <ul class="missed-list">
+                <li>Dec 3, 2024</li>
+                <li>Dec 7, 2024</li>
+                <li>Dec 12, 2024</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <!-- MONTHLY SUMMARY -->
+    <div class="monthly-summary">
+        <h3>Monthly Summary</h3>
+        <textarea placeholder="Write a reflection for this month..."></textarea>
+    </div>
+
+</div>

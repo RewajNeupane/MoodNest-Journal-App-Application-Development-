@@ -1,0 +1,65 @@
+@page "/login"
+@layout TestLayout
+@inject NavigationManager Nav
+
+<div class="lock-screen">
+
+    <div class="lock-card">
+
+        <span class="lock-badge">Secure Access</span>
+
+        <h1>Unlock Your Journal</h1>
+
+        <p class="lock-subtitle">
+            Your journal is private. Enter your PIN to continue.
+        </p>
+
+        <input type="password"
+               maxlength="4"
+               class="pin-input"
+               placeholder="● ● ● ●"
+               @bind="enteredPin"
+               @bind:event="oninput" />
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="error-message">
+                @errorMessage
+            </div>
+        }
+
+        <button class="unlock-btn" @onclick="VerifyPin">
+            Unlock
+        </button>
+
+        <p class="lock-hint">
+            Too many failed attempts will temporarily lock access.
+        </p>
+
+    </div>
+
+</div>
+
+@code {
+    // TEMP PIN (replace with hashed value later)
+    private const string StoredPin = "1234";
+
+    private string enteredPin = string.Empty;
+    private string errorMessage = string.Empty;
+
+    void VerifyPin()
+    {
+        if (enteredPin == StoredPin)
+        {
+            errorMessage = string.Empty;
+
+            // Redirect to dashboard
+            Nav.NavigateTo("/test");
+        }
+        else
+        {
+            errorMessage = "Incorrect PIN. Please try again.";
+            enteredPin = string.Empty;
+        }
+    }
+}

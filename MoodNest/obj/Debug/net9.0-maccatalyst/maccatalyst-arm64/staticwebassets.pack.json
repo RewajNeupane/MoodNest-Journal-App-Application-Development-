@@ -1,0 +1,53 @@
+{
+  "Files": [
+    {
+      "Id": "/Users/rewaj/RiderProjects/MauiApp2/MoodNest/obj/Debug/net9.0-maccatalyst/maccatalyst-arm64/scopedcss/bundle/MoodNest.styles.css",
+      "PackagePath": "staticwebassets/MoodNest.styles.css"
+    },
+    {
+      "Id": "/Users/rewaj/RiderProjects/MauiApp2/MoodNest/wwwroot/css/app.css",
+      "PackagePath": "staticwebassets/css/app.css"
+    },
+    {
+      "Id": "/Users/rewaj/RiderProjects/MauiApp2/MoodNest/wwwroot/css/bootstrap/bootstrap.min.css",
+      "PackagePath": "staticwebassets/css/bootstrap/bootstrap.min.css"
+    },
+    {
+      "Id": "/Users/rewaj/RiderProjects/MauiApp2/MoodNest/wwwroot/css/bootstrap/bootstrap.min.css.map",
+      "PackagePath": "staticwebassets/css/bootstrap/bootstrap.min.css.map"
+    },
+    {
+      "Id": "/Users/rewaj/RiderProjects/MauiApp2/MoodNest/wwwroot/images/flower.png",
+      "PackagePath": "staticwebassets/images/flower.png"
+    },
+    {
+      "Id": "/Users/rewaj/RiderProjects/MauiApp2/MoodNest/wwwroot/images/sunflower.png",
+      "PackagePath": "staticwebassets/images/sunflower.png"
+    },
+    {
+      "Id": "/Users/rewaj/RiderProjects/MauiApp2/MoodNest/wwwroot/index.html",
+      "PackagePath": "staticwebassets/index.html"
+    },
+    {
+      "Id": "obj/Debug/net9.0-maccatalyst/maccatalyst-arm64/staticwebassets/msbuild.MoodNest.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj/Debug/net9.0-maccatalyst/maccatalyst-arm64/staticwebassets/msbuild.MoodNest.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj/Debug/net9.0-maccatalyst/maccatalyst-arm64/staticwebassets/msbuild.build.MoodNest.props",
+      "PackagePath": "build\\MoodNest.props"
+    },
+    {
+      "Id": "obj/Debug/net9.0-maccatalyst/maccatalyst-arm64/staticwebassets/msbuild.buildMultiTargeting.MoodNest.props",
+      "PackagePath": "buildMultiTargeting\\MoodNest.props"
+    },
+    {
+      "Id": "obj/Debug/net9.0-maccatalyst/maccatalyst-arm64/staticwebassets/msbuild.buildTransitive.MoodNest.props",
+      "PackagePath": "buildTransitive\\MoodNest.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

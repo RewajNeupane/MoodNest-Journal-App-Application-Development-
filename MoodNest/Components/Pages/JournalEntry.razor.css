@@ -1,0 +1,227 @@
+.journal-editor-page {
+    display: flex;
+    height: 100%;
+    background: #f7f3eb;
+    font-family: "Inter", system-ui, sans-serif;
+}
+
+/* ===============================
+   SIDEBAR
+   =============================== */
+
+.entry-sidebar {
+    width: 320px;
+    padding: 32px 24px;
+    background: #fbf8f2;
+    border-right: 1px solid #e7e0d6;
+    overflow-y: auto;
+}
+
+.new-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 999px;
+    border: none;
+    background: #1c1c1c;
+    color: #fff;
+    font-weight: 600;
+    margin-bottom: 28px;
+}
+
+.entry-meta {
+    margin-bottom: 26px;
+}
+
+.entry-meta h4 {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #7a6f5c;
+    margin-bottom: 8px;
+}
+
+.meta-date {
+    font-size: 14px;
+    color: #1c1c1c;
+}
+
+.mood-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.mood {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #eee7dc;
+    font-size: 13px;
+}
+
+.mood.active {
+    background: #d8cfc2;
+}
+
+.mood-list.subtle .mood {
+    background: #f1ece4;
+}
+
+.hint {
+    font-size: 11px;
+    opacity: 0.6;
+    margin-top: 6px;
+}
+
+.dropdown {
+    width: 100%;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid #ddd5c9;
+    background: #f3eee5;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #eee7dc;
+    font-size: 12px;
+}
+
+.tag.active {
+    background: #cfc7bb;
+}
+
+.tag-input {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid #ddd5c9;
+}
+
+.timestamps {
+    font-size: 11px;
+    opacity: 0.6;
+}
+
+/* ===============================
+   EDITOR
+   =============================== */
+
+.editor-container {
+    flex: 1;
+    padding: 40px 60px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===============================
+   TOOLBAR (MATCHES REFERENCE)
+   =============================== */
+
+.editor-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 10px 14px;
+    margin-bottom: 18px;
+
+    background: #fbf8f2;
+    border: 1px solid #e7e0d6;
+    border-radius: 14px;
+}
+
+.tool-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.divider {
+    width: 1px;
+    height: 22px;
+    background: #ddd5c9;
+}
+
+/* Buttons */
+.tool-btn {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 10px;
+
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+
+    font-size: 14px;
+    font-weight: 600;
+    color: #1c1c1c;
+
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.tool-btn:hover {
+    background: rgba(0,0,0,0.06);
+}
+
+/* Typography hints */
+.bold { font-weight: 700; }
+.italic { font-style: italic; }
+.underline { text-decoration: underline; }
+
+/* ===============================
+   TITLE + CONTENT
+   =============================== */
+
+.entry-title {
+    font-size: 28px;
+    font-weight: 600;
+    border: none;
+    outline: none;
+    margin-bottom: 16px;
+    background: transparent;
+}
+
+.editor-canvas {
+    flex: 1;
+    border: none;
+    outline: none;
+    resize: none;
+    font-size: 16px;
+    line-height: 1.7;
+    background: transparent;
+}
+
+/* ===============================
+   ACTIONS
+   =============================== */
+
+.editor-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+    margin-top: 20px;
+}
+
+.primary {
+    padding: 14px 28px;
+    border-radius: 999px;
+    background: #1c1c1c;
+    color: #fff;
+    border: none;
+}
+
+.danger {
+    padding: 14px 28px;
+    border-radius: 999px;
+    border: 1px solid #e0caca;
+    background: transparent;
+    color: #b44;
+}

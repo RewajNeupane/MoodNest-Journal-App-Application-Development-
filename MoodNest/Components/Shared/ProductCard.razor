@@ -1,0 +1,11 @@
+<div>
+    <img src="@Product.ImageUrl" width="150" />
+    <h4>@Product.Name</h4>
+    <p>Price: @Product.Price</p>
+    <p>Likes: @Product.Likes</p>
+</div>
+
+@code {
+    [Parameter]
+    public Product Product { get; set; }
+}
