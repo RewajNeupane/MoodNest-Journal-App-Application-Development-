@@ -1,93 +1,106 @@
 @page "/journal"
 @layout TestLayout
 
+@inject MoodNest.Data.AppDbContext Db
+@inject NavigationManager Nav
+
+@using System.Text.RegularExpressions
+
 <div class="journal-list-page">
 
-    <!-- PAGE HEADER -->
     <div class="list-header">
         <div>
             <h2>Journal Entries</h2>
             <p class="subtitle">Browse and revisit your past reflections</p>
         </div>
-
         <span class="sort-indicator">
             Sorted by <strong>Latest first</strong>
         </span>
     </div>
 
-    <!-- MONTH / YEAR NAV -->
-    <div class="month-nav">
-        <button class="nav-btn">‹</button>
-
-        <div class="current-period">
-            <span class="month">March</span>
-            <span class="year">2025</span>
-        </div>
-
-        <button class="nav-btn">›</button>
-    </div>
-
-    <!-- ENTRIES -->
     <div class="timeline">
 
-        <div class="timeline-entry clickable">
-            <div class="timeline-date">
-                <span class="day">25</span>
-                <span class="month">MAR</span>
+        @foreach (var entry in Entries)
+        {
+            <div class="timeline-entry">
+
+                <!-- CLICKABLE CONTENT -->
+                <div class="timeline-main clickable"
+                     @onclick="() => OpenEntry(entry.Id)">
+
+                    <div class="timeline-date">
+                        <span class="day">@entry.CreatedAt.Day</span>
+                        <span class="month">@entry.CreatedAt.ToString("MMM").ToUpper()</span>
+                    </div>
+
+                    <div class="timeline-content">
+                        <h4>@(entry.Title ?? "Untitled Entry")</h4>
+                        <p>@GetPreview(entry.ContentHtml)</p>
+                    </div>
+
+                    <div class="timeline-mood">
+                        @entry.PrimaryMood
+                    </div>
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="timeline-actions">
+                    <button class="edit-btn"
+                            @onclick="() => EditEntry(entry.Id)">
+                        Edit
+                    </button>
+
+                    <button class="delete-btn"
+                            @onclick="() => DeleteEntry(entry.Id)">
+                        Delete
+                    </button>
+                </div>
             </div>
-
-            <div class="timeline-content">
-                <h4>Feeling calm and productive</h4>
-                <p>
-                    Today felt balanced. I managed to finish my tasks early and
-                    had time to reflect in the evening…
-                </p>
-            </div>
-
-            <div class="timeline-mood positive">😊</div>
-        </div>
-
-        <div class="timeline-entry clickable">
-            <div class="timeline-date">
-                <span class="day">24</span>
-                <span class="month">MAR</span>
-            </div>
-
-            <div class="timeline-content">
-                <h4>Overwhelmed but learning</h4>
-                <p>
-                    The workload was intense, but I learned how to manage my
-                    priorities better…
-                </p>
-            </div>
-
-            <div class="timeline-mood neutral">😐</div>
-        </div>
-
-        <div class="timeline-entry clickable">
-            <div class="timeline-date">
-                <span class="day">23</span>
-                <span class="month">MAR</span>
-            </div>
-
-            <div class="timeline-content">
-                <h4>Low energy day</h4>
-                <p>
-                    Didn’t feel very motivated today. Took things slow and tried
-                    not to be too hard on myself…
-                </p>
-            </div>
-
-            <div class="timeline-mood negative">😔</div>
-        </div>
+        }
 
     </div>
-
-    <!-- PAGINATION -->
-    <div class="pagination">
-        <button class="page-btn">‹ Prev</button>
-        <span class="page-info">Page 1 of 5</span>
-        <button class="page-btn">Next ›</button>
-    </div>
-
 </div>
+
+@code {
+
+    private List<MoodNest.Components.Model.JournalEntry> Entries = new();
+
+    protected override void OnInitialized()
+    {
+        Entries = Db.JournalEntries
+            .OrderByDescending(e => e.CreatedAt)
+            .ToList();
+    }
+
+    private void OpenEntry(int id)
+    {
+        Nav.NavigateTo($"/journal/{id}");
+    }
+
+    private void EditEntry(int id)
+    {
+        Nav.NavigateTo($"/journaltoday/{id}");
+    }
+
+    private void DeleteEntry(int id)
+    {
+        var entry = Db.JournalEntries.FirstOrDefault(e => e.Id == id);
+        if (entry == null) return;
+
+        Db.JournalEntries.Remove(entry);
+        Db.SaveChanges();
+
+        Entries.Remove(entry);
+    }
+
+    private string GetPreview(string html)
+    {
+        html = Regex.Replace(html, "<h[1-6][^>]*>.*?</h[1-6]>", "",
+            RegexOptions.IgnoreCase | RegexOptions.Singleline);
+
+        html = Regex.Replace(html, "<.*?>", "");
+        html = html.Trim();
+
+        return html.Length > 120 ? html[..120] + "…" : html;
+    }
+}

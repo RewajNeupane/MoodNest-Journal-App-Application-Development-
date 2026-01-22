@@ -1,14 +1,16 @@
 @page "/journaltoday"
+@page "/journaltoday/{Id:int}"
 @layout TestLayout
 @inject IJSRuntime _js
 @inject MoodNest.Data.AppDbContext Db
+@inject NavigationManager Nav
 
 <div class="journal-editor-page">
 
     <!-- LEFT META PANEL -->
     <aside class="entry-sidebar">
 
-        <button class="new-btn">＋ New Entry</button>
+        <button class="new-btn" @onclick="NewEntry">＋ New Entry</button>
 
         <!-- TODAY -->
         <div class="entry-meta">
@@ -22,12 +24,10 @@
             <div class="mood-list">
                 @foreach (var mood in PrimaryMoodOptions)
                 {
-                    <span class="pill mood
-                            @(PrimaryMood == mood ? "active" : "")"
+                    <span class="pill mood @(PrimaryMood == mood ? "active" : "")"
                           @onclick="() => PrimaryMood = mood">
                         @mood
                     </span>
-
                 }
             </div>
         </div>
@@ -44,8 +44,6 @@
                           @onclick="() => ToggleSecondaryMood(mood)">
                         @mood
                     </span>
-
-
                 }
             </div>
             <p class="hint">Up to 2 moods</p>
@@ -69,22 +67,17 @@
             <div class="tags preset-tags">
                 @foreach (var tag in PresetTags)
                 {
-                    <span class="pill tag
-                            @(SelectedTags.Contains(tag) ? "active" : "")"
+                    <span class="pill tag @(SelectedTags.Contains(tag) ? "active" : "")"
                           @onclick="() => ToggleTag(tag)">
                         @tag
                     </span>
-
                 }
             </div>
-            <!-- CUSTOM TAGS -->
+
             <input class="tag-input"
                    placeholder="Add custom tag…"
                    @bind="CustomTag"
                    @onkeyup="HandleCustomTag" />
-
-
-
         </div>
 
         <!-- TIMESTAMPS -->
@@ -101,8 +94,14 @@
         <div id="editor" class="editor-canvas quill-fix"></div>
 
         <div class="editor-actions">
-            <button class="primary" @onclick="SaveEntry">Save Entry</button>
-            <button class="danger">Delete</button>
+            <button class="primary" @onclick="SaveEntry">
+                @(IsEdit ? "Update Entry" : "Save Entry")
+            </button>
+
+            @if (IsEdit)
+            {
+                <button class="danger" @onclick="DeleteEntry">Delete</button>
+            }
         </div>
 
     </main>
@@ -112,12 +111,19 @@
 @code {
 
     /* =======================
+       ROUTE / MODE
+    ======================== */
+
+    [Parameter] public int? Id { get; set; }
+    private bool IsEdit => Id.HasValue;
+
+    /* =======================
        STATE
     ======================== */
 
     private string _editorHtml = string.Empty;
 
-    private string PrimaryMood = "Happy";
+    private string PrimaryMood = "😊 Happy";
     private HashSet<string> SecondaryMoods = new();
 
     private string Category = "Personal";
@@ -164,20 +170,31 @@
     {
         if (!firstRender) return;
 
-        // Initialize Quill
         await _js.InvokeVoidAsync("initQuill", "editor");
 
-        // 🔍 TEMP DEBUG CHECK — remove after testing
-        var exists = await _js.InvokeAsync<string>(
-            "eval",
-            "typeof window.getQuillText"
-        );
+        if (IsEdit)
+        {
+            var entry = Db.JournalEntries.FirstOrDefault(e => e.Id == Id);
+            if (entry == null) return;
 
-        Console.WriteLine($"getQuillText exists: {exists}");
+            PrimaryMood = entry.PrimaryMood;
+            Category = entry.Category;
+
+            SecondaryMoods = string.IsNullOrWhiteSpace(entry.SecondaryMoods)
+                ? new()
+                : entry.SecondaryMoods.Split(',').ToHashSet();
+
+            SelectedTags = string.IsNullOrWhiteSpace(entry.Tags)
+                ? new()
+                : entry.Tags.Split(',').ToHashSet();
+
+            CreatedAt = entry.CreatedAt;
+            UpdatedAt = entry.UpdatedAt;
+
+            await _js.InvokeVoidAsync(
+                "setQuillContent", "editor", entry.ContentHtml);
+        }
     }
-
-
-    
 
     /* =======================
        HELPERS
@@ -201,53 +218,44 @@
 
     private void HandleCustomTag(KeyboardEventArgs e)
     {
-        if (e.Key != "Enter")
-            return;
+        if (e.Key != "Enter") return;
 
-        if (string.IsNullOrWhiteSpace(CustomTag))
-            return;
-
-        // Normalize the tag
         var tag = "#" + CustomTag.Trim().Replace(" ", "");
-
-        // Prevent duplicates
-        if (!SelectedTags.Contains(tag))
-        {
+        if (!string.IsNullOrWhiteSpace(tag))
             SelectedTags.Add(tag);
-        }
 
-        // Clear input
         CustomTag = string.Empty;
     }
 
-
+    private void NewEntry()
+    {
+        Nav.NavigateTo("/journaltoday");
+    }
 
     /* =======================
-       SAVE
+       SAVE / DELETE
     ======================== */
 
     private async Task SaveEntry()
     {
         try
         {
-            var plainText = await _js.InvokeAsync<string>("getQuillText", "editor");
-            if (string.IsNullOrWhiteSpace(plainText))
+            var title = await _js.InvokeAsync<string>("getQuillTitle", "editor");
+            var bodyHtml = await _js.InvokeAsync<string>("getQuillBody", "editor");
+
+            if (string.IsNullOrWhiteSpace(bodyHtml))
             {
                 await _js.InvokeVoidAsync("alert", "Journal cannot be empty.");
                 return;
             }
 
-            // 🔹 Extract title
-            var title = await _js.InvokeAsync<string>("getQuillTitle", "editor");
             if (string.IsNullOrWhiteSpace(title))
                 title = "Untitled Entry";
 
-            var html = await _js.InvokeAsync<string>("getQuillContent", "editor");
-
             var entry = new MoodNest.Components.Model.JournalEntry
             {
-                Title = title,                 // ✅ THIS WAS MISSING / NOT EXECUTING
-                ContentHtml = html,
+                Title = title,
+                ContentHtml = bodyHtml,
 
                 PrimaryMood = PrimaryMood,
                 SecondaryMoods = string.Join(",", SecondaryMoods),
@@ -275,5 +283,14 @@
     }
 
 
+    private async Task DeleteEntry()
+    {
+        var entry = Db.JournalEntries.FirstOrDefault(e => e.Id == Id);
+        if (entry == null) return;
 
+        Db.JournalEntries.Remove(entry);
+        await Db.SaveChangesAsync();
+
+        Nav.NavigateTo("/journal");
+    }
 }

@@ -1,0 +1,37 @@
+@page "/journal/{Id:int}"
+@layout TestLayout
+
+@inject MoodNest.Data.AppDbContext Db
+
+@if (Entry == null)
+{
+    <p>Journal entry not found.</p>
+}
+else
+{
+    <div class="journal-detail-page">
+
+        <h1>@(Entry.Title ?? "Untitled Entry")</h1>
+
+        <div class="entry-meta">
+            <span>@Entry.CreatedAt.ToString("dddd, MMMM dd yyyy")</span>
+            <span>@Entry.PrimaryMood</span>
+        </div>
+
+        <div class="journal-content">
+            @((MarkupString)Entry.ContentHtml)
+        </div>
+
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private MoodNest.Components.Model.JournalEntry? Entry;
+
+    protected override void OnInitialized()
+    {
+        Entry = Db.JournalEntries.FirstOrDefault(e => e.Id == Id);
+    }
+}
