@@ -1,9 +1,10 @@
 @page "/calendar"
+@layout TestLayout
 
 <div class="calendar-page">
 
     <!-- CALENDAR CARD -->
-    <div class="calendar-card">
+    <div class="calendar-card tall-calendar">
 
         <div class="calendar-header">
             <span class="arrow">‹</span>
@@ -70,20 +71,30 @@
         </div>
 
         <div class="missed-card">
-            <h3>Missed Days</h3>
-            <ul class="missed-list">
-                <li>Dec 3, 2024</li>
-                <li>Dec 7, 2024</li>
-                <li>Dec 12, 2024</li>
-            </ul>
+
+            <div class="missed-header">
+                <div class="missed-icon">📆</div>
+                <h3>Missed Days</h3>
+            </div>
+
+            <div class="missed-item">
+                <span class="missed-dot"></span>
+                Dec 3, 2024
+            </div>
+
+            <div class="missed-item">
+                <span class="missed-dot"></span>
+                Dec 7, 2024
+            </div>
+
+            <div class="missed-item">
+                <span class="missed-dot"></span>
+                Dec 12, 2024
+            </div>
+
         </div>
 
-    </div>
 
-    <!-- MONTHLY SUMMARY -->
-    <div class="monthly-summary">
-        <h3>Monthly Summary</h3>
-        <textarea placeholder="Write a reflection for this month..."></textarea>
     </div>
 
 </div>

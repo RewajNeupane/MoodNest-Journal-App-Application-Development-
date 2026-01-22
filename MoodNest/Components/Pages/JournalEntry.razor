@@ -1,5 +1,7 @@
 @page "/journaltoday"
 @layout TestLayout
+@inject IJSRuntime _js
+@inject MoodNest.Data.AppDbContext Db
 
 <div class="journal-editor-page">
 
@@ -8,56 +10,87 @@
 
         <button class="new-btn">＋ New Entry</button>
 
+        <!-- TODAY -->
         <div class="entry-meta">
             <h4>Today</h4>
-            <p class="meta-date">Monday, March 25</p>
+            <p class="meta-date">@TodayLabel</p>
         </div>
 
+        <!-- PRIMARY MOOD -->
         <div class="entry-meta">
             <h4>Primary Mood *</h4>
             <div class="mood-list">
-                <span class="mood active">😊 Happy</span>
-                <span class="mood">😌 Calm</span>
-                <span class="mood">😐 Neutral</span>
-                <span class="mood">😔 Sad</span>
-                <span class="mood">😠 Angry</span>
+                @foreach (var mood in PrimaryMoodOptions)
+                {
+                    <span class="pill mood
+                            @(PrimaryMood == mood ? "active" : "")"
+                          @onclick="() => PrimaryMood = mood">
+                        @mood
+                    </span>
+
+                }
             </div>
         </div>
 
+        <!-- SECONDARY MOODS -->
         <div class="entry-meta">
             <h4>Secondary Moods</h4>
             <div class="mood-list subtle">
-                <span class="mood active">😴 Tired</span>
-                <span class="mood">😬 Anxious</span>
-                <span class="mood">🤔 Thoughtful</span>
+                @foreach (var mood in SecondaryMoodOptions)
+                {
+                    <span class="pill mood
+                          @(SecondaryMoods.Contains(mood) ? "active" : "")
+                          @(SecondaryMoods.Count == 2 && !SecondaryMoods.Contains(mood) ? "disabled" : "")"
+                          @onclick="() => ToggleSecondaryMood(mood)">
+                        @mood
+                    </span>
+
+
+                }
             </div>
             <p class="hint">Up to 2 moods</p>
         </div>
 
+        <!-- CATEGORY -->
         <div class="entry-meta">
             <h4>Category</h4>
-            <select class="dropdown">
-                <option selected>Personal</option>
-                <option>Work</option>
-                <option>Health</option>
-                <option>Relationships</option>
-                <option>Reflection</option>
+            <select class="dropdown" @bind="Category">
+                @foreach (var cat in Categories)
+                {
+                    <option value="@cat">@cat</option>
+                }
             </select>
         </div>
 
+        <!-- TAGS -->
         <div class="entry-meta">
             <h4>Tags</h4>
-            <div class="tags">
-                <span class="tag active">#gratitude</span>
-                <span class="tag">#work</span>
-                <span class="tag">#family</span>
+
+            <div class="tags preset-tags">
+                @foreach (var tag in PresetTags)
+                {
+                    <span class="pill tag
+                            @(SelectedTags.Contains(tag) ? "active" : "")"
+                          @onclick="() => ToggleTag(tag)">
+                        @tag
+                    </span>
+
+                }
             </div>
-            <input class="tag-input" placeholder="Add tag…" />
+            <!-- CUSTOM TAGS -->
+            <input class="tag-input"
+                   placeholder="Add custom tag…"
+                   @bind="CustomTag"
+                   @onkeyup="HandleCustomTag" />
+
+
+
         </div>
 
+        <!-- TIMESTAMPS -->
         <div class="entry-meta timestamps">
-            <p>Created: 25/03/2025 · 10:15</p>
-            <p>Updated: 25/03/2025 · 10:15</p>
+            <p>Created: @CreatedAt.ToString("dd/MM/yyyy · HH:mm")</p>
+            <p>Updated: @UpdatedAt.ToString("dd/MM/yyyy · HH:mm")</p>
         </div>
 
     </aside>
@@ -65,44 +98,182 @@
     <!-- MAIN EDITOR -->
     <main class="editor-container">
 
-        <!-- TOOLBAR -->
-        <div class="editor-toolbar">
+        <div id="editor" class="editor-canvas quill-fix"></div>
 
-            <div class="tool-group">
-                <button class="tool-btn bold">B</button>
-                <button class="tool-btn italic">I</button>
-                <button class="tool-btn underline">U</button>
-                <button class="tool-btn heading">H</button>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="tool-group">
-                <button class="tool-btn">• List</button>
-                <button class="tool-btn">1. List</button>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="tool-group">
-                <button class="tool-btn">Link</button>
-            </div>
-
-        </div>
-
-        <!-- TITLE -->
-        <input class="entry-title" placeholder="Add a title…" />
-
-        <!-- CONTENT -->
-        <textarea class="editor-canvas"
-                  placeholder="It’s empty here… write freely using Markdown."></textarea>
-
-        <!-- ACTIONS -->
         <div class="editor-actions">
-            <button class="primary">Save Entry</button>
+            <button class="primary" @onclick="SaveEntry">Save Entry</button>
             <button class="danger">Delete</button>
         </div>
 
     </main>
 
 </div>
+
+@code {
+
+    /* =======================
+       STATE
+    ======================== */
+
+    private string _editorHtml = string.Empty;
+
+    private string PrimaryMood = "Happy";
+    private HashSet<string> SecondaryMoods = new();
+
+    private string Category = "Personal";
+
+    private HashSet<string> SelectedTags = new();
+    private string CustomTag = string.Empty;
+
+    private DateTime CreatedAt = DateTime.Now;
+    private DateTime UpdatedAt = DateTime.Now;
+
+    private string TodayLabel => DateTime.Now.ToString("dddd, MMMM dd");
+
+    /* =======================
+       OPTIONS
+    ======================== */
+
+    private readonly string[] PrimaryMoodOptions =
+    {
+        "😊 Happy", "😌 Calm", "😐 Neutral", "😔 Sad", "😠 Angry"
+    };
+
+    private readonly string[] SecondaryMoodOptions =
+    {
+        "😴 Tired", "😬 Anxious", "🤔 Thoughtful", "😄 Excited"
+    };
+
+    private readonly string[] Categories =
+    {
+        "Personal", "Work", "Health", "Relationships", "Reflection"
+    };
+
+    private readonly string[] PresetTags =
+    {
+        "#Work", "#Career", "#Studies", "#Family", "#Friends",
+        "#Health", "#Fitness", "#Reflection", "#Writing",
+        "#SelfCare", "#Travel"
+    };
+
+    /* =======================
+       LIFECYCLE
+    ======================== */
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        // Initialize Quill
+        await _js.InvokeVoidAsync("initQuill", "editor");
+
+        // 🔍 TEMP DEBUG CHECK — remove after testing
+        var exists = await _js.InvokeAsync<string>(
+            "eval",
+            "typeof window.getQuillText"
+        );
+
+        Console.WriteLine($"getQuillText exists: {exists}");
+    }
+
+
+    
+
+    /* =======================
+       HELPERS
+    ======================== */
+
+    private void ToggleSecondaryMood(string mood)
+    {
+        if (SecondaryMoods.Contains(mood))
+            SecondaryMoods.Remove(mood);
+        else if (SecondaryMoods.Count < 2)
+            SecondaryMoods.Add(mood);
+    }
+
+    private void ToggleTag(string tag)
+    {
+        if (SelectedTags.Contains(tag))
+            SelectedTags.Remove(tag);
+        else
+            SelectedTags.Add(tag);
+    }
+
+    private void HandleCustomTag(KeyboardEventArgs e)
+    {
+        if (e.Key != "Enter")
+            return;
+
+        if (string.IsNullOrWhiteSpace(CustomTag))
+            return;
+
+        // Normalize the tag
+        var tag = "#" + CustomTag.Trim().Replace(" ", "");
+
+        // Prevent duplicates
+        if (!SelectedTags.Contains(tag))
+        {
+            SelectedTags.Add(tag);
+        }
+
+        // Clear input
+        CustomTag = string.Empty;
+    }
+
+
+
+    /* =======================
+       SAVE
+    ======================== */
+
+    private async Task SaveEntry()
+    {
+        try
+        {
+            var plainText = await _js.InvokeAsync<string>("getQuillText", "editor");
+            if (string.IsNullOrWhiteSpace(plainText))
+            {
+                await _js.InvokeVoidAsync("alert", "Journal cannot be empty.");
+                return;
+            }
+
+            // 🔹 Extract title
+            var title = await _js.InvokeAsync<string>("getQuillTitle", "editor");
+            if (string.IsNullOrWhiteSpace(title))
+                title = "Untitled Entry";
+
+            var html = await _js.InvokeAsync<string>("getQuillContent", "editor");
+
+            var entry = new MoodNest.Components.Model.JournalEntry
+            {
+                Title = title,                 // ✅ THIS WAS MISSING / NOT EXECUTING
+                ContentHtml = html,
+
+                PrimaryMood = PrimaryMood,
+                SecondaryMoods = string.Join(",", SecondaryMoods),
+                Category = Category,
+                Tags = string.Join(",", SelectedTags),
+
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
+            };
+
+            Db.JournalEntries.Add(entry);
+            await Db.SaveChangesAsync();
+
+            await _js.InvokeVoidAsync("showSaveSuccess");
+            await _js.InvokeVoidAsync("clearQuillContent", "editor");
+
+            SecondaryMoods.Clear();
+            SelectedTags.Clear();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            await _js.InvokeVoidAsync("alert", "An error occurred while saving.");
+        }
+    }
+
+
+
+}

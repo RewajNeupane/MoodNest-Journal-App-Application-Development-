@@ -22,6 +22,13 @@
     padding: 28px;
 }
 
+/* Make calendar taller */
+.tall-calendar[b-d7o6kdwhjr] {
+    min-height: 720px;
+    display: flex;
+    flex-direction: column;
+}
+
 /* Header */
 .calendar-header[b-d7o6kdwhjr] {
     display: flex;
@@ -49,25 +56,26 @@
     font-size: 12px;
     letter-spacing: 0.4px;
     opacity: 0.6;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
 }
 
 /* Days */
 .days[b-d7o6kdwhjr] {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 12px;
+    gap: 14px;
+    flex-grow: 1;
 }
 
 .day[b-d7o6kdwhjr] {
-    height: 42px;
+    height: 68px;
     display: flex;
     align-items: center;
     justify-content: center;
 
     position: relative;
-    border-radius: 14px;
-    font-size: 14px;
+    border-radius: 16px;
+    font-size: 15px;
     background: #e1d9cc;
 }
 
@@ -78,7 +86,7 @@
 /* Dots */
 .calendar-dot[b-d7o6kdwhjr] {
     position: absolute;
-    bottom: 6px;
+    bottom: 8px;
     width: 6px;
     height: 6px;
     border-radius: 50%;
@@ -92,7 +100,7 @@
 .legend[b-d7o6kdwhjr] {
     display: flex;
     gap: 20px;
-    margin-top: 18px;
+    margin-top: 22px;
     font-size: 13px;
 }
 
@@ -115,7 +123,7 @@
 .hint[b-d7o6kdwhjr] {
     font-size: 12px;
     opacity: 0.6;
-    margin-top: 10px;
+    margin-top: 12px;
 }
 
 /* ===============================
@@ -219,11 +227,7 @@
 }
 
 /* Missed Days */
-.missed-card[b-d7o6kdwhjr] {
-    background: #f7f2ea;
-    border-radius: 28px;
-    padding: 26px;
-}
+
 
 .missed-list[b-d7o6kdwhjr] {
     margin-top: 12px;
@@ -231,23 +235,45 @@
     font-size: 13px;
 }
 
-/* ===============================
-   MONTHLY SUMMARY
-   =============================== */
-
-.monthly-summary[b-d7o6kdwhjr] {
-    grid-column: 1 / 3;
+.missed-card[b-d7o6kdwhjr] {
     background: #f7f2ea;
-    border-radius: 30px;
+    border-radius: 28px;
     padding: 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
 }
 
-.monthly-summary textarea[b-d7o6kdwhjr] {
-    width: 100%;
-    height: 260px;
-    border-radius: 20px;
-    border: none;
-    padding: 16px;
-    background: #f3eee5;
-    resize: none;
+.missed-header[b-d7o6kdwhjr] {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
+
+.missed-icon[b-d7o6kdwhjr] {
+    width: 42px;
+    height: 42px;
+    background: #e1d9cc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.missed-item[b-d7o6kdwhjr] {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #efe4e4;
+    padding: 12px 16px;
+    border-radius: 16px;
+    font-size: 14px;
+}
+
+.missed-dot[b-d7o6kdwhjr] {
+    width: 8px;
+    height: 8px;
+    background: #c27c7c;
+    border-radius: 50%;
+}
+

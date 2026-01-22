@@ -1,6 +1,7 @@
-@page "/login"
+@page "/"
 @layout TestLayout
 @inject NavigationManager Nav
+@inject MoodNest.Components.Services.PinAuthService Auth
 
 <div class="lock-screen">
 
@@ -41,20 +42,21 @@
 </div>
 
 @code {
-    // TEMP PIN (replace with hashed value later)
     private const string StoredPin = "1234";
 
     private string enteredPin = string.Empty;
     private string errorMessage = string.Empty;
 
-    void VerifyPin()
+    private async Task VerifyPin()
     {
         if (enteredPin == StoredPin)
         {
             errorMessage = string.Empty;
 
-            // Redirect to dashboard
-            Nav.NavigateTo("/test");
+            Auth.Unlock();              // 🔓 unlock
+            await Task.Yield();         // 🧠 allow auth state to propagate
+
+            Nav.NavigateTo("/test", replace: true);
         }
         else
         {
@@ -63,3 +65,4 @@
         }
     }
 }
+

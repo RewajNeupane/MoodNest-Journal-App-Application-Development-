@@ -29,6 +29,10 @@
       "PackagePath": "staticwebassets/index.html"
     },
     {
+      "Id": "/Users/rewaj/RiderProjects/MauiApp2/MoodNest/wwwroot/js/quill-editor.js",
+      "PackagePath": "staticwebassets/js/quill-editor.js"
+    },
+    {
       "Id": "obj/Debug/net9.0-maccatalyst/maccatalyst-arm64/staticwebassets/msbuild.MoodNest.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
       "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
     },

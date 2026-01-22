@@ -24,7 +24,28 @@
 
         <!-- PAGE CONTENT -->
         <main class="content-area">
-            @Body
+
+            <ErrorBoundary @ref="_errorBoundary">
+
+                <ChildContent>
+                    @Body
+                </ChildContent>
+
+                <ErrorContent Context="ex">
+                    <div style="
+                        background:#b00020;
+                        color:white;
+                        padding:16px;
+                        font-family:monospace;
+                        white-space:pre-wrap;">
+                        <strong>Unhandled exception:</strong>
+                        <br />
+                        @ex.ToString()
+                    </div>
+                </ErrorContent>
+
+            </ErrorBoundary>
+
         </main>
 
         <!-- FOOTER -->
@@ -35,3 +56,7 @@
     </div>
 
 </div>
+
+@code {
+private ErrorBoundary? _errorBoundary;
+}

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MoodNest")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+fd6fde7bf4a934cef8804b489a68270ef18f3b0b")]
 [assembly: System.Reflection.AssemblyProductAttribute("MoodNest")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MoodNest")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

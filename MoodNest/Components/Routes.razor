@@ -1,6 +1,26 @@
-﻿<Router AppAssembly="@typeof(MauiProgram).Assembly">
+﻿@using MoodNest.Components.Services
+@inject PinAuthService Auth
+@inject NavigationManager Nav
+
+<Router AppAssembly="@typeof(MauiProgram).Assembly"
+        OnNavigateAsync="HandleNavigationAsync">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.TestLayout)"/>
-        <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
+        <RouteView RouteData="@routeData" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
 </Router>
+
+@code {
+    private async Task HandleNavigationAsync(NavigationContext context)
+    {
+        if (string.IsNullOrEmpty(context.Path))
+            return;
+
+        if (!Auth.IsUnlocked && context.Path != "/")
+        {
+            Nav.NavigateTo("/", replace: true);
+        }
+
+        await Task.CompletedTask;
+    }
+}

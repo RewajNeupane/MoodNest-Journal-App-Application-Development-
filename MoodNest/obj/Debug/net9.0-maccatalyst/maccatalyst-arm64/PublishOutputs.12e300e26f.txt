@@ -40,6 +40,13 @@
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.AspNetCore.Components.WebView.dll
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.AspNetCore.Components.WebView.Maui.dll
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.AspNetCore.Metadata.dll
+/Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.Data.Sqlite.dll
+/Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.EntityFrameworkCore.dll
+/Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.EntityFrameworkCore.Abstractions.dll
+/Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.EntityFrameworkCore.Relational.dll
+/Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.EntityFrameworkCore.Sqlite.dll
+/Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.Extensions.Caching.Abstractions.dll
+/Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.Extensions.Caching.Memory.dll
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.Extensions.Configuration.dll
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.Extensions.Configuration.Abstractions.dll
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.Extensions.Configuration.Binder.dll
@@ -47,6 +54,7 @@
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.Extensions.Configuration.Json.dll
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.Extensions.DependencyInjection.dll
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.Extensions.DependencyInjection.Abstractions.dll
+/Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.Extensions.DependencyModel.dll
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.Extensions.FileProviders.Abstractions.dll
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.Extensions.FileProviders.Composite.dll
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.Extensions.FileProviders.Embedded.dll
@@ -63,6 +71,10 @@
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.Maui.dll
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.Maui.Essentials.dll
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.Maui.Graphics.dll
+/Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/SQLite-net.dll
+/Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/SQLitePCLRaw.batteries_v2.dll
+/Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/SQLitePCLRaw.core.dll
+/Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/SQLitePCLRaw.provider.e_sqlite3.dll
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/MoodNest.dll
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.CSharp.dll
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.VisualBasic.Core.dll
@@ -236,5 +248,6 @@
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.MacCatalyst.dll
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/MoodNest.pdb
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/Microsoft.MacCatalyst.pdb
+/Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/libe_sqlite3.dylib
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MonoBundle/System.Private.CoreLib.aotdata.arm64
 /Users/rewaj/RiderProjects/MauiApp2/MoodNest/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/publish/../MoodNest.app/Contents/MacOS//MoodNest

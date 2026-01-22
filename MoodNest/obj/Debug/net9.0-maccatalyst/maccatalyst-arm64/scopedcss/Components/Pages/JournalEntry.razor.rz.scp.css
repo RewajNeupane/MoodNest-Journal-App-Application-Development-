@@ -1,6 +1,10 @@
+/* ===============================
+   ROOT LAYOUT
+   =============================== */
+
 .journal-editor-page[b-3rg7ssqe1p] {
     display: flex;
-    height: 100%;
+    height: 100vh;
     background: #f7f3eb;
     font-family: "Inter", system-ui, sans-serif;
 }
@@ -26,6 +30,7 @@
     color: #fff;
     font-weight: 600;
     margin-bottom: 28px;
+    cursor: pointer;
 }
 
 .entry-meta[b-3rg7ssqe1p] {
@@ -44,32 +49,75 @@
     color: #1c1c1c;
 }
 
-.mood-list[b-3rg7ssqe1p] {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.mood[b-3rg7ssqe1p] {
-    padding: 6px 12px;
-    border-radius: 999px;
-    background: #eee7dc;
-    font-size: 13px;
-}
-
-.mood.active[b-3rg7ssqe1p] {
-    background: #d8cfc2;
-}
-
-.mood-list.subtle .mood[b-3rg7ssqe1p] {
-    background: #f1ece4;
-}
-
 .hint[b-3rg7ssqe1p] {
     font-size: 11px;
     opacity: 0.6;
     margin-top: 6px;
 }
+
+/* ===============================
+   LIST CONTAINERS
+   =============================== */
+
+.mood-list[b-3rg7ssqe1p],
+.tags[b-3rg7ssqe1p] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.preset-tags[b-3rg7ssqe1p] {
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+/* ===============================
+   INTERACTIVE PILLS (MOODS + TAGS)
+   =============================== */
+
+.pill[b-3rg7ssqe1p] {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #eee7dc;
+    font-size: 13px;
+
+    cursor: pointer;
+    user-select: none;
+
+    transition:
+            background-color 0.15s ease,
+            transform 0.08s ease,
+            opacity 0.15s ease;
+}
+
+/* Hover */
+.pill:hover[b-3rg7ssqe1p] {
+    background: #e2dbcf;
+}
+
+/* Active */
+.pill.active[b-3rg7ssqe1p] {
+    background: #d8cfc2;
+}
+
+/* Press feedback */
+.pill:active[b-3rg7ssqe1p] {
+    transform: scale(0.97);
+}
+
+/* Disabled (used when secondary mood limit reached) */
+.pill.disabled[b-3rg7ssqe1p] {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.pill.disabled:hover[b-3rg7ssqe1p] {
+    background: #eee7dc;
+}
+
+/* ===============================
+   FORM CONTROLS
+   =============================== */
 
 .dropdown[b-3rg7ssqe1p] {
     width: 100%;
@@ -77,23 +125,6 @@
     border-radius: 12px;
     border: 1px solid #ddd5c9;
     background: #f3eee5;
-}
-
-.tags[b-3rg7ssqe1p] {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.tag[b-3rg7ssqe1p] {
-    padding: 6px 12px;
-    border-radius: 999px;
-    background: #eee7dc;
-    font-size: 12px;
-}
-
-.tag.active[b-3rg7ssqe1p] {
-    background: #cfc7bb;
 }
 
 .tag-input[b-3rg7ssqe1p] {
@@ -118,85 +149,17 @@
     padding: 40px 60px;
     display: flex;
     flex-direction: column;
-}
-
-/* ===============================
-   TOOLBAR (MATCHES REFERENCE)
-   =============================== */
-
-.editor-toolbar[b-3rg7ssqe1p] {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    padding: 10px 14px;
-    margin-bottom: 18px;
-
-    background: #fbf8f2;
-    border: 1px solid #e7e0d6;
-    border-radius: 14px;
-}
-
-.tool-group[b-3rg7ssqe1p] {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.divider[b-3rg7ssqe1p] {
-    width: 1px;
-    height: 22px;
-    background: #ddd5c9;
-}
-
-/* Buttons */
-.tool-btn[b-3rg7ssqe1p] {
-    min-width: 34px;
-    height: 34px;
-    padding: 0 10px;
-
-    border-radius: 8px;
-    border: none;
-    background: transparent;
-
-    font-size: 14px;
-    font-weight: 600;
-    color: #1c1c1c;
-
-    cursor: pointer;
-    transition: background 0.15s ease;
-}
-
-.tool-btn:hover[b-3rg7ssqe1p] {
-    background: rgba(0,0,0,0.06);
-}
-
-/* Typography hints */
-.bold[b-3rg7ssqe1p] { font-weight: 700; }
-.italic[b-3rg7ssqe1p] { font-style: italic; }
-.underline[b-3rg7ssqe1p] { text-decoration: underline; }
-
-/* ===============================
-   TITLE + CONTENT
-   =============================== */
-
-.entry-title[b-3rg7ssqe1p] {
-    font-size: 28px;
-    font-weight: 600;
-    border: none;
-    outline: none;
-    margin-bottom: 16px;
-    background: transparent;
+    min-height: 0;
 }
 
 .editor-canvas[b-3rg7ssqe1p] {
     flex: 1;
-    border: none;
-    outline: none;
-    resize: none;
     font-size: 16px;
     line-height: 1.7;
     background: transparent;
+    border: none;
+    outline: none;
+    min-height: 0;
 }
 
 /* ===============================
@@ -216,6 +179,27 @@
     background: #1c1c1c;
     color: #fff;
     border: none;
+    cursor: pointer;
+
+    transition:
+            background-color 0.15s ease,
+            transform 0.1s ease,
+            box-shadow 0.1s ease;
+}
+
+.primary:hover[b-3rg7ssqe1p] {
+    background: #2a2a2a;
+}
+
+.primary:active[b-3rg7ssqe1p] {
+    background: #000;
+    transform: translateY(1px);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.25);
+}
+
+.primary:focus-visible[b-3rg7ssqe1p] {
+    outline: 2px solid #cfc7bb;
+    outline-offset: 3px;
 }
 
 .danger[b-3rg7ssqe1p] {
@@ -224,4 +208,73 @@
     border: 1px solid #e0caca;
     background: transparent;
     color: #b44;
+    cursor: pointer;
+}
+
+/* ===============================
+   QUILL TOOLBAR OVERRIDE
+   =============================== */
+
+.ql-toolbar.ql-snow[b-3rg7ssqe1p] {
+    border: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+.ql-toolbar[b-3rg7ssqe1p] {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    margin-bottom: 18px;
+    background: #fbf8f2;
+    border: 1px solid #e7e0d6;
+    border-radius: 14px;
+}
+
+.ql-toolbar .ql-formats[b-3rg7ssqe1p] {
+    display: flex;
+    gap: 6px;
+    margin-right: 8px;
+}
+
+.ql-toolbar button[b-3rg7ssqe1p] {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: none;
+    background: transparent !important;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ql-toolbar button:hover[b-3rg7ssqe1p] {
+    background: rgba(0,0,0,0.06);
+}
+
+.ql-toolbar button.ql-active[b-3rg7ssqe1p] {
+    background: rgba(0,0,0,0.12);
+}
+
+.ql-toolbar .ql-stroke[b-3rg7ssqe1p],
+.ql-toolbar .ql-fill[b-3rg7ssqe1p] {
+    stroke: none !important;
+    fill: none !important;
+}
+
+.ql-editor h1[b-3rg7ssqe1p] {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.ql-editor p[b-3rg7ssqe1p] {
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+.ql-editor.ql-blank[b-3rg7ssqe1p]::before {
+    font-style: normal;
+    color: #aaa;
+    font-size: 16px;
 }
