@@ -73,7 +73,7 @@
    =============================== */
 
 .timeline-date {
-    width: 70px;
+    width: 90px; /* was 70px */
     text-align: center;
     flex-shrink: 0;
 }
@@ -85,11 +85,13 @@
 }
 
 .timeline-date .month {
-    font-size: 11px;
-    letter-spacing: 1.4px;
+    font-size: 12px;
+    letter-spacing: 0;
     color: #7a6f5c;
     margin-top: 4px;
+    text-transform: none;
 }
+
 
 /* ===============================
    CONTENT
@@ -183,4 +185,223 @@
 .edit-btn:active,
 .delete-btn:active {
     transform: scale(0.96);
+}
+.secondary-moods .pill {
+    margin-left: 6px;
+    font-size: 12px;
+    opacity: 0.85;
+}
+
+.timeline-meta {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #7a6f5c;
+}
+
+.tag {
+    margin-right: 6px;
+}
+/* ===============================
+   INFO BLOCK (MOODS + META)
+   =============================== */
+
+.timeline-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 220px;
+}
+
+/* ===============================
+   MOOD PILLS (PRIMARY + SECONDARY)
+   =============================== */
+
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+
+    background: #ede7dc;
+    color: #4f4a40;
+
+    line-height: 1;
+}
+
+.pill.primary {
+    font-size: 14px;
+    padding: 6px 12px;
+    font-weight: 600;
+
+    background: #e3dccf;
+
+    width: fit-content;   /* 🔑 KEY FIX */
+    max-width: max-content;
+}
+
+
+
+/* Secondary moods spacing */
+.secondary-moods {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+
+/* Secondary moods */
+.secondary-moods {
+    display: flex;
+    gap: 6px;
+}
+
+.secondary-moods .pill {
+    font-size: 12px;
+    background: #ede7dc;
+    padding: 3px 8px;
+    border-radius: 999px;
+}
+
+/* Category + tags line */
+.meta-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 12px;
+    color: #7a6f5c;
+}
+
+.category {
+    font-weight: 600;
+}
+
+.tag {
+    opacity: 0.8;
+}
+/* ===============================
+   FILTER BAR
+   =============================== */
+
+.filters {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    margin-bottom: 32px;
+}
+
+.filters input,
+.filters select {
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid #e2dbcf;
+    background: #fbf8f2;
+
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.search-input {
+    min-width: 260px;
+}
+
+.tag-input {
+    min-width: 180px;
+}
+
+.reset-btn {
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: none;
+
+    background: #e9e3d8;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.reset-btn:hover {
+    background: #ded6ca;
+}
+/* ===============================
+   DATE RANGE FILTER
+   =============================== */
+
+.date-range {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    font-size: 11px;
+    color: #7a6f5c;
+}
+
+.date-label input {
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid #e7e0d6;
+    background: #fbf8f2;
+
+    font-size: 13px;
+    color: #1c1c1c;
+}
+
+.date-separator {
+    font-size: 16px;
+    color: #b8ad9c;
+    margin-top: 14px;
+}
+/* ===============================
+   PAGINATION
+   =============================== */
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+
+    margin: 50px 0 20px;
+}
+
+.page-btn {
+    padding: 8px 16px;
+    border-radius: 999px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    border: none;
+    cursor: pointer;
+
+    background: #f1ece2;
+    color: #3b82f6;
+
+    transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.page-btn:hover:not(:disabled) {
+    background: #e6dfd3;
+}
+
+.page-btn:active:not(:disabled) {
+    transform: scale(0.96);
+}
+
+.page-btn:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+.page-indicator {
+    font-size: 13px;
+    color: #7a6f5c;
 }

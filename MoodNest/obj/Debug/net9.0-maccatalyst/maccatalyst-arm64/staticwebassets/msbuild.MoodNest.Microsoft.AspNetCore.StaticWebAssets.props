@@ -132,12 +132,12 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>9i7yu8vmm3</Fingerprint>
-      <Integrity>fzdTKIsrPWqXerSr0VT/beJEulG3dHFYgA2oFWn6ipM=</Integrity>
+      <Fingerprint>9lkfykmptw</Fingerprint>
+      <Integrity>Axgc9tvMTUvKG5zAyGN2+6rjvg4SUkRv1t9iHp+UjJA=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <FileLength>2729</FileLength>
-      <LastWriteTime>Thu, 22 Jan 2026 17:42:48 GMT</LastWriteTime>
+      <FileLength>2628</FileLength>
+      <LastWriteTime>Fri, 23 Jan 2026 06:57:58 GMT</LastWriteTime>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\quill-editor.js'))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\MoodNest.styles.css'))">
@@ -152,12 +152,12 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName>ScopedCss</AssetTraitName>
       <AssetTraitValue>ApplicationBundle</AssetTraitValue>
-      <Fingerprint>3k4j31wmkp</Fingerprint>
-      <Integrity>06QosxmmTWg2MuNcFbGWbgOX2MRa+yceX/jjc02sW3U=</Integrity>
+      <Fingerprint>0wpdk7b1wl</Fingerprint>
+      <Integrity>UMSMg4c7oqZEI9FzkST83Q08j74Gdn/Sd5a0Y+PCusU=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <FileLength>22386</FileLength>
-      <LastWriteTime>Thu, 22 Jan 2026 17:44:08 GMT</LastWriteTime>
+      <FileLength>28150</FileLength>
+      <LastWriteTime>Fri, 23 Jan 2026 09:18:25 GMT</LastWriteTime>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\MoodNest.styles.css'))</OriginalItemSpec>
     </StaticWebAsset>
   </ItemGroup>

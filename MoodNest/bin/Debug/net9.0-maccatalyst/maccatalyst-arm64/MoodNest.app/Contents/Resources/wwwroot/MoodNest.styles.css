@@ -430,6 +430,118 @@
     border-radius: 50%;
 }
 
+/* /Components/Pages/JournalDetail.razor.rz.scp.css */
+.journal-detail-page[b-5h23rzmpjw] {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 64px 24px 80px;
+
+    font-family: "Inter", system-ui, sans-serif;
+    color: #2f2b23;
+}
+
+/* ===============================
+   HEADER
+   =============================== */
+
+.detail-header h1[b-5h23rzmpjw] {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.detail-dates[b-5h23rzmpjw] {
+    display: flex;
+    gap: 18px;
+    font-size: 13px;
+    color: #7a6f5c;
+}
+
+/* ===============================
+   META INFO
+   =============================== */
+
+.detail-meta[b-5h23rzmpjw] {
+    margin-top: 28px;
+    margin-bottom: 40px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* Pills */
+.pill[b-5h23rzmpjw] {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 6px 14px;
+    border-radius: 999px;
+
+    font-size: 13px;
+    background: #ede7dc;
+    color: #4f4a40;
+}
+
+/* Primary mood */
+.pill.primary[b-5h23rzmpjw] {
+    font-size: 15px;
+    font-weight: 600;
+    background: #e3dccf;
+    width: fit-content;
+}
+
+/* Secondary moods */
+.secondary-moods[b-5h23rzmpjw] {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Category & tags */
+.meta-line[b-5h23rzmpjw] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 13px;
+    color: #7a6f5c;
+}
+
+.category[b-5h23rzmpjw] {
+    font-weight: 600;
+}
+
+.tag[b-5h23rzmpjw] {
+    opacity: 0.85;
+}
+
+/* ===============================
+   CONTENT
+   =============================== */
+
+.journal-content[b-5h23rzmpjw] {
+    margin-top: 24px;
+    padding-top: 32px;
+    border-top: 1px solid #e7e0d6;
+
+    font-size: 16px;
+    line-height: 1.75;
+    color: #2f2b23;
+}
+
+.journal-content p[b-5h23rzmpjw] {
+    margin-bottom: 18px;
+}
+
+/* ===============================
+   FALLBACK
+   =============================== */
+
+.not-found[b-5h23rzmpjw] {
+    padding: 40px;
+    text-align: center;
+    color: #9b9180;
+}
 /* /Components/Pages/JournalEntry.razor.rz.scp.css */
 /* ===============================
    ROOT LAYOUT
@@ -788,7 +900,7 @@
    =============================== */
 
 .timeline-date[b-2p8xlmia2i] {
-    width: 70px;
+    width: 90px; /* was 70px */
     text-align: center;
     flex-shrink: 0;
 }
@@ -800,11 +912,13 @@
 }
 
 .timeline-date .month[b-2p8xlmia2i] {
-    font-size: 11px;
-    letter-spacing: 1.4px;
+    font-size: 12px;
+    letter-spacing: 0;
     color: #7a6f5c;
     margin-top: 4px;
+    text-transform: none;
 }
+
 
 /* ===============================
    CONTENT
@@ -898,6 +1012,225 @@
 .edit-btn:active[b-2p8xlmia2i],
 .delete-btn:active[b-2p8xlmia2i] {
     transform: scale(0.96);
+}
+.secondary-moods .pill[b-2p8xlmia2i] {
+    margin-left: 6px;
+    font-size: 12px;
+    opacity: 0.85;
+}
+
+.timeline-meta[b-2p8xlmia2i] {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #7a6f5c;
+}
+
+.tag[b-2p8xlmia2i] {
+    margin-right: 6px;
+}
+/* ===============================
+   INFO BLOCK (MOODS + META)
+   =============================== */
+
+.timeline-info[b-2p8xlmia2i] {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 220px;
+}
+
+/* ===============================
+   MOOD PILLS (PRIMARY + SECONDARY)
+   =============================== */
+
+.pill[b-2p8xlmia2i] {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+
+    background: #ede7dc;
+    color: #4f4a40;
+
+    line-height: 1;
+}
+
+.pill.primary[b-2p8xlmia2i] {
+    font-size: 14px;
+    padding: 6px 12px;
+    font-weight: 600;
+
+    background: #e3dccf;
+
+    width: fit-content;   /* 🔑 KEY FIX */
+    max-width: max-content;
+}
+
+
+
+/* Secondary moods spacing */
+.secondary-moods[b-2p8xlmia2i] {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+
+/* Secondary moods */
+.secondary-moods[b-2p8xlmia2i] {
+    display: flex;
+    gap: 6px;
+}
+
+.secondary-moods .pill[b-2p8xlmia2i] {
+    font-size: 12px;
+    background: #ede7dc;
+    padding: 3px 8px;
+    border-radius: 999px;
+}
+
+/* Category + tags line */
+.meta-line[b-2p8xlmia2i] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 12px;
+    color: #7a6f5c;
+}
+
+.category[b-2p8xlmia2i] {
+    font-weight: 600;
+}
+
+.tag[b-2p8xlmia2i] {
+    opacity: 0.8;
+}
+/* ===============================
+   FILTER BAR
+   =============================== */
+
+.filters[b-2p8xlmia2i] {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    margin-bottom: 32px;
+}
+
+.filters input[b-2p8xlmia2i],
+.filters select[b-2p8xlmia2i] {
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid #e2dbcf;
+    background: #fbf8f2;
+
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.search-input[b-2p8xlmia2i] {
+    min-width: 260px;
+}
+
+.tag-input[b-2p8xlmia2i] {
+    min-width: 180px;
+}
+
+.reset-btn[b-2p8xlmia2i] {
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: none;
+
+    background: #e9e3d8;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.reset-btn:hover[b-2p8xlmia2i] {
+    background: #ded6ca;
+}
+/* ===============================
+   DATE RANGE FILTER
+   =============================== */
+
+.date-range[b-2p8xlmia2i] {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-label[b-2p8xlmia2i] {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    font-size: 11px;
+    color: #7a6f5c;
+}
+
+.date-label input[b-2p8xlmia2i] {
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid #e7e0d6;
+    background: #fbf8f2;
+
+    font-size: 13px;
+    color: #1c1c1c;
+}
+
+.date-separator[b-2p8xlmia2i] {
+    font-size: 16px;
+    color: #b8ad9c;
+    margin-top: 14px;
+}
+/* ===============================
+   PAGINATION
+   =============================== */
+
+.pagination[b-2p8xlmia2i] {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+
+    margin: 50px 0 20px;
+}
+
+.page-btn[b-2p8xlmia2i] {
+    padding: 8px 16px;
+    border-radius: 999px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    border: none;
+    cursor: pointer;
+
+    background: #f1ece2;
+    color: #3b82f6;
+
+    transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.page-btn:hover:not(:disabled)[b-2p8xlmia2i] {
+    background: #e6dfd3;
+}
+
+.page-btn:active:not(:disabled)[b-2p8xlmia2i] {
+    transform: scale(0.96);
+}
+
+.page-btn:disabled[b-2p8xlmia2i] {
+    opacity: 0.45;
+    cursor: default;
+}
+
+.page-indicator[b-2p8xlmia2i] {
+    font-size: 13px;
+    color: #7a6f5c;
 }
 /* /Components/Pages/Login.razor.rz.scp.css */
 /* ===============================

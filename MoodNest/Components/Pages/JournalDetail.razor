@@ -1,37 +1,118 @@
 @page "/journal/{Id:int}"
 @layout TestLayout
 
-@inject MoodNest.Data.AppDbContext Db
+@inject IJournalService JournalService
 
-@if (Entry == null)
+@if (_model == null)
 {
-    <p>Journal entry not found.</p>
+    <p class="empty-state">Journal entry not found.</p>
 }
 else
 {
     <div class="journal-detail-page">
 
-        <h1>@(Entry.Title ?? "Untitled Entry")</h1>
+        <!-- HEADER -->
+        <header class="detail-header">
+            <h1>@(_model.Title ?? "Untitled Entry")</h1>
 
-        <div class="entry-meta">
-            <span>@Entry.CreatedAt.ToString("dddd, MMMM dd yyyy")</span>
-            <span>@Entry.PrimaryMood</span>
-        </div>
+            <div class="meta-row">
+                <span class="date-text">@_createdAtText</span>
+                <span class="pill primary">@_model.PrimaryMood</span>
+            </div>
+        </header>
 
-        <div class="journal-content">
-            @((MarkupString)Entry.ContentHtml)
-        </div>
+        <!-- METADATA -->
+        <section class="detail-meta-card">
+
+            <!-- MOODS -->
+            <div class="meta-group">
+                <span class="meta-label">Moods</span>
+                <div class="meta-content">
+                    <span class="pill primary">@_model.PrimaryMood</span>
+
+                    @if (!string.IsNullOrWhiteSpace(_model.SecondaryMoods))
+                    {
+                        @foreach (var mood in _model.SecondaryMoods.Split(','))
+                        {
+                            <span class="pill">@mood.Trim()</span>
+                        }
+                    }
+                </div>
+            </div>
+
+            <!-- CATEGORY -->
+            @if (!string.IsNullOrWhiteSpace(_model.Category))
+            {
+                <div class="meta-group">
+                    <span class="meta-label">Category</span>
+                    <div class="meta-content">
+                        <span class="category-pill">@_model.Category</span>
+                    </div>
+                </div>
+            }
+
+            <!-- TAGS -->
+            @if (!string.IsNullOrWhiteSpace(_model.Tags))
+            {
+                <div class="meta-group">
+                    <span class="meta-label">Tags</span>
+                    <div class="meta-content">
+                        @foreach (var tag in _model.Tags.Split(','))
+                        {
+                            <span class="tag">#@tag.Trim()</span>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- DATES -->
+            <div class="meta-group">
+                <span class="meta-label">Timeline</span>
+                <div class="meta-content timeline-dates">
+                    <span>Created: <strong>@_createdAtText</strong></span>
+
+                    @if (_updatedAtText != null)
+                    {
+                        <span>Updated: <strong>@_updatedAtText</strong></span>
+                    }
+                </div>
+            </div>
+
+        </section>
+
+        <!-- CONTENT -->
+        <article class="journal-content-card">
+            @((MarkupString)_model.ContentHtml)
+        </article>
 
     </div>
 }
 
 @code {
+
     [Parameter] public int Id { get; set; }
 
-    private MoodNest.Components.Model.JournalEntry? Entry;
+    private JournalEntryViewModel? _model;
 
-    protected override void OnInitialized()
+    private string _createdAtText = string.Empty;
+    private string? _updatedAtText;
+
+    protected override async Task OnInitializedAsync()
     {
-        Entry = Db.JournalEntries.FirstOrDefault(e => e.Id == Id);
+        var result = await JournalService.GetByIdAsync(Id);
+
+        if (!result.Success || result.Data == null)
+            return;
+
+        _model = result.Data;
+
+        // UI formatting only
+        _createdAtText = _model.CreatedAt.ToString("dddd, MMMM dd yyyy");
+
+        // Show updated date only if it differs
+        if (_model.UpdatedAt != _model.CreatedAt)
+        {
+            _updatedAtText = _model.UpdatedAt.ToString("dddd, MMMM dd yyyy");
+        }
     }
 }

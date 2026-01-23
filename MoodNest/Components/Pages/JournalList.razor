@@ -1,10 +1,9 @@
 @page "/journal"
 @layout TestLayout
 
-@inject MoodNest.Data.AppDbContext Db
+@inject IJournalService JournalService
+@inject IJournalFilterService JournalFilterService
 @inject NavigationManager Nav
-
-@using System.Text.RegularExpressions
 
 <div class="journal-list-page">
 
@@ -18,89 +17,300 @@
         </span>
     </div>
 
+    <!-- ===============================
+         FILTER BAR
+         =============================== -->
+
+    <div class="filters">
+
+        <!-- SEARCH -->
+        <input class="search-input"
+               placeholder="Search title or content…"
+               @bind-value="Filter.SearchText"
+               @bind-value:event="oninput"
+               @bind-value:after="OnSearchChanged" />
+
+        <!-- DATE RANGE -->
+        <div class="date-range">
+            <label class="date-label">
+                <span>From</span>
+                <input type="date"
+                       @bind="Filter.FromDate"
+                       @bind:after="OnDateChanged" />
+            </label>
+
+            <span class="date-separator">→</span>
+
+            <label class="date-label">
+                <span>To</span>
+                <input type="date"
+                       @bind="Filter.ToDate"
+                       @bind:after="OnDateChanged" />
+            </label>
+        </div>
+
+        <!-- MOOD -->
+        <select @bind="SelectedMood" @bind:after="OnMoodChanged">
+            <option value="">All moods</option>
+            <option>Happy</option>
+            <option>Calm</option>
+            <option>Sad</option>
+            <option>Angry</option>
+            <option>Tired</option>
+            <option>Anxious</option>
+            <option>Thoughtful</option>
+            <option>Excited</option>
+        </select>
+
+        <!-- TAG -->
+        <input class="tag-input"
+               placeholder="Filter by tag (#work)"
+               @bind-value="SelectedTag"
+               @bind-value:event="oninput"
+               @bind-value:after="OnTagChanged" />
+
+        <button class="reset-btn" @onclick="ResetFilters">
+            Reset
+        </button>
+
+    </div>
+
+    <!-- ===============================
+         JOURNAL LIST
+         =============================== -->
+
     <div class="timeline">
 
-        @foreach (var entry in Entries)
+        @if (!Entries.Any())
         {
-            <div class="timeline-entry">
+            <p>No journal entries found.</p>
+        }
+        else
+        {
+            @foreach (var entry in Entries)
+            {
+                <div class="timeline-entry">
 
-                <!-- CLICKABLE CONTENT -->
-                <div class="timeline-main clickable"
-                     @onclick="() => OpenEntry(entry.Id)">
+                    <div class="timeline-main clickable"
+                         @onclick="() => OpenEntry(entry.Id)">
 
-                    <div class="timeline-date">
-                        <span class="day">@entry.CreatedAt.Day</span>
-                        <span class="month">@entry.CreatedAt.ToString("MMM").ToUpper()</span>
+                        <div class="timeline-date">
+                            <span class="day">@entry.Day</span>
+                            <span class="month">@entry.Month</span>
+                        </div>
+
+                        <div class="timeline-content">
+                            <h4>@entry.Title</h4>
+                        </div>
+
+                        <div class="timeline-info">
+
+                            <div class="pill primary">
+                                @entry.PrimaryMood
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(entry.SecondaryMoods))
+                            {
+                                <div class="secondary-moods">
+                                    @foreach (var mood in entry.SecondaryMoods.Split(','))
+                                    {
+                                        <span class="pill">@mood</span>
+                                    }
+                                </div>
+                            }
+
+                            <div class="meta-line">
+                                <span class="category">@entry.Category</span>
+
+                                @if (!string.IsNullOrWhiteSpace(entry.Tags))
+                                {
+                                    @foreach (var tag in entry.Tags.Split(','))
+                                    {
+                                        <span class="tag">@tag</span>
+                                    }
+                                }
+                            </div>
+
+                        </div>
                     </div>
 
-                    <div class="timeline-content">
-                        <h4>@(entry.Title ?? "Untitled Entry")</h4>
-                        <p>@GetPreview(entry.ContentHtml)</p>
-                    </div>
-
-                    <div class="timeline-mood">
-                        @entry.PrimaryMood
+                    <div class="timeline-actions">
+                        <button class="edit-btn" @onclick="() => EditEntry(entry.Id)">
+                            Edit
+                        </button>
+                        <button class="delete-btn" @onclick="() => DeleteEntry(entry.Id)">
+                            Delete
+                        </button>
                     </div>
                 </div>
-
-                <!-- ACTIONS -->
-                <div class="timeline-actions">
-                    <button class="edit-btn"
-                            @onclick="() => EditEntry(entry.Id)">
-                        Edit
-                    </button>
-
-                    <button class="delete-btn"
-                            @onclick="() => DeleteEntry(entry.Id)">
-                        Delete
-                    </button>
-                </div>
-            </div>
+            }
         }
 
     </div>
+
+    <!-- ===============================
+         PAGINATION
+         =============================== -->
+
+    @if (TotalPages > 1)
+    {
+        <div class="pagination">
+            <button class="page-btn"
+                    disabled="@(CurrentPage == 1)"
+                    @onclick="PrevPage">
+                ‹ Prev
+            </button>
+
+            <span class="page-indicator">
+                Page <strong>@CurrentPage</strong> of <strong>@TotalPages</strong>
+            </span>
+
+            <button class="page-btn"
+                    disabled="@(CurrentPage == TotalPages)"
+                    @onclick="NextPage">
+                Next ›
+            </button>
+        </div>
+    }
+
 </div>
 
 @code {
 
-    private List<MoodNest.Components.Model.JournalEntry> Entries = new();
+    /* =======================
+       DATA
+    ======================== */
 
-    protected override void OnInitialized()
+    private List<JournalEntryDisplayModel> Entries = new();
+    private List<JournalEntryDisplayModel> FilteredEntries = new();
+
+    private JournalFilterModel Filter = new();
+
+    private string SelectedMood = string.Empty;
+    private string SelectedTag = string.Empty;
+
+    /* =======================
+       PAGINATION
+    ======================== */
+
+    private const int PageSize = 5;
+    private int CurrentPage = 1;
+    private int TotalPages = 1;
+
+    /* =======================
+       LIFECYCLE
+    ======================== */
+
+    protected override async Task OnInitializedAsync()
     {
-        Entries = Db.JournalEntries
-            .OrderByDescending(e => e.CreatedAt)
+        await ApplyFilters(resetPage: true);
+    }
+
+    /* =======================
+       FILTER WRAPPERS (IMPORTANT)
+    ======================== */
+
+    private async Task OnSearchChanged()
+        => await ApplyFilters(resetPage: true);
+
+    private async Task OnDateChanged()
+        => await ApplyFilters(resetPage: true);
+
+    private async Task OnMoodChanged()
+    {
+        Filter.Moods.Clear();
+
+        if (!string.IsNullOrWhiteSpace(SelectedMood))
+            Filter.Moods.Add(SelectedMood);
+
+        await ApplyFilters(resetPage: true);
+    }
+
+    private async Task OnTagChanged()
+    {
+        Filter.Tags.Clear();
+
+        if (!string.IsNullOrWhiteSpace(SelectedTag))
+            Filter.Tags.Add(SelectedTag);
+
+        await ApplyFilters(resetPage: true);
+    }
+
+    private async Task ResetFilters()
+    {
+        Filter = new JournalFilterModel();
+        SelectedMood = string.Empty;
+        SelectedTag = string.Empty;
+
+        await ApplyFilters(resetPage: true);
+    }
+
+    /* =======================
+       CORE FILTER LOGIC
+    ======================== */
+
+    private async Task ApplyFilters(bool resetPage = false)
+    {
+        var result = await JournalFilterService.GetFilteredAsync(Filter);
+
+        FilteredEntries = result.Success
+            ? result.Data
+            : new();
+
+        if (resetPage)
+            CurrentPage = 1;
+
+        TotalPages = Math.Max(
+            1,
+            (int)Math.Ceiling(FilteredEntries.Count / (double)PageSize)
+        );
+
+        CurrentPage = Math.Min(CurrentPage, TotalPages);
+
+        Entries = FilteredEntries
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
             .ToList();
     }
 
-    private void OpenEntry(int id)
+    /* =======================
+       PAGINATION ACTIONS
+    ======================== */
+
+    private async Task NextPage()
     {
-        Nav.NavigateTo($"/journal/{id}");
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+            await ApplyFilters();
+        }
     }
+
+    private async Task PrevPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
+            await ApplyFilters();
+        }
+    }
+
+    /* =======================
+       NAVIGATION / ACTIONS
+    ======================== */
+
+    private void OpenEntry(int id)
+        => Nav.NavigateTo($"/journal/{id}");
 
     private void EditEntry(int id)
+        => Nav.NavigateTo($"/journaltoday/{id}");
+
+    private async Task DeleteEntry(int id)
     {
-        Nav.NavigateTo($"/journaltoday/{id}");
-    }
+        var result = await JournalService.DeleteAsync(id);
+        if (!result.Success) return;
 
-    private void DeleteEntry(int id)
-    {
-        var entry = Db.JournalEntries.FirstOrDefault(e => e.Id == id);
-        if (entry == null) return;
-
-        Db.JournalEntries.Remove(entry);
-        Db.SaveChanges();
-
-        Entries.Remove(entry);
-    }
-
-    private string GetPreview(string html)
-    {
-        html = Regex.Replace(html, "<h[1-6][^>]*>.*?</h[1-6]>", "",
-            RegexOptions.IgnoreCase | RegexOptions.Singleline);
-
-        html = Regex.Replace(html, "<.*?>", "");
-        html = html.Trim();
-
-        return html.Length > 120 ? html[..120] + "…" : html;
+        FilteredEntries.RemoveAll(e => e.Id == id);
+        await ApplyFilters();
     }
 }

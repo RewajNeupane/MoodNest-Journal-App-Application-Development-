@@ -2,23 +2,50 @@
 @inject PinAuthService Auth
 @inject NavigationManager Nav
 
-<Router AppAssembly="@typeof(MauiProgram).Assembly"
-        OnNavigateAsync="HandleNavigationAsync">
-    <Found Context="routeData">
-        <RouteView RouteData="@routeData" />
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
-    </Found>
-</Router>
+<ErrorBoundary>
+    <ChildContent>
+
+        <Router AppAssembly="@typeof(MauiProgram).Assembly"
+                OnNavigateAsync="HandleNavigationAsync">
+
+            <Found Context="routeData">
+                <RouteView RouteData="@routeData"
+                           DefaultLayout="@typeof(TestLayout)" />
+                <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+            </Found>
+
+            <NotFound>
+                <LayoutView Layout="@typeof(TestLayout)">
+                    <p>Page not found.</p>
+                </LayoutView>
+            </NotFound>
+
+        </Router>
+
+    </ChildContent>
+
+    <ErrorContent>
+        <div style="padding:20px; color:#b00020; background:#fff5f5;">
+            <h3>Runtime Error</h3>
+            <p>@context.Message</p>
+            <pre style="white-space:pre-wrap">@context.StackTrace</pre>
+        </div>
+    </ErrorContent>
+</ErrorBoundary>
 
 @code {
+
     private async Task HandleNavigationAsync(NavigationContext context)
     {
-        if (string.IsNullOrEmpty(context.Path))
+        // Safety guard
+        if (string.IsNullOrWhiteSpace(context.Path))
             return;
 
+        // 🔐 PIN lock logic preserved
         if (!Auth.IsUnlocked && context.Path != "/")
         {
             Nav.NavigateTo("/", replace: true);
+            return;
         }
 
         await Task.CompletedTask;

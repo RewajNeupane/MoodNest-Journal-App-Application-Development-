@@ -1,15 +1,16 @@
 // ===============================
-// QUILL REGISTRY
+// QUILL REGISTRY (GLOBAL SAFE STORE)
 // ===============================
 window.quillEditors = window.quillEditors || {};
 
 // ===============================
-// INIT QUILL
+// INIT QUILL EDITOR
 // ===============================
 window.initQuill = (editorId) => {
     const el = document.getElementById(editorId);
     if (!el) return;
 
+    // Destroy old instance if exists
     if (window.quillEditors[editorId]) {
         delete window.quillEditors[editorId];
     }
@@ -21,7 +22,7 @@ window.initQuill = (editorId) => {
         placeholder: "Use Heading 1 for title...\nStart writing your entry...",
         modules: {
             toolbar: [
-                [{ header: [1, 2, false] }], // ✅ H1 = Title, H2 = Section
+                [{ header: [1, 2, false] }],   // H1 = Title, H2 = Section
                 ["bold", "italic", "underline"],
                 [{ list: "ordered" }, { list: "bullet" }],
                 ["clean"]
@@ -30,15 +31,6 @@ window.initQuill = (editorId) => {
     });
 
     window.quillEditors[editorId] = quill;
-};
-
-// ===============================
-// GET FULL HTML
-// ===============================
-window.getQuillContent = (editorId) => {
-    const quill = window.quillEditors[editorId];
-    if (!quill) return "";
-    return quill.root.innerHTML.trim();
 };
 
 // ===============================
@@ -53,7 +45,7 @@ window.getQuillTitle = (editorId) => {
 };
 
 // ===============================
-// GET BODY (REMOVE ONLY H1, KEEP H2)
+// GET BODY HTML (REMOVE ONLY FIRST H1)
 // ===============================
 window.getQuillBody = (editorId) => {
     const quill = window.quillEditors[editorId];
@@ -61,7 +53,7 @@ window.getQuillBody = (editorId) => {
 
     const clone = quill.root.cloneNode(true);
 
-    // 🔴 REMOVE ONLY FIRST H1
+    // Remove ONLY the first H1 (title)
     const h1 = clone.querySelector("h1");
     if (h1) h1.remove();
 
@@ -69,19 +61,19 @@ window.getQuillBody = (editorId) => {
 };
 
 // ===============================
-// SET CONTENT (EDIT MODE)
+// SET CONTENT (EDIT MODE SAFE)
 // ===============================
-window.setQuillContent = (editorId, title, bodyHtml) => {
+window.setQuillContent = (editorId, title = "", bodyHtml = "") => {
     const quill = window.quillEditors[editorId];
     if (!quill) return;
 
     let html = "";
 
-    if (title) {
+    if (title && title.trim() !== "") {
         html += `<h1>${title}</h1>`;
     }
 
-    if (bodyHtml) {
+    if (bodyHtml && bodyHtml.trim() !== "") {
         html += bodyHtml;
     }
 
@@ -89,7 +81,7 @@ window.setQuillContent = (editorId, title, bodyHtml) => {
 };
 
 // ===============================
-// CLEAR EDITOR
+// CLEAR EDITOR CONTENT
 // ===============================
 window.clearQuillContent = (editorId) => {
     const quill = window.quillEditors[editorId];
@@ -100,7 +92,7 @@ window.clearQuillContent = (editorId) => {
 };
 
 // ===============================
-// SUCCESS POPUP
+// SUCCESS FEEDBACK
 // ===============================
 window.showSaveSuccess = () => {
     alert("Journal entry saved successfully ✅");

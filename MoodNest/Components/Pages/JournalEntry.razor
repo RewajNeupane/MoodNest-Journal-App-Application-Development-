@@ -1,8 +1,9 @@
 @page "/journaltoday"
 @page "/journaltoday/{Id:int}"
 @layout TestLayout
+
 @inject IJSRuntime _js
-@inject MoodNest.Data.AppDbContext Db
+@inject IJournalService JournalService
 @inject NavigationManager Nav
 
 <div class="journal-editor-page">
@@ -121,8 +122,6 @@
        STATE
     ======================== */
 
-    private string _editorHtml = string.Empty;
-
     private string PrimaryMood = "😊 Happy";
     private HashSet<string> SecondaryMoods = new();
 
@@ -172,28 +171,34 @@
 
         await _js.InvokeVoidAsync("initQuill", "editor");
 
-        if (IsEdit)
-        {
-            var entry = Db.JournalEntries.FirstOrDefault(e => e.Id == Id);
-            if (entry == null) return;
+        if (!IsEdit) return;
 
-            PrimaryMood = entry.PrimaryMood;
-            Category = entry.Category;
+        var result = await JournalService.GetByIdAsync(Id!.Value);
+        if (!result.Success || result.Data == null) return;
 
-            SecondaryMoods = string.IsNullOrWhiteSpace(entry.SecondaryMoods)
-                ? new()
-                : entry.SecondaryMoods.Split(',').ToHashSet();
+        var model = result.Data;
 
-            SelectedTags = string.IsNullOrWhiteSpace(entry.Tags)
-                ? new()
-                : entry.Tags.Split(',').ToHashSet();
+        PrimaryMood = model.PrimaryMood;
+        Category = model.Category;
 
-            CreatedAt = entry.CreatedAt;
-            UpdatedAt = entry.UpdatedAt;
+        SecondaryMoods = string.IsNullOrWhiteSpace(model.SecondaryMoods)
+            ? new()
+            : model.SecondaryMoods.Split(',').ToHashSet();
 
-            await _js.InvokeVoidAsync(
-                "setQuillContent", "editor", entry.ContentHtml);
-        }
+        SelectedTags = string.IsNullOrWhiteSpace(model.Tags)
+            ? new()
+            : model.Tags.Split(',').ToHashSet();
+
+        CreatedAt = model.CreatedAt;
+        UpdatedAt = model.UpdatedAt;
+
+        // 🔥 FIXED: JS SIGNATURE MATCH
+        await _js.InvokeVoidAsync(
+            "setQuillContent",
+            "editor",
+            model.Title,
+            model.ContentHtml
+        );
     }
 
     /* =======================
@@ -229,7 +234,7 @@
 
     private void NewEntry()
     {
-        Nav.NavigateTo("/journaltoday");
+        Nav.NavigateTo("/journaltoday", true);
     }
 
     /* =======================
@@ -238,58 +243,53 @@
 
     private async Task SaveEntry()
     {
-        try
+        var title = await _js.InvokeAsync<string>("getQuillTitle", "editor");
+        var bodyHtml = await _js.InvokeAsync<string>("getQuillBody", "editor");
+
+        if (string.IsNullOrWhiteSpace(bodyHtml))
         {
-            var title = await _js.InvokeAsync<string>("getQuillTitle", "editor");
-            var bodyHtml = await _js.InvokeAsync<string>("getQuillBody", "editor");
-
-            if (string.IsNullOrWhiteSpace(bodyHtml))
-            {
-                await _js.InvokeVoidAsync("alert", "Journal cannot be empty.");
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(title))
-                title = "Untitled Entry";
-
-            var entry = new MoodNest.Components.Model.JournalEntry
-            {
-                Title = title,
-                ContentHtml = bodyHtml,
-
-                PrimaryMood = PrimaryMood,
-                SecondaryMoods = string.Join(",", SecondaryMoods),
-                Category = Category,
-                Tags = string.Join(",", SelectedTags),
-
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
-            };
-
-            Db.JournalEntries.Add(entry);
-            await Db.SaveChangesAsync();
-
-            await _js.InvokeVoidAsync("showSaveSuccess");
-            await _js.InvokeVoidAsync("clearQuillContent", "editor");
-
-            SecondaryMoods.Clear();
-            SelectedTags.Clear();
+            await _js.InvokeVoidAsync("alert", "Journal cannot be empty.");
+            return;
         }
-        catch (Exception ex)
+
+        var model = new JournalEntryViewModel
         {
-            Console.WriteLine(ex);
-            await _js.InvokeVoidAsync("alert", "An error occurred while saving.");
+            Title = string.IsNullOrWhiteSpace(title) ? "Untitled Entry" : title,
+            ContentHtml = bodyHtml,
+            PrimaryMood = PrimaryMood,
+            SecondaryMoods = string.Join(",", SecondaryMoods),
+            Category = Category,
+            Tags = string.Join(",", SelectedTags)
+        };
+
+        var result = IsEdit
+            ? await JournalService.UpdateAsync(Id!.Value, model)
+            : await JournalService.CreateAsync(model);
+
+        if (!result.Success)
+        {
+            await _js.InvokeVoidAsync("alert", result.ErrorMessage);
+            return;
         }
+
+        UpdatedAt = DateTime.Now;
+
+        await _js.InvokeVoidAsync("showSaveSuccess");
+        await _js.InvokeVoidAsync("clearQuillContent", "editor");
+
+        SecondaryMoods.Clear();
+        SelectedTags.Clear();
+
+        if (!IsEdit)
+            Nav.NavigateTo("/journal");
     }
-
 
     private async Task DeleteEntry()
     {
-        var entry = Db.JournalEntries.FirstOrDefault(e => e.Id == Id);
-        if (entry == null) return;
+        if (!Id.HasValue) return;
 
-        Db.JournalEntries.Remove(entry);
-        await Db.SaveChangesAsync();
+        var result = await JournalService.DeleteAsync(Id.Value);
+        if (!result.Success) return;
 
         Nav.NavigateTo("/journal");
     }

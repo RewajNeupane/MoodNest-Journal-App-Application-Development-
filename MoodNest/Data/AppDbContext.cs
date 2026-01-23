@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using MoodNest.Components.Model;
+using MoodNest.Entities;
 
 namespace MoodNest.Data;
 

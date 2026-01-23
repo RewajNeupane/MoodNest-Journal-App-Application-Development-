@@ -1,4 +1,6 @@
-﻿namespace MoodNest;
+﻿using Microsoft.Maui.Controls;
+
+namespace MoodNest;
 
 public partial class MainPage : ContentPage
 {

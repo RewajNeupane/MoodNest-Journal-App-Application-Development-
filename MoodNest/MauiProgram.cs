@@ -37,6 +37,13 @@ public static class MauiProgram
 
         // PIN auth
         builder.Services.AddScoped<PinAuthService>();
+        
+        //  JOURNAL SERVICE 
+        builder.Services.AddScoped<IJournalService, JournalService>();
+        
+        // JOURNAL FILTERING
+        builder.Services.AddScoped<IJournalFilterService, JournalFilterService>();
+
 
         // EF Core SQLite
         var dbPath = Path.Combine(
