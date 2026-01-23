@@ -1,6 +1,8 @@
 @page "/test"
 @layout TestLayout
 @inject NavigationManager Nav
+@inject IJournalService JournalService
+
 
 <div class="dashboard">
 
@@ -9,17 +11,17 @@
 
         <div class="stat-card">
             <h4>🔥 Current Streak</h4>
-            <p class="stat-value">5 Days</p>
+            <p class="stat-value">@Stats.CurrentStreak Days</p>
         </div>
 
         <div class="stat-card">
             <h4>🏆 Longest Streak</h4>
-            <p class="stat-value">14 Days</p>
+            <p class="stat-value">@Stats.LongestStreak Days</p>
         </div>
 
         <div class="stat-card">
             <h4>❌ Missed Days</h4>
-            <p class="stat-value">3</p>
+            <p class="stat-value">@Stats.MissedDays</p>
         </div>
 
         <div class="stat-card">
@@ -78,18 +80,19 @@
 </div>
 
 @code {
-    void GoToToday()
+    private JournalStatsModel Stats = new();
+
+    protected override async Task OnInitializedAsync()
     {
-        Nav.NavigateTo("/journal/today");
+        var result = await JournalService.GetJournalStatsAsync();
+        if (result.Success)
+        {
+            Stats = result.Data;
+        }
     }
 
-    void GoToCalendar()
-    {
-        Nav.NavigateTo("/calendar");
-    }
-
-    void GoToAnalytics()
-    {
-        Nav.NavigateTo("/analytics");
-    }
+    void GoToToday() => Nav.NavigateTo("/journaltoday");
+    void GoToCalendar() => Nav.NavigateTo("/calendar");
+    void GoToAnalytics() => Nav.NavigateTo("/analytics");
 }
+

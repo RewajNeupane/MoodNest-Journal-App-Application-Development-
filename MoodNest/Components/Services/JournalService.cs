@@ -181,5 +181,101 @@ public class JournalService : IJournalService
                 .FailureResult(ex.Message);
         }
     }
+    public async Task<ServiceResult<JournalEntryDisplayModel?>> GetTodayAsync()
+    {
+        try
+        {
+            var today = DateTime.Today;
+
+            var entry = await _context.JournalEntries
+                .Where(e => e.CreatedAt.Date == today)
+                .Select(e => new JournalEntryDisplayModel
+                {
+                    Id = e.Id,
+                    Title = e.Title,
+                    PrimaryMood = e.PrimaryMood,
+                    SecondaryMoods = e.SecondaryMoods,
+                    Category = e.Category,
+                    Tags = e.Tags,
+                    Day = e.CreatedAt.Day,
+                    Month = e.CreatedAt.ToString("MMMM"),
+                    Year = e.CreatedAt.Year
+                })
+                .FirstOrDefaultAsync();
+
+            return ServiceResult<JournalEntryDisplayModel?>.SuccessResult(entry);
+        }
+        catch (Exception ex)
+        {
+            return ServiceResult<JournalEntryDisplayModel?>.FailureResult(ex.Message);
+        }
+    }
+    public async Task<ServiceResult<JournalStatsModel>> GetJournalStatsAsync()
+    {
+        try
+        {
+            var dates = await _context.JournalEntries
+                .Select(e => e.CreatedAt.Date)
+                .Distinct()
+                .OrderBy(d => d)
+                .ToListAsync();
+
+            if (!dates.Any())
+            {
+                return ServiceResult<JournalStatsModel>.SuccessResult(
+                    new JournalStatsModel()
+                );
+            }
+
+            // ---- Longest & current streak ----
+            int longest = 1;
+            int current = 1;
+            int temp = 1;
+
+            for (int i = 1; i < dates.Count; i++)
+            {
+                if ((dates[i] - dates[i - 1]).Days == 1)
+                {
+                    temp++;
+                    longest = Math.Max(longest, temp);
+                }
+                else
+                {
+                    temp = 1;
+                }
+            }
+
+            // ---- Current streak (must reach today) ----
+            if (dates.Last() == DateTime.Today)
+            {
+                current = temp;
+            }
+            else
+            {
+                current = 0;
+            }
+
+            // ---- Missed days ----
+            int totalDays =
+                (DateTime.Today - dates.First()).Days + 1;
+
+            int missed = totalDays - dates.Count;
+
+            return ServiceResult<JournalStatsModel>.SuccessResult(
+                new JournalStatsModel
+                {
+                    CurrentStreak = current,
+                    LongestStreak = longest,
+                    MissedDays = Math.Max(0, missed)
+                }
+            );
+        }
+        catch (Exception ex)
+        {
+            return ServiceResult<JournalStatsModel>
+                .FailureResult(ex.Message);
+        }
+    }
+
 
 }

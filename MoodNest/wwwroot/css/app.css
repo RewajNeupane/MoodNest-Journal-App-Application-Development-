@@ -100,3 +100,111 @@ a:hover {
     width: 100%;
     z-index: 1000;
 }
+/* =========================
+   GLOBAL MODAL SYSTEM
+   (MAUI + BLAZOR SAFE)
+   ========================= */
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.45);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 99999;
+}
+
+/* Modal card */
+.modal {
+    background: var(--bg-panel);
+    color: var(--text-main);
+
+    width: 100%;
+    max-width: 420px;
+
+    padding: 26px 28px;
+    border-radius: 24px;
+
+    border: 1px solid var(--border-soft);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
+}
+
+/* Title */
+.modal h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-strong);
+    margin-bottom: 18px;
+}
+
+/* Inputs */
+.modal input {
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+
+    border-radius: 14px;
+    border: 1px solid var(--border-soft);
+
+    background: var(--bg-soft);
+    color: var(--text-main);
+    font-size: 14px;
+}
+
+/* Actions */
+.modal-actions {
+    display: flex;
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.primary-btn {
+    flex: 1;
+    padding: 12px 18px;
+
+    border-radius: 999px;
+    border: none;
+
+    background: #3b82f6;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.primary-btn:hover {
+    background: #2563eb;
+}
+
+.secondary-btn {
+    flex: 1;
+    padding: 12px 18px;
+
+    border-radius: 999px;
+    border: 1px solid var(--border-soft);
+
+    background: var(--bg-soft);
+    color: var(--text-main);
+    font-weight: 600;
+    cursor: pointer;
+}
+/* =========================
+   GLOBAL MODAL LOCK
+   ========================= */
+
+.modal-open .layout-main,
+.modal-open .sidebar,
+.modal-open .topbar,
+.modal-open .footer {
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Re-enable interaction ONLY for modal */
+.modal-backdrop,
+.modal-backdrop * {
+    pointer-events: auto;
+}

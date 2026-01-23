@@ -1,6 +1,6 @@
 @page "/settings"
 @layout TestLayout
-
+@inject MoodNest.Components.Services.PinAuthService Auth
 @inject IJSRuntime JS
 
 <div class="settings-page">
@@ -12,25 +12,42 @@
     </div>
 
     <!-- ===============================
-         THEME SETTINGS
+         SECURITY / CHANGE PIN
          =============================== -->
 
     <section class="settings-card">
-        <h3>Appearance</h3>
+        <h3>Security</h3>
 
-        <div class="setting-row">
-            <div>
-                <p class="setting-title">Theme</p>
-                <p class="setting-desc">Switch between light and dark mode</p>
+        <p class="setting-desc" style="margin-bottom:18px">
+            Update your access PIN to keep your journal private.
+        </p>
+
+        <div class="security-grid">
+            <div class="security-field">
+                <label>Current PIN</label>
+                <input type="password"
+                       maxlength="4"
+                       placeholder="••••"
+                       @bind="currentPin" />
             </div>
 
-            <label class="theme-toggle">
-                <input type="checkbox"
-                       @bind="IsDarkMode"
-                       @bind:after="OnThemeChanged" />
-                <span class="slider"></span>
-            </label>
+            <div class="security-field">
+                <label>New PIN</label>
+                <input type="password"
+                       maxlength="4"
+                       placeholder="••••"
+                       @bind="newPin" />
+            </div>
+
+            <button class="primary-btn" @onclick="ChangePin">
+                Change PIN
+            </button>
         </div>
+
+        @if (!string.IsNullOrEmpty(pinMessage))
+        {
+            <p class="security-hint">@pinMessage</p>
+        }
     </section>
 
     <!-- ===============================
@@ -61,45 +78,9 @@
         </p>
     </section>
 
-    <!-- ===============================
-         SECURITY
-         =============================== -->
-
-    <section class="settings-card">
-        <h3>Security</h3>
-
-        <div class="security-box">
-            <div>
-                <p class="setting-title">Change PIN</p>
-                <p class="setting-desc">
-                    Update your access PIN for additional security.
-                </p>
-            </div>
-
-            <button class="secondary-btn" disabled>
-                Coming soon
-            </button>
-        </div>
-    </section>
-
 </div>
 
 @code {
-
-    /* =======================
-       THEME
-    ======================== */
-
-    private bool IsDarkMode;
-
-    private async Task OnThemeChanged()
-    {
-        await JS.InvokeVoidAsync(
-            "document.documentElement.classList.toggle",
-            "dark-theme",
-            IsDarkMode
-        );
-    }
 
     /* =======================
        EXPORT
@@ -120,5 +101,33 @@
             "alert",
             $"Exporting journals from {ExportFrom:dd MMM yyyy} to {ExportTo:dd MMM yyyy}"
         );
+    }
+
+    /* =======================
+       SECURITY
+    ======================== */
+
+    private string currentPin = string.Empty;
+    private string newPin = string.Empty;
+    private string? pinMessage;
+
+    private void ChangePin()
+    {
+        if (newPin.Length != 4)
+        {
+            pinMessage = "PIN must be exactly 4 digits.";
+            return;
+        }
+
+        if (Auth.ChangePin(currentPin, newPin))
+        {
+            pinMessage = "PIN updated successfully.";
+            currentPin = "";
+            newPin = "";
+        }
+        else
+        {
+            pinMessage = "Current PIN is incorrect.";
+        }
     }
 }

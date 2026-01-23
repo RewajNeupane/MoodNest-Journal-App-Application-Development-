@@ -11,7 +11,13 @@
     <!-- LEFT META PANEL -->
     <aside class="entry-sidebar">
 
-        <button class="new-btn" @onclick="NewEntry">＋ New Entry</button>
+        <button class="new-btn"
+                disabled="@HasTodayEntry"
+                title="You can only write one journal entry per day"
+                @onclick="NewEntry">
+            ＋ New Entry
+        </button>
+
 
         <!-- TODAY -->
         <div class="entry-meta">
@@ -121,6 +127,9 @@
 </div>
 
 @code {
+    
+    private bool HasTodayEntry;
+
 
     /* =======================
        ROUTE / MODE
@@ -296,6 +305,19 @@
             Category = resolvedCategory,
             Tags = string.Join(",", SelectedTags)
         };
+        
+        if (!IsEdit)
+        {
+            var todayCheck = await JournalService.GetTodayAsync();
+            if (todayCheck.Success && todayCheck.Data != null)
+            {
+                await _js.InvokeVoidAsync(
+                    "alert",
+                    "You already have a journal entry for today."
+                );
+                return;
+            }
+        }
 
 
         var result = IsEdit
@@ -329,4 +351,21 @@
 
         Nav.NavigateTo("/journal");
     }
+    protected override async Task OnInitializedAsync()
+    {
+        // Editing existing entry is always allowed
+        if (IsEdit)
+            return;
+
+        var todayResult = await JournalService.GetTodayAsync();
+
+        if (todayResult.Success && todayResult.Data != null)
+        {
+            HasTodayEntry = true;
+
+            // Redirect to today's existing entry
+            Nav.NavigateTo($"/journaltoday/{todayResult.Data.Id}", replace: true);
+        }
+    }
+
 }

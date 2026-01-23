@@ -1,5 +1,7 @@
 @inherits LayoutComponentBase
 @inject ThemeService Theme
+@inject MoodNest.Components.Services.PinAuthService Auth
+@inject NavigationManager Nav
 
 <div class="@Theme.CssClass layout-root">
 
@@ -24,7 +26,9 @@
                     @(Theme.IsDark ? "☀️" : "🌙")
                 </button>
 
-                <button class="icon-btn" title="Lock">
+                <button class="icon-btn"
+                        title="Lock"
+                        @onclick="LockApp">
                     🔒
                 </button>
             </div>
@@ -32,23 +36,7 @@
 
         <!-- PAGE CONTENT -->
         <main class="content-area">
-
-            <ErrorBoundary @ref="_errorBoundary">
-
-                <ChildContent>
-                    @Body
-                </ChildContent>
-
-                <ErrorContent Context="ex">
-                    <div class="error-box">
-                        <strong>Unhandled exception:</strong>
-                        <br />
-                        @ex.ToString()
-                    </div>
-                </ErrorContent>
-
-            </ErrorBoundary>
-
+            @Body
         </main>
 
         <!-- FOOTER -->
@@ -61,11 +49,15 @@
 </div>
 
 @code {
-    private ErrorBoundary? _errorBoundary;
-
     private void ToggleTheme()
     {
         Theme.Toggle();
         StateHasChanged();
+    }
+
+    private void LockApp()
+    {
+        Auth.Lock();
+        Nav.NavigateTo("/", replace: true);
     }
 }

@@ -42,19 +42,18 @@
 </div>
 
 @code {
-    private const string StoredPin = "1234";
-
     private string enteredPin = string.Empty;
     private string errorMessage = string.Empty;
 
     private async Task VerifyPin()
     {
-        if (enteredPin == StoredPin)
+        if (Auth.VerifyPin(enteredPin))
         {
             errorMessage = string.Empty;
+            enteredPin = string.Empty;
 
-            Auth.Unlock();              // 🔓 unlock
-            await Task.Yield();         // 🧠 allow auth state to propagate
+            Auth.Unlock();
+            await Task.Yield();
 
             Nav.NavigateTo("/test", replace: true);
         }
@@ -65,4 +64,3 @@
         }
     }
 }
-
