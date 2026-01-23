@@ -1,7 +1,11 @@
+/* ===============================
+   PAGE
+   =============================== */
+
 .journal-list-page {
-    padding: 60px 90px;
+    padding: 80px 110px;
     background: #f7f3eb;
-    height: 100%;
+    min-height: 100vh;
     font-family: "Inter", system-ui, sans-serif;
 }
 
@@ -13,23 +17,96 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-bottom: 32px;
+    margin-bottom: 48px;
 }
 
 .list-header h2 {
-    font-size: 32px;
+    font-size: 34px;
     font-weight: 650;
 }
 
 .subtitle {
-    font-size: 15px;
+    font-size: 16px;
     color: #6b604d;
-    margin-top: 6px;
+    margin-top: 8px;
 }
 
 .sort-indicator {
-    font-size: 13px;
+    font-size: 14px;
     color: #7a6f5c;
+}
+
+/* ===============================
+   FILTER BAR
+   =============================== */
+
+.filters {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 52px;
+}
+
+.filters input,
+.filters select {
+    padding: 12px 16px;
+    border-radius: 14px;
+    border: 1px solid #e2dbcf;
+    background: #fbf8f2;
+    font-size: 14px;
+}
+
+.search-input {
+    min-width: 320px;
+}
+
+.tag-input {
+    min-width: 220px;
+}
+
+.reset-btn {
+    padding: 12px 20px;
+    border-radius: 999px;
+    border: none;
+    background: #e9e3d8;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.reset-btn:hover {
+    background: #ded6ca;
+}
+
+/* ===============================
+   DATE RANGE
+   =============================== */
+
+.date-range {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.date-label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    color: #7a6f5c;
+}
+
+.date-label input {
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid #e7e0d6;
+    background: #fbf8f2;
+    font-size: 14px;
+}
+
+.date-separator {
+    font-size: 18px;
+    color: #b8ad9c;
+    margin-top: 18px;
 }
 
 /* ===============================
@@ -39,33 +116,26 @@
 .timeline {
     display: flex;
     flex-direction: column;
-    gap: 28px;
+    gap: 36px;
 }
 
-/* ENTRY CARD */
+/* ===============================
+   ENTRY CARD
+   =============================== */
+
 .timeline-entry {
-    position: relative;
-
     display: flex;
-    align-items: center;
-    gap: 28px;
-
-    padding: 28px 34px;
-    border-radius: 28px;
-
+    gap: 36px;
+    padding: 36px 42px;
+    border-radius: 30px;
     background: #fbf8f2;
     border: 1px solid #e7e0d6;
-
-    transition:
-            transform 0.18s ease,
-            box-shadow 0.18s ease,
-            border-color 0.18s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .timeline-entry:hover {
-    transform: translateY(-2px);
-    border-color: #ded6ca;
-    box-shadow: 0 18px 44px rgba(122, 111, 92, 0.12);
+    transform: translateY(-3px);
+    box-shadow: 0 22px 52px rgba(122, 111, 92, 0.14);
 }
 
 /* ===============================
@@ -73,204 +143,93 @@
    =============================== */
 
 .timeline-date {
-    width: 90px; /* was 70px */
+    width: 100px;
     text-align: center;
     flex-shrink: 0;
 }
 
 .timeline-date .day {
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 700;
-    line-height: 1;
 }
 
 .timeline-date .month {
-    font-size: 12px;
-    letter-spacing: 0;
+    font-size: 13px;
     color: #7a6f5c;
-    margin-top: 4px;
-    text-transform: none;
+    margin-top: 6px;
 }
 
-
 /* ===============================
-   CONTENT
+   MAIN CONTENT
    =============================== */
 
 .timeline-content {
     flex: 1;
-    max-width: 520px;
+    max-width: 760px;
 }
 
 .timeline-content h4 {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 600;
-    margin-bottom: 6px;
+    margin-bottom: 10px;
 }
 
 .timeline-content p {
-    font-size: 14px;
-    line-height: 1.65;
+    font-size: 15px;
+    line-height: 1.7;
     color: #5f5a50;
 }
 
 /* ===============================
-   MOOD
-   =============================== */
-
-.timeline-mood {
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 22px;
-    flex-shrink: 0;
-}
-
-.timeline-mood.positive { background: #dbe6d6; }
-.timeline-mood.neutral  { background: #e6e1d6; }
-.timeline-mood.negative { background: #ecd6d6; }
-
-/* ===============================
-   ACTIONS (EDIT / DELETE)
-   =============================== */
-
-.timeline-actions {
-    display: flex;
-    gap: 10px;
-    margin-left: auto;
-}
-
-.edit-btn,
-.delete-btn {
-    padding: 8px 14px;
-    border-radius: 999px;
-
-    font-size: 13px;
-    font-weight: 600;
-
-    border: none;
-    cursor: pointer;
-
-    transition:
-            background-color 0.15s ease,
-            transform 0.08s ease;
-}
-
-/* Edit */
-.edit-btn {
-    background: #e9e3d8;
-    color: #1c1c1c;
-}
-
-.edit-btn:hover {
-    background: #ded6ca;
-}
-
-/* Delete */
-.delete-btn {
-    background: transparent;
-    color: #b44;
-}
-
-.delete-btn:hover {
-    background: rgba(180, 68, 68, 0.12);
-}
-
-/* Press feedback */
-.edit-btn:active,
-.delete-btn:active {
-    transform: scale(0.96);
-}
-.secondary-moods .pill {
-    margin-left: 6px;
-    font-size: 12px;
-    opacity: 0.85;
-}
-
-.timeline-meta {
-    margin-top: 6px;
-    font-size: 12px;
-    color: #7a6f5c;
-}
-
-.tag {
-    margin-right: 6px;
-}
-/* ===============================
-   INFO BLOCK (MOODS + META)
+   INFO BLOCK
    =============================== */
 
 .timeline-info {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    min-width: 220px;
+    gap: 12px;
+    min-width: 260px;
 }
 
 /* ===============================
-   MOOD PILLS (PRIMARY + SECONDARY)
+   PILLS
    =============================== */
 
 .pill {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-
-    font-size: 12px;
-    padding: 4px 10px;
+    font-size: 13px;
+    padding: 6px 12px;
     border-radius: 999px;
-
     background: #ede7dc;
     color: #4f4a40;
-
-    line-height: 1;
 }
 
 .pill.primary {
-    font-size: 14px;
-    padding: 6px 12px;
+    font-size: 15px;
+    padding: 8px 16px;
     font-weight: 600;
-
     background: #e3dccf;
-
-    width: fit-content;   /* 🔑 KEY FIX */
-    max-width: max-content;
+    width: fit-content;
 }
-
-
-
-/* Secondary moods spacing */
-.secondary-moods {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-}
-
 
 /* Secondary moods */
 .secondary-moods {
     display: flex;
-    gap: 6px;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
-.secondary-moods .pill {
-    font-size: 12px;
-    background: #ede7dc;
-    padding: 3px 8px;
-    border-radius: 999px;
-}
+/* ===============================
+   META
+   =============================== */
 
-/* Category + tags line */
 .meta-line {
     display: flex;
+    gap: 10px;
     flex-wrap: wrap;
-    gap: 8px;
-    font-size: 12px;
+    font-size: 13px;
     color: #7a6f5c;
 }
 
@@ -281,84 +240,45 @@
 .tag {
     opacity: 0.8;
 }
+
 /* ===============================
-   FILTER BAR
+   ACTIONS
    =============================== */
 
-.filters {
+.timeline-actions {
     display: flex;
     gap: 12px;
-    flex-wrap: wrap;
-
-    margin-bottom: 32px;
+    margin-left: auto;
+    align-items: center;
 }
 
-.filters input,
-.filters select {
-    padding: 10px 14px;
-    border-radius: 12px;
-    border: 1px solid #e2dbcf;
-    background: #fbf8f2;
-
-    font-size: 14px;
-    font-family: inherit;
-}
-
-.search-input {
-    min-width: 260px;
-}
-
-.tag-input {
-    min-width: 180px;
-}
-
-.reset-btn {
+.edit-btn,
+.delete-btn {
     padding: 10px 18px;
     border-radius: 999px;
-    border: none;
-
-    background: #e9e3d8;
+    font-size: 14px;
     font-weight: 600;
+    border: none;
     cursor: pointer;
 }
 
-.reset-btn:hover {
+.edit-btn {
+    background: #e9e3d8;
+}
+
+.edit-btn:hover {
     background: #ded6ca;
 }
-/* ===============================
-   DATE RANGE FILTER
-   =============================== */
 
-.date-range {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.delete-btn {
+    background: transparent;
+    color: #b44;
 }
 
-.date-label {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-
-    font-size: 11px;
-    color: #7a6f5c;
+.delete-btn:hover {
+    background: rgba(180, 68, 68, 0.12);
 }
 
-.date-label input {
-    padding: 8px 10px;
-    border-radius: 10px;
-    border: 1px solid #e7e0d6;
-    background: #fbf8f2;
-
-    font-size: 13px;
-    color: #1c1c1c;
-}
-
-.date-separator {
-    font-size: 16px;
-    color: #b8ad9c;
-    margin-top: 14px;
-}
 /* ===============================
    PAGINATION
    =============================== */
@@ -367,33 +287,22 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 16px;
-
-    margin: 50px 0 20px;
+    gap: 20px;
+    margin: 64px 0 24px;
 }
 
 .page-btn {
-    padding: 8px 16px;
+    padding: 10px 20px;
     border-radius: 999px;
-
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
-
+    background: #f1ece2;
     border: none;
     cursor: pointer;
-
-    background: #f1ece2;
-    color: #3b82f6;
-
-    transition: background 0.15s ease, transform 0.1s ease;
 }
 
 .page-btn:hover:not(:disabled) {
     background: #e6dfd3;
-}
-
-.page-btn:active:not(:disabled) {
-    transform: scale(0.96);
 }
 
 .page-btn:disabled {
@@ -402,6 +311,6 @@
 }
 
 .page-indicator {
-    font-size: 13px;
+    font-size: 14px;
     color: #7a6f5c;
 }

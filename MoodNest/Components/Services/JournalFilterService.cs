@@ -33,8 +33,8 @@ public class JournalFilterService : IJournalFilterService
                 var text = filter.SearchText.ToLower();
 
                 query = query.Where(e =>
-                    e.Title.ToLower().Contains(text) ||
-                    e.ContentHtml.ToLower().Contains(text)
+                    (e.Title != null && e.Title.ToLower().Contains(text)) ||
+                    (e.ContentHtml != null && e.ContentHtml.ToLower().Contains(text))
                 );
             }
 
@@ -49,6 +49,16 @@ public class JournalFilterService : IJournalFilterService
                 query = query.Where(e => e.CreatedAt <= filter.ToDate.Value);
 
             /* =======================
+               CATEGORY
+            ======================== */
+
+            if (!string.IsNullOrWhiteSpace(filter.Category))
+            {
+                query = query.Where(e => e.Category == filter.Category);
+            }
+
+
+            /* =======================
                MOODS (PRIMARY + SECONDARY)
             ======================== */
 
@@ -56,9 +66,8 @@ public class JournalFilterService : IJournalFilterService
             {
                 query = query.Where(e =>
                     filter.Moods.Any(m =>
-                        e.PrimaryMood.Contains(m) ||
-                        (e.SecondaryMoods != null &&
-                         e.SecondaryMoods.Contains(m))
+                        (e.PrimaryMood != null && e.PrimaryMood.Contains(m)) ||
+                        (e.SecondaryMoods != null && e.SecondaryMoods.Contains(m))
                     )
                 );
             }

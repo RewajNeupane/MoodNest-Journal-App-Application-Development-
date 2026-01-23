@@ -43,6 +43,9 @@ public static class MauiProgram
         
         // JOURNAL FILTERING
         builder.Services.AddScoped<IJournalFilterService, JournalFilterService>();
+        
+        // THEME SERVICE
+        builder.Services.AddSingleton<ThemeService>();
 
 
         // EF Core SQLite

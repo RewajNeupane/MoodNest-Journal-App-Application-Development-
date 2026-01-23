@@ -49,17 +49,28 @@
             </div>
             <p class="hint">Up to 2 moods</p>
         </div>
-
+        
         <!-- CATEGORY -->
         <div class="entry-meta">
             <h4>Category</h4>
-            <select class="dropdown" @bind="Category">
+
+            <select class="dropdown" @bind="SelectedCategoryMode">
                 @foreach (var cat in Categories)
                 {
                     <option value="@cat">@cat</option>
                 }
+                <option value="__custom">＋ Custom category…</option>
             </select>
+
+            @if (SelectedCategoryMode == "__custom")
+            {
+                <input class="custom-category-input"
+                       placeholder="Enter custom category…"
+                       @bind="CustomCategory"
+                       @bind:event="oninput" />
+            }
         </div>
+
 
         <!-- TAGS -->
         <div class="entry-meta">
@@ -125,7 +136,9 @@
     private string PrimaryMood = "😊 Happy";
     private HashSet<string> SecondaryMoods = new();
 
-    private string Category = "Personal";
+    private string SelectedCategoryMode = "Personal";
+    private string CustomCategory = string.Empty;
+
 
     private HashSet<string> SelectedTags = new();
     private string CustomTag = string.Empty;
@@ -179,7 +192,18 @@
         var model = result.Data;
 
         PrimaryMood = model.PrimaryMood;
-        Category = model.Category;
+        
+        if (Categories.Contains(model.Category))
+        {
+            SelectedCategoryMode = model.Category;
+            CustomCategory = string.Empty;
+        }
+        else
+        {
+            SelectedCategoryMode = "__custom";
+            CustomCategory = model.Category;
+        }
+
 
         SecondaryMoods = string.IsNullOrWhiteSpace(model.SecondaryMoods)
             ? new()
@@ -252,15 +276,27 @@
             return;
         }
 
+        var resolvedCategory =
+            SelectedCategoryMode == "__custom"
+                ? CustomCategory.Trim()
+                : SelectedCategoryMode;
+
+        if (string.IsNullOrWhiteSpace(resolvedCategory))
+        {
+            await _js.InvokeVoidAsync("alert", "Please enter a category.");
+            return;
+        }
+
         var model = new JournalEntryViewModel
         {
             Title = string.IsNullOrWhiteSpace(title) ? "Untitled Entry" : title,
             ContentHtml = bodyHtml,
             PrimaryMood = PrimaryMood,
             SecondaryMoods = string.Join(",", SecondaryMoods),
-            Category = Category,
+            Category = resolvedCategory,
             Tags = string.Join(",", SelectedTags)
         };
+
 
         var result = IsEdit
             ? await JournalService.UpdateAsync(Id!.Value, model)

@@ -12,4 +12,6 @@ public class JournalFilterModel
 
     public List<string> Moods { get; set; } = new();
     public List<string> Tags { get; set; } = new();
+    
+    public string? Category { get; set; }
 }

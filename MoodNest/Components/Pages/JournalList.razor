@@ -62,6 +62,15 @@
             <option>Excited</option>
         </select>
 
+        <!-- CATEGORY (DROPDOWN ✅) -->
+        <select @bind="SelectedCategory" @bind:after="OnCategoryChanged">
+            <option value="">All categories</option>
+            @foreach (var cat in Categories)
+            {
+                <option value="@cat">@cat</option>
+            }
+        </select>
+
         <!-- TAG -->
         <input class="tag-input"
                placeholder="Filter by tag (#work)"
@@ -188,6 +197,9 @@
 
     private string SelectedMood = string.Empty;
     private string SelectedTag = string.Empty;
+    private string SelectedCategory = string.Empty;
+
+    private List<string> Categories = new();
 
     /* =======================
        PAGINATION
@@ -203,11 +215,30 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadCategories();
         await ApplyFilters(resetPage: true);
     }
 
     /* =======================
-       FILTER WRAPPERS (IMPORTANT)
+       LOAD CATEGORY OPTIONS
+    ======================== */
+
+    private async Task LoadCategories()
+    {
+        var result = await JournalFilterService.GetFilteredAsync(new JournalFilterModel());
+
+        if (!result.Success) return;
+
+        Categories = result.Data
+            .Select(e => e.Category)
+            .Where(c => !string.IsNullOrWhiteSpace(c))
+            .Distinct()
+            .OrderBy(c => c)
+            .ToList();
+    }
+
+    /* =======================
+       FILTER WRAPPERS
     ======================== */
 
     private async Task OnSearchChanged()
@@ -236,11 +267,21 @@
         await ApplyFilters(resetPage: true);
     }
 
+    private async Task OnCategoryChanged()
+    {
+        Filter.Category = string.IsNullOrWhiteSpace(SelectedCategory)
+            ? null
+            : SelectedCategory;
+
+        await ApplyFilters(resetPage: true);
+    }
+
     private async Task ResetFilters()
     {
         Filter = new JournalFilterModel();
         SelectedMood = string.Empty;
         SelectedTag = string.Empty;
+        SelectedCategory = string.Empty;
 
         await ApplyFilters(resetPage: true);
     }

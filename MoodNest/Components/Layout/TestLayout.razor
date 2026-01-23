@@ -1,6 +1,7 @@
 @inherits LayoutComponentBase
+@inject ThemeService Theme
 
-<div class="layout-root">
+<div class="@Theme.CssClass layout-root">
 
     <!-- SIDEBAR -->
     <aside class="sidebar">
@@ -17,8 +18,15 @@
             </div>
 
             <div class="topbar-right">
-                <button class="icon-btn">🌙</button>
-                <button class="icon-btn">🔒</button>
+                <button class="icon-btn"
+                        title="Toggle theme"
+                        @onclick="ToggleTheme">
+                    @(Theme.IsDark ? "☀️" : "🌙")
+                </button>
+
+                <button class="icon-btn" title="Lock">
+                    🔒
+                </button>
             </div>
         </header>
 
@@ -32,12 +40,7 @@
                 </ChildContent>
 
                 <ErrorContent Context="ex">
-                    <div style="
-                        background:#b00020;
-                        color:white;
-                        padding:16px;
-                        font-family:monospace;
-                        white-space:pre-wrap;">
+                    <div class="error-box">
                         <strong>Unhandled exception:</strong>
                         <br />
                         @ex.ToString()
@@ -58,5 +61,11 @@
 </div>
 
 @code {
-private ErrorBoundary? _errorBoundary;
+    private ErrorBoundary? _errorBoundary;
+
+    private void ToggleTheme()
+    {
+        Theme.Toggle();
+        StateHasChanged();
+    }
 }

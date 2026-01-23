@@ -278,4 +278,12 @@
     color: #aaa;
     font-size: 16px;
 }
+.custom-category-input {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
 

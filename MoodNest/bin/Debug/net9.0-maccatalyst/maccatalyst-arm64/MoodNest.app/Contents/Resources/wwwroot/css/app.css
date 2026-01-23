@@ -1,13 +1,49 @@
 ﻿/* =========================
+   THEME VARIABLES
+   ========================= */
+
+.light-theme {
+    --bg-main: #f6f1e9;
+    --bg-panel: #fbf8f2;
+    --bg-soft: #f1ece2;
+    --bg-hover: #e6ded3;
+    --bg-active: #d8cfc2;
+
+    --text-main: #2e2e2e;
+    --text-muted: #7a6f5c;
+    --text-strong: #000;
+
+    --border-soft: #ddd4c8;
+}
+
+.dark-theme {
+    --bg-main: #121212;
+    --bg-panel: #1e1e1e;
+    --bg-soft: #242424;
+    --bg-hover: #2a2a2a;
+    --bg-active: #333;
+
+    --text-main: #f1f1f1;
+    --text-muted: #b5b5b5;
+    --text-strong: #ffffff;
+
+    --border-soft: #333;
+}
+
+
+/* =========================
    RESET / BASE
    ========================= */
 
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
     height: 100%;
-    background: #f6f1e9;
-    color: #2e2e2e;
+
+    background: var(--bg-main);
+    color: var(--text-main);
+
     font-family: "Inter", system-ui, -apple-system, sans-serif;
 }
 
@@ -16,12 +52,12 @@ html, body {
    ========================= */
 
 a {
-    color: #2e2e2e !important;
+    color: var(--text-main) !important;
     text-decoration: none;
 }
 
 a:hover {
-    color: #000 !important;
+    color: var(--text-strong) !important;
 }
 
 /* =========================
@@ -29,20 +65,26 @@ a:hover {
    ========================= */
 
 .nav-link {
-    color: #2e2e2e !important;
+    color: var(--text-main) !important;
+
     padding: 12px 16px;
     border-radius: 12px;
     margin-bottom: 6px;
+
     display: block;
     font-weight: 500;
+
+    transition:
+            background-color 0.15s ease,
+            color 0.15s ease;
 }
 
 .nav-link:hover {
-    background-color: #e6ded3;
+    background-color: var(--bg-hover);
 }
 
 .nav-link.active {
-    background-color: #d8cfc2;
+    background-color: var(--bg-active);
     font-weight: 600;
 }
 

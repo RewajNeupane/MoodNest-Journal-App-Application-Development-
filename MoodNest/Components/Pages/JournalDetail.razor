@@ -1,87 +1,76 @@
 @page "/journal/{Id:int}"
 @layout TestLayout
+@using MoodNest.Components.Services
 
 @inject IJournalService JournalService
 
 @if (_model == null)
 {
-    <p class="empty-state">Journal entry not found.</p>
+    <p class="not-found">Journal entry not found.</p>
 }
 else
 {
     <div class="journal-detail-page">
 
-        <!-- HEADER -->
         <header class="detail-header">
             <h1>@(_model.Title ?? "Untitled Entry")</h1>
 
             <div class="meta-row">
-                <span class="date-text">@_createdAtText</span>
+                <span class="date">@_createdAtText</span>
                 <span class="pill primary">@_model.PrimaryMood</span>
             </div>
         </header>
 
-        <!-- METADATA -->
-        <section class="detail-meta-card">
+        <section class="info-grid">
 
-            <!-- MOODS -->
-            <div class="meta-group">
-                <span class="meta-label">Moods</span>
-                <div class="meta-content">
+            <div class="info-block">
+                <h4>Moods</h4>
+                <div class="pill-group">
                     <span class="pill primary">@_model.PrimaryMood</span>
 
                     @if (!string.IsNullOrWhiteSpace(_model.SecondaryMoods))
                     {
                         @foreach (var mood in _model.SecondaryMoods.Split(','))
                         {
-                            <span class="pill">@mood.Trim()</span>
+                            <span class="pill">@mood</span>
                         }
                     }
                 </div>
             </div>
 
-            <!-- CATEGORY -->
-            @if (!string.IsNullOrWhiteSpace(_model.Category))
-            {
-                <div class="meta-group">
-                    <span class="meta-label">Category</span>
-                    <div class="meta-content">
-                        <span class="category-pill">@_model.Category</span>
-                    </div>
-                </div>
-            }
+            <div class="info-block">
+                <h4>Category</h4>
+                <p>@_model.Category</p>
+            </div>
 
-            <!-- TAGS -->
-            @if (!string.IsNullOrWhiteSpace(_model.Tags))
-            {
-                <div class="meta-group">
-                    <span class="meta-label">Tags</span>
-                    <div class="meta-content">
+            <div class="info-block">
+                <h4>Tags</h4>
+                <div class="tag-group">
+                    @if (!string.IsNullOrWhiteSpace(_model.Tags))
+                    {
                         @foreach (var tag in _model.Tags.Split(','))
                         {
-                            <span class="tag">#@tag.Trim()</span>
+                            <span class="tag">@tag</span>
                         }
-                    </div>
-                </div>
-            }
-
-            <!-- DATES -->
-            <div class="meta-group">
-                <span class="meta-label">Timeline</span>
-                <div class="meta-content timeline-dates">
-                    <span>Created: <strong>@_createdAtText</strong></span>
-
-                    @if (_updatedAtText != null)
+                    }
+                    else
                     {
-                        <span>Updated: <strong>@_updatedAtText</strong></span>
+                        <span class="muted">No tags</span>
                     }
                 </div>
+            </div>
+
+            <div class="info-block">
+                <h4>Timeline</h4>
+                <p>
+                    Created: <strong>@_createdAtText</strong><br />
+                    Updated: <strong>@_updatedAtText</strong>
+                </p>
             </div>
 
         </section>
 
-        <!-- CONTENT -->
-        <article class="journal-content-card">
+        <article class="journal-content">
             @((MarkupString)_model.ContentHtml)
         </article>
 
@@ -95,7 +84,7 @@ else
     private JournalEntryViewModel? _model;
 
     private string _createdAtText = string.Empty;
-    private string? _updatedAtText;
+    private string _updatedAtText = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -106,13 +95,7 @@ else
 
         _model = result.Data;
 
-        // UI formatting only
         _createdAtText = _model.CreatedAt.ToString("dddd, MMMM dd yyyy");
-
-        // Show updated date only if it differs
-        if (_model.UpdatedAt != _model.CreatedAt)
-        {
-            _updatedAtText = _model.UpdatedAt.ToString("dddd, MMMM dd yyyy");
-        }
+        _updatedAtText = _model.UpdatedAt.ToString("dddd, MMMM dd yyyy");
     }
 }

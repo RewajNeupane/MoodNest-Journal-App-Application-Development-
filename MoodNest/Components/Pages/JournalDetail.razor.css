@@ -1,111 +1,189 @@
-.journal-detail-page {
-    max-width: 820px;
-    margin: 0 auto;
-    padding: 64px 24px 80px;
+/* ===============================
+   PAGE WRAPPER (VERY WIDE)
+   =============================== */
 
+.journal-detail-page {
+    max-width: 1400px;              /* ⬅ MUCH WIDER */
+    margin: 32px auto 80px;
+    padding: 0 48px;
     font-family: "Inter", system-ui, sans-serif;
-    color: #2f2b23;
+    color: #1f1f1f;
 }
 
 /* ===============================
    HEADER
    =============================== */
 
-.detail-header h1 {
-    font-size: 36px;
-    font-weight: 700;
-    margin-bottom: 12px;
+.detail-header {
+    margin-bottom: 36px;
 }
 
-.detail-dates {
+.detail-header h1 {
+    font-size: 52px;                /* ⬅ BIG TITLE */
+    font-weight: 800;
+    margin-bottom: 14px;
+    line-height: 1.1;
+}
+
+.meta-row {
     display: flex;
-    gap: 18px;
-    font-size: 13px;
-    color: #7a6f5c;
+    align-items: center;
+    gap: 16px;
+    font-size: 17px;                /* ⬅ BIGGER META */
+    color: #6f6656;
+}
+
+.meta-row .date {
+    font-weight: 500;
 }
 
 /* ===============================
-   META INFO
+   INFO GRID (BIG CARDS)
    =============================== */
 
-.detail-meta {
-    margin-top: 28px;
-    margin-bottom: 40px;
-
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
+.info-grid {
+    display: grid;
+    grid-template-columns: 2fr 1.2fr; /* ⬅ CONTENT-HEAVY GRID */
+    gap: 32px;
+    margin-bottom: 48px;
 }
 
-/* Pills */
+.info-left,
+.info-right {
+    display: grid;
+    gap: 24px;
+}
+
+/* Card */
+.info-block {
+    background: #fbf8f2;
+    border: 1px solid #e7e0d6;
+    border-radius: 26px;
+    padding: 28px 30px;             /* ⬅ TALLER */
+}
+
+.info-block h4 {
+    font-size: 14px;
+    font-weight: 800;
+    color: #7a6f5c;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.info-block p {
+    font-size: 18px;                /* ⬅ BIG TEXT */
+    color: #3f3a32;
+    line-height: 1.7;
+}
+
+/* ===============================
+   PILLS (VERY PROMINENT)
+   =============================== */
+
+.pill-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
 .pill {
     display: inline-flex;
     align-items: center;
-
-    padding: 6px 14px;
+    padding: 10px 18px;             /* ⬅ BIGGER */
     border-radius: 999px;
-
-    font-size: 13px;
+    font-size: 15px;
     background: #ede7dc;
     color: #4f4a40;
 }
 
-/* Primary mood */
 .pill.primary {
-    font-size: 15px;
-    font-weight: 600;
     background: #e3dccf;
-    width: fit-content;
+    font-weight: 800;
 }
 
-/* Secondary moods */
-.secondary-moods {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
+/* ===============================
+   TAGS
+   =============================== */
 
-/* Category & tags */
-.meta-line {
+.tag-group {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    font-size: 13px;
-    color: #7a6f5c;
-}
-
-.category {
-    font-weight: 600;
+    gap: 12px;
 }
 
 .tag {
-    opacity: 0.85;
+    font-size: 15px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: #f0ebe2;
+    color: #6b604d;
+}
+
+.muted {
+    font-size: 15px;
+    color: #9a917f;
 }
 
 /* ===============================
-   CONTENT
+   CONTENT (DOMINANT ELEMENT)
    =============================== */
 
 .journal-content {
-    margin-top: 24px;
-    padding-top: 32px;
-    border-top: 1px solid #e7e0d6;
+    background: #ffffff;
+    border: 1px solid #e7e0d6;
+    border-radius: 32px;
 
-    font-size: 16px;
-    line-height: 1.75;
-    color: #2f2b23;
+    padding: 56px 64px;             /* ⬅ HUGE CONTENT AREA */
+    min-height: 520px;              /* ⬅ FILLS VIEW */
+
+    line-height: 2;
+    font-size: 19px;                /* ⬅ READABLE */
+    color: #2b2722;
 }
 
-.journal-content p {
+/* Content typography */
+.journal-content h1,
+.journal-content h2,
+.journal-content h3 {
+    margin-top: 40px;
     margin-bottom: 18px;
 }
 
+.journal-content p {
+    margin-bottom: 22px;
+}
+
 /* ===============================
-   FALLBACK
+   EMPTY / ERROR
    =============================== */
 
 .not-found {
-    padding: 40px;
     text-align: center;
-    color: #9b9180;
+    margin-top: 100px;
+    font-size: 18px;
+    color: #7a6f5c;
+}
+
+/* ===============================
+   RESPONSIVE
+   =============================== */
+
+@media (max-width: 1100px) {
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .journal-detail-page {
+        padding: 0 28px;
+    }
+
+    .detail-header h1 {
+        font-size: 38px;
+    }
+
+    .journal-content {
+        padding: 36px;
+        font-size: 17px;
+    }
 }

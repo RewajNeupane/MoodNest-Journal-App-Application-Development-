@@ -1,0 +1,124 @@
+@page "/settings"
+@layout TestLayout
+
+@inject IJSRuntime JS
+
+<div class="settings-page">
+
+    <!-- HEADER -->
+    <div class="settings-header">
+        <h2>Settings</h2>
+        <p class="subtitle">Customize your experience & manage your data</p>
+    </div>
+
+    <!-- ===============================
+         THEME SETTINGS
+         =============================== -->
+
+    <section class="settings-card">
+        <h3>Appearance</h3>
+
+        <div class="setting-row">
+            <div>
+                <p class="setting-title">Theme</p>
+                <p class="setting-desc">Switch between light and dark mode</p>
+            </div>
+
+            <label class="theme-toggle">
+                <input type="checkbox"
+                       @bind="IsDarkMode"
+                       @bind:after="OnThemeChanged" />
+                <span class="slider"></span>
+            </label>
+        </div>
+    </section>
+
+    <!-- ===============================
+         EXPORT JOURNALS
+         =============================== -->
+
+    <section class="settings-card">
+        <h3>Export Journals</h3>
+
+        <div class="export-grid">
+            <div class="export-field">
+                <label>From</label>
+                <input type="date" @bind="ExportFrom" />
+            </div>
+
+            <div class="export-field">
+                <label>To</label>
+                <input type="date" @bind="ExportTo" />
+            </div>
+
+            <button class="export-btn" @onclick="ExportPdf">
+                Export as PDF
+            </button>
+        </div>
+
+        <p class="export-hint">
+            Exports all journal entries within the selected date range.
+        </p>
+    </section>
+
+    <!-- ===============================
+         SECURITY
+         =============================== -->
+
+    <section class="settings-card">
+        <h3>Security</h3>
+
+        <div class="security-box">
+            <div>
+                <p class="setting-title">Change PIN</p>
+                <p class="setting-desc">
+                    Update your access PIN for additional security.
+                </p>
+            </div>
+
+            <button class="secondary-btn" disabled>
+                Coming soon
+            </button>
+        </div>
+    </section>
+
+</div>
+
+@code {
+
+    /* =======================
+       THEME
+    ======================== */
+
+    private bool IsDarkMode;
+
+    private async Task OnThemeChanged()
+    {
+        await JS.InvokeVoidAsync(
+            "document.documentElement.classList.toggle",
+            "dark-theme",
+            IsDarkMode
+        );
+    }
+
+    /* =======================
+       EXPORT
+    ======================== */
+
+    private DateTime? ExportFrom;
+    private DateTime? ExportTo;
+
+    private async Task ExportPdf()
+    {
+        if (!ExportFrom.HasValue || !ExportTo.HasValue)
+        {
+            await JS.InvokeVoidAsync("alert", "Please select a date range.");
+            return;
+        }
+
+        await JS.InvokeVoidAsync(
+            "alert",
+            $"Exporting journals from {ExportFrom:dd MMM yyyy} to {ExportTo:dd MMM yyyy}"
+        );
+    }
+}
