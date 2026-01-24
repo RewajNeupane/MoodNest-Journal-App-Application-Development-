@@ -97,3 +97,25 @@ window.clearQuillContent = (editorId) => {
 window.showSaveSuccess = () => {
     alert("Journal entry saved successfully ✅");
 };
+
+window.getQuillWordCount = function (editorId) {
+    const quill = Quill.find(document.getElementById(editorId));
+    if (!quill) return 0;
+
+    const text = quill.getText().trim();
+    if (!text) return 0;
+
+    return text.split(/\s+/).length;
+};
+
+window.registerQuillWordCounter = function (editorId, dotnetRef) {
+    const quill = Quill.find(document.getElementById(editorId));
+    if (!quill) return;
+
+    quill.on('text-change', function () {
+        const text = quill.getText().trim();
+        const count = text ? text.split(/\s+/).length : 0;
+        dotnetRef.invokeMethodAsync("UpdateWordCount", count);
+    });
+};
+

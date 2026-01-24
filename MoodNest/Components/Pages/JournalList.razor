@@ -115,16 +115,18 @@
                         <div class="timeline-info">
 
                             <div class="pill primary">
-                                @entry.PrimaryMood
+                                @WithEmoji(entry.PrimaryMood)
                             </div>
+
 
                             @if (!string.IsNullOrWhiteSpace(entry.SecondaryMoods))
                             {
                                 <div class="secondary-moods">
                                     @foreach (var mood in entry.SecondaryMoods.Split(','))
                                     {
-                                        <span class="pill">@mood</span>
+                                        <span class="pill">@WithEmoji(mood)</span>
                                     }
+
                                 </div>
                             }
 
@@ -200,6 +202,28 @@
     private string SelectedCategory = string.Empty;
 
     private List<string> Categories = new();
+    
+    private readonly Dictionary<string, string> MoodEmojis = new()
+    {
+        ["Happy"] = "😊",
+        ["Excited"] = "🤩",
+        ["Relaxed"] = "😌",
+        ["Grateful"] = "🙏",
+        ["Confident"] = "💪",
+
+        ["Calm"] = "😐",
+        ["Thoughtful"] = "🤔",
+        ["Curious"] = "🧐",
+        ["Nostalgic"] = "🕰️",
+        ["Bored"] = "😶",
+
+        ["Sad"] = "😔",
+        ["Angry"] = "😠",
+        ["Stressed"] = "😫",
+        ["Lonely"] = "😞",
+        ["Anxious"] = "😬"
+    };
+
 
     /* =======================
        PAGINATION
@@ -354,4 +378,15 @@
         FilteredEntries.RemoveAll(e => e.Id == id);
         await ApplyFilters();
     }
+    
+    private string WithEmoji(string mood)
+    {
+        if (string.IsNullOrWhiteSpace(mood))
+            return mood;
+
+        return MoodEmojis.TryGetValue(mood, out var emoji)
+            ? $"{emoji} {mood}"
+            : mood;
+    }
+
 }

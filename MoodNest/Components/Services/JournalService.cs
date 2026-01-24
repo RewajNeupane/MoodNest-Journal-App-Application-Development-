@@ -8,6 +8,8 @@ using MoodNest.Data;
 using MoodNest.Entities;
 using MoodNest.Components.Model;
 
+using System.Text.RegularExpressions;
+
 namespace MoodNest.Components.Services;
 
 public class JournalService : IJournalService
@@ -211,71 +213,202 @@ public class JournalService : IJournalService
         }
     }
     public async Task<ServiceResult<JournalStatsModel>> GetJournalStatsAsync()
+{
+    try
     {
-        try
+        var entries = await _context.JournalEntries
+            .OrderBy(e => e.CreatedAt)
+            .ToListAsync();
+
+        if (!entries.Any())
         {
-            var dates = await _context.JournalEntries
-                .Select(e => e.CreatedAt.Date)
-                .Distinct()
-                .OrderBy(d => d)
-                .ToListAsync();
+            return ServiceResult<JournalStatsModel>.SuccessResult(
+                new JournalStatsModel()
+            );
+        }
 
-            if (!dates.Any())
+        /* =======================
+           STREAK LOGIC (UNCHANGED)
+        ======================== */
+
+        var dates = entries
+            .Select(e => e.CreatedAt.Date)
+            .Distinct()
+            .OrderBy(d => d)
+            .ToList();
+
+        int longest = 1;
+        int current = 0;
+        int temp = 1;
+
+        for (int i = 1; i < dates.Count; i++)
+        {
+            if ((dates[i] - dates[i - 1]).Days == 1)
             {
-                return ServiceResult<JournalStatsModel>.SuccessResult(
-                    new JournalStatsModel()
-                );
-            }
-
-            // ---- Longest & current streak ----
-            int longest = 1;
-            int current = 1;
-            int temp = 1;
-
-            for (int i = 1; i < dates.Count; i++)
-            {
-                if ((dates[i] - dates[i - 1]).Days == 1)
-                {
-                    temp++;
-                    longest = Math.Max(longest, temp);
-                }
-                else
-                {
-                    temp = 1;
-                }
-            }
-
-            // ---- Current streak (must reach today) ----
-            if (dates.Last() == DateTime.Today)
-            {
-                current = temp;
+                temp++;
+                longest = Math.Max(longest, temp);
             }
             else
             {
-                current = 0;
+                temp = 1;
             }
-
-            // ---- Missed days ----
-            int totalDays =
-                (DateTime.Today - dates.First()).Days + 1;
-
-            int missed = totalDays - dates.Count;
-
-            return ServiceResult<JournalStatsModel>.SuccessResult(
-                new JournalStatsModel
-                {
-                    CurrentStreak = current,
-                    LongestStreak = longest,
-                    MissedDays = Math.Max(0, missed)
-                }
-            );
         }
-        catch (Exception ex)
+
+        if (dates.Last() == DateTime.Today)
+            current = temp;
+
+        int totalDays =
+            (DateTime.Today - dates.First()).Days + 1;
+
+        int missed = totalDays - dates.Count;
+
+        /* =======================
+           MOOD ANALYTICS (FIXED)
+        ======================== */
+
+        // Normalize mood (remove emoji if present)
+        string NormalizeMood(string mood)
         {
-            return ServiceResult<JournalStatsModel>
-                .FailureResult(ex.Message);
+            if (string.IsNullOrWhiteSpace(mood))
+                return mood;
+
+            var parts = mood.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            return parts.Length > 1 ? parts[1] : parts[0];
         }
+
+        var normalizedMoods = entries
+            .Select(e => NormalizeMood(e.PrimaryMood))
+            .ToList();
+
+        // Most frequent mood
+        var moodCounts = normalizedMoods
+            .GroupBy(m => m)
+            .Select(g => new
+            {
+                Mood = g.Key,
+                Count = g.Count()
+            })
+            .OrderByDescending(g => g.Count)
+            .ToList();
+
+        string? mostFrequentMood = moodCounts.First().Mood;
+
+        // Mood breakdown
+        int positive = 0;
+        int neutral = 0;
+        int negative = 0;
+
+        foreach (var mood in normalizedMoods)
+        {
+            switch (mood)
+            {
+                case "Happy":
+                case "Excited":
+                case "Relaxed":
+                case "Grateful":
+                case "Confident":
+                    positive++;
+                    break;
+
+                case "Calm":
+                case "Thoughtful":
+                case "Curious":
+                case "Nostalgic":
+                case "Bored":
+                    neutral++;
+                    break;
+
+                default:
+                    negative++;
+                    break;
+            }
+        }
+
+        int total = normalizedMoods.Count;
+
+        return ServiceResult<JournalStatsModel>.SuccessResult(
+            new JournalStatsModel
+            {
+                CurrentStreak = current,
+                LongestStreak = longest,
+                MissedDays = Math.Max(0, missed),
+
+                MostFrequentMood = mostFrequentMood,
+
+                PositivePercentage = (int)Math.Round((double)positive / total * 100),
+                NeutralPercentage  = (int)Math.Round((double)neutral  / total * 100),
+                NegativePercentage = (int)Math.Round((double)negative / total * 100)
+            }
+        );
+    }
+    catch (Exception ex)
+    {
+        return ServiceResult<JournalStatsModel>
+            .FailureResult(ex.Message);
+    }
+}
+    public async Task<List<TagStatModel>> GetTagStatsAsync()
+    {
+        var entries = await _context.JournalEntries.ToListAsync();
+
+        return entries
+            .Where(e => !string.IsNullOrWhiteSpace(e.Tags))
+            .SelectMany(e => e.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries))
+            .Select(t => t.Trim())
+            .GroupBy(t => t)
+            .Select(g => new TagStatModel
+            {
+                Tag = g.Key,
+                Count = g.Count()
+            })
+            .OrderByDescending(g => g.Count)
+            .ToList();
+    }
+
+    public async Task<List<WordTrendModel>> GetWordTrendsAsync()
+    {
+        var entries = await _context.JournalEntries
+            .OrderBy(e => e.CreatedAt)
+            .ToListAsync();
+
+        return entries
+            .Select(e => new WordTrendModel
+            {
+                Date = e.CreatedAt.Date,
+                WordCount = string.IsNullOrWhiteSpace(e.ContentHtml)
+                    ? 0
+                    : StripHtml(e.ContentHtml).Split(' ', StringSplitOptions.RemoveEmptyEntries).Length
+            })
+            .ToList();
+    }
+
+    
+
+    
+
+    private static string StripHtml(string html)
+    {
+        if (string.IsNullOrWhiteSpace(html))
+            return string.Empty;
+
+        return Regex.Replace(html, "<.*?>", string.Empty);
+    }
+    
+    public async Task<List<JournalEntry>> GetEntriesBetweenAsync(
+        DateTime from,
+        DateTime to)
+    {
+        return await _context.JournalEntries
+            .Where(e => e.CreatedAt.Date >= from.Date &&
+                        e.CreatedAt.Date <= to.Date)
+            .OrderBy(e => e.CreatedAt)
+            .ToListAsync();
     }
 
 
+
+    
+    
+
+    
 }

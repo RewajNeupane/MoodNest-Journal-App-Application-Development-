@@ -1,7 +1,9 @@
 @page "/settings"
 @layout TestLayout
+
 @inject MoodNest.Components.Services.PinAuthService Auth
-@inject IJSRuntime JS
+@inject JournalPdfExportService PdfService
+@inject IJournalService JournalService
 
 <div class="settings-page">
 
@@ -18,25 +20,19 @@
     <section class="settings-card">
         <h3>Security</h3>
 
-        <p class="setting-desc" style="margin-bottom:18px">
+        <p class="setting-desc">
             Update your access PIN to keep your journal private.
         </p>
 
         <div class="security-grid">
             <div class="security-field">
                 <label>Current PIN</label>
-                <input type="password"
-                       maxlength="4"
-                       placeholder="••••"
-                       @bind="currentPin" />
+                <input type="password" maxlength="4" @bind="currentPin" />
             </div>
 
             <div class="security-field">
                 <label>New PIN</label>
-                <input type="password"
-                       maxlength="4"
-                       placeholder="••••"
-                       @bind="newPin" />
+                <input type="password" maxlength="4" @bind="newPin" />
             </div>
 
             <button class="primary-btn" @onclick="ChangePin">
@@ -73,9 +69,10 @@
             </button>
         </div>
 
-        <p class="export-hint">
-            Exports all journal entries within the selected date range.
-        </p>
+        @if (!string.IsNullOrEmpty(exportMessage))
+        {
+            <p class="export-hint">@exportMessage</p>
+        }
     </section>
 
 </div>
@@ -88,19 +85,33 @@
 
     private DateTime? ExportFrom;
     private DateTime? ExportTo;
+    private string? exportMessage;
 
     private async Task ExportPdf()
     {
         if (!ExportFrom.HasValue || !ExportTo.HasValue)
         {
-            await JS.InvokeVoidAsync("alert", "Please select a date range.");
+            exportMessage = "Please select a valid date range.";
             return;
         }
 
-        await JS.InvokeVoidAsync(
-            "alert",
-            $"Exporting journals from {ExportFrom:dd MMM yyyy} to {ExportTo:dd MMM yyyy}"
+        var entries = await JournalService
+            .GetEntriesBetweenAsync(ExportFrom.Value, ExportTo.Value);
+
+        if (entries.Count == 0)
+        {
+            exportMessage = "No journal entries found in this range.";
+            return;
+        }
+
+        // ✅ CORRECT async call
+        var path = await PdfService.ExportAsync(
+            entries,
+            ExportFrom.Value,
+            ExportTo.Value
         );
+
+        exportMessage = $"PDF exported successfully:\n{path}";
     }
 
     /* =======================

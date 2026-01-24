@@ -1,0 +1,168 @@
+@page "/analytics"
+@layout TestLayout
+
+@inject IJournalService JournalService
+
+<div class="analytics-page">
+
+    <div class="analytics-header">
+        <h2>📊 Analytics & Insights</h2>
+        <p class="subtitle">Your mood patterns, writing habits, and trends</p>
+    </div>
+
+    <!-- TOP SUMMARY ROW -->
+    <div class="analytics-grid three">
+
+        <!-- MOST FREQUENT MOOD -->
+        <div class="analytics-card center">
+            <h5>Most Frequent Mood</h5>
+            <div class="emoji">😊</div>
+            <div class="big-value">@Stats.MostFrequentMood</div>
+        </div>
+
+        <!-- MOOD DISTRIBUTION (PIE + BAR) -->
+        <div class="analytics-card">
+            <h5>Mood Distribution</h5>
+
+            <!-- PIE CHART -->
+            <div class="pie-wrapper">
+                <div class="pie-chart"
+                     style="
+                        background:
+                        conic-gradient(
+                            #7da87b 0% @Stats.PositivePercentage%,
+                            #c4b79c @Stats.PositivePercentage% @(Stats.PositivePercentage + Stats.NeutralPercentage)%,
+                            #c27c7c @(Stats.PositivePercentage + Stats.NeutralPercentage)% 100%
+                        );
+                     ">
+                </div>
+
+                <div class="pie-legend">
+                    <div><span class="dot positive"></span> Positive @Stats.PositivePercentage%</div>
+                    <div><span class="dot neutral"></span> Neutral @Stats.NeutralPercentage%</div>
+                    <div><span class="dot negative"></span> Negative @Stats.NegativePercentage%</div>
+                </div>
+            </div>
+
+            <!-- BAR CHART -->
+            <div class="progress-row">
+                <span>Positive</span>
+                <div class="progress">
+                    <div class="fill positive" style="width:@Stats.PositivePercentage%">
+                        @Stats.PositivePercentage%
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-row">
+                <span>Neutral</span>
+                <div class="progress">
+                    <div class="fill neutral" style="width:@Stats.NeutralPercentage%">
+                        @Stats.NeutralPercentage%
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-row">
+                <span>Negative</span>
+                <div class="progress">
+                    <div class="fill negative" style="width:@Stats.NegativePercentage%">
+                        @Stats.NegativePercentage%
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WRITING CONSISTENCY -->
+        <div class="analytics-card center">
+            <h5>Writing Consistency</h5>
+
+            <div class="stat-pair">
+                <div>
+                    <span class="label">Current Streak</span>
+                    <strong>@Stats.CurrentStreak days</strong>
+                </div>
+                <div>
+                    <span class="label">Longest Streak</span>
+                    <strong>@Stats.LongestStreak days</strong>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SECOND ROW -->
+    <div class="analytics-grid two">
+
+        <!-- MOST USED TAGS -->
+        <div class="analytics-card">
+            <h5>🏷️ Most Used Tags</h5>
+
+            @if (!TagStats.Any())
+            {
+                <p class="muted">No tags found</p>
+            }
+            else
+            {
+                <!-- WORD CLOUD -->
+                <div class="tag-cloud">
+                    @foreach (var tag in TagStats.Take(6))
+                    {
+                        <span class="tag">
+                            #@tag.Tag
+                            <small>@tag.Count</small>
+                        </span>
+                    }
+                </div>
+
+                <!-- BAR CHART -->
+                <div class="tag-bars">
+                    @foreach (var tag in TagStats.Take(6))
+                    {
+                        <div class="tag-bar-row">
+                            <span class="tag-name">#@tag.Tag</span>
+                            <div class="tag-bar">
+                                <div class="tag-fill"
+                                     style="width:@(tag.Count * 15)%"></div>
+                            </div>
+                            <span class="tag-count">@tag.Count</span>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- WORD COUNT TREND -->
+        <div class="analytics-card">
+            <h5>✍️ Word Count Trend</h5>
+
+            <ul class="trend-list">
+                @foreach (var item in WordTrends)
+                {
+                    <li>
+                        <span>@item.Date.ToString("MMM dd")</span>
+                        <strong>@item.WordCount words</strong>
+                    </li>
+                }
+            </ul>
+        </div>
+
+    </div>
+
+</div>
+
+@code {
+    private JournalStatsModel Stats = new();
+    private List<TagStatModel> TagStats = new();
+    private List<WordTrendModel> WordTrends = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var statsResult = await JournalService.GetJournalStatsAsync();
+        if (statsResult.Success)
+            Stats = statsResult.Data;
+
+        TagStats = await JournalService.GetTagStatsAsync();
+        WordTrends = await JournalService.GetWordTrendsAsync();
+    }
+}

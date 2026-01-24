@@ -1,15 +1,18 @@
 @page "/calendar"
 @layout TestLayout
 
+@inject ICalendarService CalendarService
+@inject NavigationManager Nav
+
 <div class="calendar-page">
 
     <!-- CALENDAR CARD -->
     <div class="calendar-card tall-calendar">
 
         <div class="calendar-header">
-            <span class="arrow">‹</span>
-            <h3>December 2025</h3>
-            <span class="arrow">›</span>
+            <span class="arrow" @onclick="PrevMonth">‹</span>
+            <h3>@CurrentMonthName @CurrentYear</h3>
+            <span class="arrow" @onclick="NextMonth">›</span>
         </div>
 
         <div class="weekdays">
@@ -18,12 +21,34 @@
         </div>
 
         <div class="days">
-            @for (int i = 1; i <= 31; i++)
+
+            @* Leading empty cells *@
+            @for (int i = 0; i < StartOffset; i++)
             {
-                <div class="day has-entry">
-                    @i
-                    <span class="calendar-dot positive"></span>
+                <div class="day empty"></div>
+            }
+
+            @* Actual days *@
+            @foreach (var day in CalendarDays)
+            {
+                <div class="day
+                     @(day.HasEntry ? "has-entry" : "")
+                     @(day.IsToday ? "today" : "")"
+                     @onclick="() => OpenDay(day)">
+
+                    @day.Date.Day
+
+                    @if (!string.IsNullOrEmpty(day.MoodType))
+                    {
+                        <span class="calendar-dot @day.MoodType"></span>
+                    }
                 </div>
+            }
+
+            @* Trailing empty cells to complete 6x7 grid *@
+            @for (int i = 0; i < EndOffset; i++)
+            {
+                <div class="day empty"></div>
             }
         </div>
 
@@ -42,20 +67,19 @@
         <p class="hint">Click a date to view or write a journal entry</p>
     </div>
 
-    <!-- YEAR CARD -->
+    <!-- YEAR CARD (kept for now, styling comes later) -->
     <div class="year-card">
-        <h2>2025</h2>
-
+        <h2>@CurrentYear</h2>
         <div class="year-image">
             <img src="/images/flower.png" alt="Year illustration" />
         </div>
-
         <p class="year-caption">Year overview of journal entries</p>
     </div>
 
     <!-- RIGHT COLUMN -->
     <div class="right-column">
 
+        <!-- TODAY CARD (ALWAYS REAL TODAY) -->
         <div class="today-card">
             <div class="today-header">
                 <div class="today-icon">📅</div>
@@ -63,38 +87,126 @@
             </div>
 
             <div class="today-status">
-                <span class="status-dot"></span>
-                Today’s entry not written
+                <span class="status-dot @(TodayEntry != null ? "positive" : "negative")"></span>
+                @(TodayEntry != null ? "Today’s entry written" : "Today’s entry not written")
             </div>
 
-            <button class="today-btn">✍️ Write Today’s Entry</button>
+            <button class="today-btn" @onclick="GoToToday">
+                ✍️ @(TodayEntry != null ? "Edit Today’s Entry" : "Write Today’s Entry")
+            </button>
         </div>
 
+        <!-- MISSED DAYS (ONLY FOR CURRENT MONTH) -->
         <div class="missed-card">
-
             <div class="missed-header">
                 <div class="missed-icon">📆</div>
                 <h3>Missed Days</h3>
             </div>
 
-            <div class="missed-item">
-                <span class="missed-dot"></span>
-                Dec 3, 2024
-            </div>
-
-            <div class="missed-item">
-                <span class="missed-dot"></span>
-                Dec 7, 2024
-            </div>
-
-            <div class="missed-item">
-                <span class="missed-dot"></span>
-                Dec 12, 2024
-            </div>
-
+            @if (!MissedDays.Any())
+            {
+                <p class="hint">No missed days 🎉</p>
+            }
+            else
+            {
+                @foreach (var date in MissedDays)
+                {
+                    <div class="missed-item">
+                        <span class="missed-dot"></span>
+                        @date.ToString("MMM dd, yyyy")
+                    </div>
+                }
+            }
         </div>
-
 
     </div>
 
 </div>
+
+@code {
+
+    private List<CalendarDayModel> CalendarDays = new();
+    private CalendarDayModel? TodayEntry;
+    private List<DateTime> MissedDays = new();
+
+    private int CurrentYear = DateTime.Today.Year;
+    private int CurrentMonth = DateTime.Today.Month;
+
+    private int StartOffset;
+    private int EndOffset;
+
+    private string CurrentMonthName =>
+        new DateTime(CurrentYear, CurrentMonth, 1).ToString("MMMM");
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadToday();
+        await LoadCalendar();
+    }
+
+    private async Task LoadCalendar()
+    {
+        CalendarDays = await CalendarService.GetMonthAsync(CurrentYear, CurrentMonth);
+
+        var firstDay = new DateTime(CurrentYear, CurrentMonth, 1);
+        StartOffset = (int)firstDay.DayOfWeek;
+
+        int totalCells = StartOffset + CalendarDays.Count;
+        EndOffset = Math.Max(0, 42 - totalCells); // ✅ safe guard
+
+        MissedDays = CalendarDays
+            .Where(d =>
+                d.Date < DateTime.Today &&
+                !d.HasEntry &&
+                d.Date.Month == CurrentMonth &&
+                d.Date.Year == CurrentYear)
+            .Select(d => d.Date)
+            .ToList();
+    }
+
+    private async Task LoadToday()
+    {
+        var todayMonth = await CalendarService.GetMonthAsync(
+            DateTime.Today.Year,
+            DateTime.Today.Month);
+
+        TodayEntry = todayMonth.FirstOrDefault(d =>
+            d.Date == DateTime.Today && d.HasEntry);
+    }
+
+    private void OpenDay(CalendarDayModel day)
+    {
+        if (day.HasEntry && day.JournalId.HasValue)
+            Nav.NavigateTo($"/journal/{day.JournalId}");
+        else
+            Nav.NavigateTo($"/journaltoday?date={day.Date:yyyy-MM-dd}");
+    }
+
+    private void GoToToday()
+    {
+        if (TodayEntry != null)
+            Nav.NavigateTo($"/journaltoday/{TodayEntry.JournalId}");
+        else
+            Nav.NavigateTo("/journaltoday");
+    }
+
+    private async Task PrevMonth()
+    {
+        if (--CurrentMonth == 0)
+        {
+            CurrentMonth = 12;
+            CurrentYear--;
+        }
+        await LoadCalendar();
+    }
+
+    private async Task NextMonth()
+    {
+        if (++CurrentMonth == 13)
+        {
+            CurrentMonth = 1;
+            CurrentYear++;
+        }
+        await LoadCalendar();
+    }
+}

@@ -1,0 +1,196 @@
+.analytics-page {
+    padding: 32px;
+}
+
+.analytics-header {
+    margin-bottom: 28px;
+}
+
+.analytics-header h2 {
+    font-size: 26px;
+}
+
+.subtitle {
+    font-size: 13px;
+    opacity: 0.6;
+}
+
+/* GRID SYSTEM */
+.analytics-grid {
+    display: grid;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.analytics-grid.three {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.analytics-grid.two {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+/* CARDS */
+.analytics-card {
+    background: #f7f2ea;
+    border-radius: 24px;
+    padding: 24px;
+}
+
+.analytics-card.center {
+    text-align: center;
+}
+
+/* MOST FREQUENT MOOD */
+.emoji {
+    font-size: 34px;
+    margin: 10px 0;
+}
+
+.big-value {
+    font-size: 28px;
+    font-weight: 600;
+}
+
+/* MOOD DISTRIBUTION */
+.progress-row {
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.progress {
+    background: #e6dfd4;
+    border-radius: 10px;
+    height: 20px;
+    overflow: hidden;
+}
+
+.fill {
+    height: 100%;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    color: #fff;
+}
+
+.fill.positive { background: #7da87b; }
+.fill.neutral { background: #c4b79c; color: #333; }
+.fill.negative { background: #c27c7c; }
+
+/* STREAKS */
+.stat-pair {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 12px;
+}
+
+.label {
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+/* TAG CLOUD */
+.tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.tag {
+    background: #e1d9cc;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 13px;
+}
+
+.tag small {
+    opacity: 0.6;
+    margin-left: 6px;
+}
+
+/* TAG BAR CHART */
+.tag-bars {
+    margin-top: 8px;
+}
+
+.tag-bar-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.tag-bar {
+    height: 10px;
+    background: #e6dfd4;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.tag-fill {
+    height: 100%;
+    background: #7da87b;
+}
+
+.tag-name,
+.tag-count {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+/* WORD TREND */
+.trend-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.trend-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 13px;
+}
+
+.muted {
+    font-size: 13px;
+    opacity: 0.6;
+}
+/* PIE CHART */
+.pie-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 16px;
+}
+
+.pie-chart {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+}
+
+.pie-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+}
+
+.pie-legend .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+}
+
+.dot.positive { background: #7da87b; }
+.dot.neutral { background: #c4b79c; }
+.dot.negative { background: #c27c7c; }

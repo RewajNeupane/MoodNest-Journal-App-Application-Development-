@@ -26,19 +26,30 @@
 
         <div class="stat-card">
             <h4>😊 Most Frequent Mood</h4>
-            <p class="stat-value">Calm</p>
+            <p class="stat-value">@Stats.MostFrequentMood</p>
         </div>
+
 
         <!-- QUICK ANALYTICS -->
         <div class="stat-card wide">
             <h4>📊 Mood Breakdown</h4>
 
             <ul class="mood-stats">
-                <li><span class="dot positive"></span> Positive — 45%</li>
-                <li><span class="dot neutral"></span> Neutral — 35%</li>
-                <li><span class="dot negative"></span> Negative — 20%</li>
+                <li>
+                    <span class="dot positive"></span>
+                    Positive — @Stats.PositivePercentage%
+                </li>
+                <li>
+                    <span class="dot neutral"></span>
+                    Neutral — @Stats.NeutralPercentage%
+                </li>
+                <li>
+                    <span class="dot negative"></span>
+                    Negative — @Stats.NegativePercentage%
+                </li>
             </ul>
         </div>
+
 
     </div>
 

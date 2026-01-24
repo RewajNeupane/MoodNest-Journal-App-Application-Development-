@@ -18,44 +18,36 @@
             ＋ New Entry
         </button>
 
-
         <!-- TODAY -->
         <div class="entry-meta">
             <h4>Today</h4>
             <p class="meta-date">@TodayLabel</p>
         </div>
 
-        <!-- PRIMARY MOOD -->
+        <!-- MOODS -->
         <div class="entry-meta">
-            <h4>Primary Mood *</h4>
-            <div class="mood-list">
-                @foreach (var mood in PrimaryMoodOptions)
-                {
-                    <span class="pill mood @(PrimaryMood == mood ? "active" : "")"
-                          @onclick="() => PrimaryMood = mood">
-                        @mood
-                    </span>
-                }
-            </div>
+            <h4>Mood *</h4>
+            <p class="hint">Select up to 3 moods (first = primary)</p>
+
+            @foreach (var group in MoodGroups)
+            {
+                <p class="mood-group">@group.Key</p>
+
+                <div class="mood-list">
+                    @foreach (var mood in group.Value)
+                    {
+                        <span class="pill mood
+                              @(IsPrimary(mood) ? "primary" : "")
+                              @(IsSecondary(mood) ? "secondary" : "")
+                              @(IsDisabled(mood) ? "disabled" : "")"
+                              @onclick="() => ToggleMood(mood)">
+                            @MoodEmojis[mood] @mood
+                        </span>
+                    }
+                </div>
+            }
         </div>
 
-        <!-- SECONDARY MOODS -->
-        <div class="entry-meta">
-            <h4>Secondary Moods</h4>
-            <div class="mood-list subtle">
-                @foreach (var mood in SecondaryMoodOptions)
-                {
-                    <span class="pill mood
-                          @(SecondaryMoods.Contains(mood) ? "active" : "")
-                          @(SecondaryMoods.Count == 2 && !SecondaryMoods.Contains(mood) ? "disabled" : "")"
-                          @onclick="() => ToggleSecondaryMood(mood)">
-                        @mood
-                    </span>
-                }
-            </div>
-            <p class="hint">Up to 2 moods</p>
-        </div>
-        
         <!-- CATEGORY -->
         <div class="entry-meta">
             <h4>Category</h4>
@@ -77,13 +69,12 @@
             }
         </div>
 
-
         <!-- TAGS -->
         <div class="entry-meta">
             <h4>Tags</h4>
 
             <div class="tags preset-tags">
-                @foreach (var tag in PresetTags)
+                @foreach (var tag in AllVisibleTags)
                 {
                     <span class="pill tag @(SelectedTags.Contains(tag) ? "active" : "")"
                           @onclick="() => ToggleTag(tag)">
@@ -110,6 +101,10 @@
     <main class="editor-container">
 
         <div id="editor" class="editor-canvas quill-fix"></div>
+        
+        <div class="word-count">
+            📝 @WordCount word@(WordCount == 1 ? "" : "s")
+        </div>
 
         <div class="editor-actions">
             <button class="primary" @onclick="SaveEntry">
@@ -121,19 +116,23 @@
                 <button class="danger" @onclick="DeleteEntry">Delete</button>
             }
         </div>
+        
+        
 
     </main>
 
 </div>
 
 @code {
-    
-    private bool HasTodayEntry;
-
 
     /* =======================
-       ROUTE / MODE
+       DAILY ENTRY
     ======================== */
+        
+    private int WordCount;
+
+    
+    private bool HasTodayEntry;
 
     [Parameter] public int? Id { get; set; }
     private bool IsEdit => Id.HasValue;
@@ -142,12 +141,10 @@
        STATE
     ======================== */
 
-    private string PrimaryMood = "😊 Happy";
-    private HashSet<string> SecondaryMoods = new();
+    private List<string> SelectedMoods = new();
 
     private string SelectedCategoryMode = "Personal";
     private string CustomCategory = string.Empty;
-
 
     private HashSet<string> SelectedTags = new();
     private string CustomTag = string.Empty;
@@ -158,40 +155,92 @@
     private string TodayLabel => DateTime.Now.ToString("dddd, MMMM dd");
 
     /* =======================
-       OPTIONS
+       MOODS
     ======================== */
 
-    private readonly string[] PrimaryMoodOptions =
+    private readonly Dictionary<string, string[]> MoodGroups = new()
     {
-        "😊 Happy", "😌 Calm", "😐 Neutral", "😔 Sad", "😠 Angry"
+        ["Positive"] = new[] { "Happy", "Excited", "Relaxed", "Grateful", "Confident" },
+        ["Neutral"]  = new[] { "Calm", "Thoughtful", "Curious", "Nostalgic", "Bored" },
+        ["Negative"] = new[] { "Sad", "Angry", "Stressed", "Lonely", "Anxious" }
     };
 
-    private readonly string[] SecondaryMoodOptions =
+    private readonly Dictionary<string, string> MoodEmojis = new()
     {
-        "😴 Tired", "😬 Anxious", "🤔 Thoughtful", "😄 Excited"
+        ["Happy"] = "😊",
+        ["Excited"] = "🤩",
+        ["Relaxed"] = "😌",
+        ["Grateful"] = "🙏",
+        ["Confident"] = "💪",
+
+        ["Calm"] = "😐",
+        ["Thoughtful"] = "🤔",
+        ["Curious"] = "🧐",
+        ["Nostalgic"] = "🕰",
+        ["Bored"] = "😶",
+
+        ["Sad"] = "😔",
+        ["Angry"] = "😠",
+        ["Stressed"] = "😫",
+        ["Lonely"] = "😞",
+        ["Anxious"] = "😬"
     };
+
+    /* =======================
+       CATEGORIES
+    ======================== */
 
     private readonly string[] Categories =
     {
         "Personal", "Work", "Health", "Relationships", "Reflection"
     };
 
+    /* =======================
+       TAGS
+    ======================== */
+
     private readonly string[] PresetTags =
     {
-        "#Work", "#Career", "#Studies", "#Family", "#Friends",
-        "#Health", "#Fitness", "#Reflection", "#Writing",
-        "#SelfCare", "#Travel"
+        "#Work", "#Career", "#Studies", "#Family", "#Friends", "#Relationships",
+        "#Health", "#Fitness", "#PersonalGrowth", "#SelfCare", "#Hobbies", "#Travel",
+        "#Nature", "#Finance", "#Spirituality", "#Birthday", "#Holiday", "#Vacation",
+        "#Celebration", "#Exercise", "#Reading", "#Writing", "#Cooking", "#Meditation",
+        "#Yoga", "#Music", "#Shopping", "#Parenting", "#Projects", "#Planning", "#Reflection"
     };
+
+    private IEnumerable<string> AllVisibleTags =>
+        PresetTags.Concat(SelectedTags).Distinct().OrderBy(t => t);
 
     /* =======================
        LIFECYCLE
     ======================== */
 
+    protected override async Task OnInitializedAsync()
+    {
+        if (IsEdit) return;
+
+        var todayResult = await JournalService.GetTodayAsync();
+        if (todayResult.Success && todayResult.Data != null)
+        {
+            HasTodayEntry = true;
+            Nav.NavigateTo($"/journaltoday/{todayResult.Data.Id}", replace: true);
+        }
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
 
+        // Initialize Quill
         await _js.InvokeVoidAsync("initQuill", "editor");
+
+        // 🔹 Register live word counter (NEW – safe addition)
+        var dotNetRef = DotNetObjectReference.Create(this);
+        await _js.InvokeVoidAsync(
+            "registerQuillWordCounter",
+            "editor",
+            dotNetRef
+        );
 
         if (!IsEdit) return;
 
@@ -200,51 +249,71 @@
 
         var model = result.Data;
 
-        PrimaryMood = model.PrimaryMood;
-        
-        if (Categories.Contains(model.Category))
-        {
-            SelectedCategoryMode = model.Category;
-            CustomCategory = string.Empty;
-        }
-        else
-        {
-            SelectedCategoryMode = "__custom";
-            CustomCategory = model.Category;
-        }
+        // Load moods
+        SelectedMoods.Clear();
+        SelectedMoods.Add(model.PrimaryMood);
 
+        if (!string.IsNullOrWhiteSpace(model.SecondaryMoods))
+            SelectedMoods.AddRange(model.SecondaryMoods.Split(','));
 
-        SecondaryMoods = string.IsNullOrWhiteSpace(model.SecondaryMoods)
-            ? new()
-            : model.SecondaryMoods.Split(',').ToHashSet();
-
+        // Load tags
         SelectedTags = string.IsNullOrWhiteSpace(model.Tags)
             ? new()
             : model.Tags.Split(',').ToHashSet();
 
+        // Metadata
         CreatedAt = model.CreatedAt;
         UpdatedAt = model.UpdatedAt;
 
-        // 🔥 FIXED: JS SIGNATURE MATCH
+        // Category
+        SelectedCategoryMode = Categories.Contains(model.Category)
+            ? model.Category
+            : "__custom";
+
+        CustomCategory = SelectedCategoryMode == "__custom"
+            ? model.Category
+            : string.Empty;
+
+        // Set editor content
         await _js.InvokeVoidAsync(
             "setQuillContent",
             "editor",
             model.Title,
             model.ContentHtml
         );
+
+        // 🔹 Initialize word count for existing entry (NEW)
+        WordCount = await _js.InvokeAsync<int>(
+            "getQuillWordCount",
+            "editor"
+        );
     }
+
 
     /* =======================
        HELPERS
     ======================== */
 
-    private void ToggleSecondaryMood(string mood)
+    private void ToggleMood(string mood)
     {
-        if (SecondaryMoods.Contains(mood))
-            SecondaryMoods.Remove(mood);
-        else if (SecondaryMoods.Count < 2)
-            SecondaryMoods.Add(mood);
+        if (SelectedMoods.Contains(mood))
+        {
+            SelectedMoods.Remove(mood);
+            return;
+        }
+
+        if (SelectedMoods.Count < 3)
+            SelectedMoods.Add(mood);
     }
+
+    private bool IsPrimary(string mood) =>
+        SelectedMoods.Count > 0 && SelectedMoods[0] == mood;
+
+    private bool IsSecondary(string mood) =>
+        SelectedMoods.Skip(1).Contains(mood);
+
+    private bool IsDisabled(string mood) =>
+        SelectedMoods.Count == 3 && !SelectedMoods.Contains(mood);
 
     private void ToggleTag(string tag)
     {
@@ -258,17 +327,15 @@
     {
         if (e.Key != "Enter") return;
 
-        var tag = "#" + CustomTag.Trim().Replace(" ", "");
-        if (!string.IsNullOrWhiteSpace(tag))
-            SelectedTags.Add(tag);
+        var cleaned = CustomTag.Trim().Replace(" ", "");
+        if (string.IsNullOrWhiteSpace(cleaned)) return;
 
+        SelectedTags.Add("#" + cleaned);
         CustomTag = string.Empty;
     }
 
-    private void NewEntry()
-    {
+    private void NewEntry() =>
         Nav.NavigateTo("/journaltoday", true);
-    }
 
     /* =======================
        SAVE / DELETE
@@ -285,6 +352,12 @@
             return;
         }
 
+        if (!SelectedMoods.Any())
+        {
+            await _js.InvokeVoidAsync("alert", "Please select at least one mood.");
+            return;
+        }
+
         var resolvedCategory =
             SelectedCategoryMode == "__custom"
                 ? CustomCategory.Trim()
@@ -296,29 +369,25 @@
             return;
         }
 
-        var model = new JournalEntryViewModel
-        {
-            Title = string.IsNullOrWhiteSpace(title) ? "Untitled Entry" : title,
-            ContentHtml = bodyHtml,
-            PrimaryMood = PrimaryMood,
-            SecondaryMoods = string.Join(",", SecondaryMoods),
-            Category = resolvedCategory,
-            Tags = string.Join(",", SelectedTags)
-        };
-        
         if (!IsEdit)
         {
             var todayCheck = await JournalService.GetTodayAsync();
             if (todayCheck.Success && todayCheck.Data != null)
             {
-                await _js.InvokeVoidAsync(
-                    "alert",
-                    "You already have a journal entry for today."
-                );
+                await _js.InvokeVoidAsync("alert", "You already have a journal entry for today.");
                 return;
             }
         }
 
+        var model = new JournalEntryViewModel
+        {
+            Title = string.IsNullOrWhiteSpace(title) ? "Untitled Entry" : title,
+            ContentHtml = bodyHtml,
+            PrimaryMood = SelectedMoods[0],
+            SecondaryMoods = string.Join(",", SelectedMoods.Skip(1)),
+            Category = resolvedCategory,
+            Tags = string.Join(",", SelectedTags)
+        };
 
         var result = IsEdit
             ? await JournalService.UpdateAsync(Id!.Value, model)
@@ -335,7 +404,7 @@
         await _js.InvokeVoidAsync("showSaveSuccess");
         await _js.InvokeVoidAsync("clearQuillContent", "editor");
 
-        SecondaryMoods.Clear();
+        SelectedMoods.Clear();
         SelectedTags.Clear();
 
         if (!IsEdit)
@@ -351,21 +420,12 @@
 
         Nav.NavigateTo("/journal");
     }
-    protected override async Task OnInitializedAsync()
+    
+    [JSInvokable]
+    public void UpdateWordCount(int count)
     {
-        // Editing existing entry is always allowed
-        if (IsEdit)
-            return;
-
-        var todayResult = await JournalService.GetTodayAsync();
-
-        if (todayResult.Success && todayResult.Data != null)
-        {
-            HasTodayEntry = true;
-
-            // Redirect to today's existing entry
-            Nav.NavigateTo($"/journaltoday/{todayResult.Data.Id}", replace: true);
-        }
+        WordCount = count;
+        InvokeAsync(StateHasChanged);
     }
 
 }

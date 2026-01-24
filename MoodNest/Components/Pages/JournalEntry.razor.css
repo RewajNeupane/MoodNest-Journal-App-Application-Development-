@@ -286,4 +286,34 @@
     border: 1px solid #ddd;
     font-size: 14px;
 }
+/* Primary mood highlight */
+.pill.primary {
+    background: #1c1c1c;
+    color: #fff;
+}
+
+/* Secondary moods */
+.pill.secondary {
+    background: #d8cfc2;
+}
+
+/* Disabled moods */
+.pill.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+/* Mood group labels */
+.mood-group {
+    font-size: 12px;
+    font-weight: 600;
+    margin: 10px 0 6px;
+    color: #6f6657;
+}
+.word-count {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #7a6f5c;
+    text-align: right;
+}
 

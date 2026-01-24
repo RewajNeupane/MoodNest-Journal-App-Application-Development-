@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MoodNest.Common;
 using MoodNest.Components.Model;
+using MoodNest.Entities;
 
 public interface IJournalService
 {
@@ -15,4 +17,13 @@ public interface IJournalService
     Task<ServiceResult<JournalEntryDisplayModel?>> GetTodayAsync();
     
     Task<ServiceResult<JournalStatsModel>> GetJournalStatsAsync();
+    Task<List<TagStatModel>> GetTagStatsAsync();
+    Task<List<WordTrendModel>> GetWordTrendsAsync();
+    
+
+    Task<List<JournalEntry>> GetEntriesBetweenAsync(DateTime from, DateTime to);
+
+
+
+
 }

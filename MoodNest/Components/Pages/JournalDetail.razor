@@ -26,15 +26,16 @@ else
             <div class="info-block">
                 <h4>Moods</h4>
                 <div class="pill-group">
-                    <span class="pill primary">@_model.PrimaryMood</span>
+                    <span class="pill primary">@WithEmoji(_model.PrimaryMood)</span>
 
                     @if (!string.IsNullOrWhiteSpace(_model.SecondaryMoods))
                     {
                         @foreach (var mood in _model.SecondaryMoods.Split(','))
                         {
-                            <span class="pill">@mood</span>
+                            <span class="pill">@WithEmoji(mood)</span>
                         }
                     }
+
                 </div>
             </div>
 
@@ -78,6 +79,38 @@ else
 }
 
 @code {
+    
+    private readonly Dictionary<string, string> MoodEmojis = new()
+    {
+        ["Happy"] = "😊",
+        ["Excited"] = "🤩",
+        ["Relaxed"] = "😌",
+        ["Grateful"] = "🙏",
+        ["Confident"] = "💪",
+
+        ["Calm"] = "😐",
+        ["Thoughtful"] = "🤔",
+        ["Curious"] = "🧐",
+        ["Nostalgic"] = "🕰️",
+        ["Bored"] = "😶",
+
+        ["Sad"] = "😔",
+        ["Angry"] = "😠",
+        ["Stressed"] = "😫",
+        ["Lonely"] = "😞",
+        ["Anxious"] = "😬"
+    };
+
+    private string WithEmoji(string mood)
+    {
+        if (string.IsNullOrWhiteSpace(mood))
+            return mood;
+
+        return MoodEmojis.TryGetValue(mood.Trim(), out var emoji)
+            ? $"{emoji} {mood}"
+            : mood;
+    }
+
 
     [Parameter] public int Id { get; set; }
 

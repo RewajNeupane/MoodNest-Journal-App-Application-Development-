@@ -150,16 +150,212 @@
     background: rgba(0, 0, 0, 0.08);
     font-weight: 600;
 }
+/* /Components/Pages/Analytics.razor.rz.scp.css */
+.analytics-page[b-hgni7mvfuh] {
+    padding: 32px;
+}
+
+.analytics-header[b-hgni7mvfuh] {
+    margin-bottom: 28px;
+}
+
+.analytics-header h2[b-hgni7mvfuh] {
+    font-size: 26px;
+}
+
+.subtitle[b-hgni7mvfuh] {
+    font-size: 13px;
+    opacity: 0.6;
+}
+
+/* GRID SYSTEM */
+.analytics-grid[b-hgni7mvfuh] {
+    display: grid;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.analytics-grid.three[b-hgni7mvfuh] {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.analytics-grid.two[b-hgni7mvfuh] {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+/* CARDS */
+.analytics-card[b-hgni7mvfuh] {
+    background: #f7f2ea;
+    border-radius: 24px;
+    padding: 24px;
+}
+
+.analytics-card.center[b-hgni7mvfuh] {
+    text-align: center;
+}
+
+/* MOST FREQUENT MOOD */
+.emoji[b-hgni7mvfuh] {
+    font-size: 34px;
+    margin: 10px 0;
+}
+
+.big-value[b-hgni7mvfuh] {
+    font-size: 28px;
+    font-weight: 600;
+}
+
+/* MOOD DISTRIBUTION */
+.progress-row[b-hgni7mvfuh] {
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.progress[b-hgni7mvfuh] {
+    background: #e6dfd4;
+    border-radius: 10px;
+    height: 20px;
+    overflow: hidden;
+}
+
+.fill[b-hgni7mvfuh] {
+    height: 100%;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    color: #fff;
+}
+
+.fill.positive[b-hgni7mvfuh] { background: #7da87b; }
+.fill.neutral[b-hgni7mvfuh] { background: #c4b79c; color: #333; }
+.fill.negative[b-hgni7mvfuh] { background: #c27c7c; }
+
+/* STREAKS */
+.stat-pair[b-hgni7mvfuh] {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 12px;
+}
+
+.label[b-hgni7mvfuh] {
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+/* TAG CLOUD */
+.tag-cloud[b-hgni7mvfuh] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.tag[b-hgni7mvfuh] {
+    background: #e1d9cc;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 13px;
+}
+
+.tag small[b-hgni7mvfuh] {
+    opacity: 0.6;
+    margin-left: 6px;
+}
+
+/* TAG BAR CHART */
+.tag-bars[b-hgni7mvfuh] {
+    margin-top: 8px;
+}
+
+.tag-bar-row[b-hgni7mvfuh] {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.tag-bar[b-hgni7mvfuh] {
+    height: 10px;
+    background: #e6dfd4;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.tag-fill[b-hgni7mvfuh] {
+    height: 100%;
+    background: #7da87b;
+}
+
+.tag-name[b-hgni7mvfuh],
+.tag-count[b-hgni7mvfuh] {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+/* WORD TREND */
+.trend-list[b-hgni7mvfuh] {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.trend-list li[b-hgni7mvfuh] {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 13px;
+}
+
+.muted[b-hgni7mvfuh] {
+    font-size: 13px;
+    opacity: 0.6;
+}
+/* PIE CHART */
+.pie-wrapper[b-hgni7mvfuh] {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 16px;
+}
+
+.pie-chart[b-hgni7mvfuh] {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+}
+
+.pie-legend[b-hgni7mvfuh] {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+}
+
+.pie-legend .dot[b-hgni7mvfuh] {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+}
+
+.dot.positive[b-hgni7mvfuh] { background: #7da87b; }
+.dot.neutral[b-hgni7mvfuh] { background: #c4b79c; }
+.dot.negative[b-hgni7mvfuh] { background: #c27c7c; }
 /* /Components/Pages/Calendar.razor.rz.scp.css */
 /* ===============================
-   PAGE GRID
+   PAGE GRID (CALENDAR DOMINANT)
    =============================== */
 
 .calendar-page[b-d7o6kdwhjr] {
     display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr;
-    grid-auto-rows: min-content;
-    gap: 28px;
+    grid-template-columns: 3fr 1.2fr; /* calendar + right column */
+    gap: 36px;
     padding: 32px;
     background: #f6f1e9;
     font-family: "Inter", system-ui, sans-serif;
@@ -171,90 +367,120 @@
 
 .calendar-card[b-d7o6kdwhjr] {
     background: #f7f2ea;
-    border-radius: 30px;
-    padding: 28px;
+    border-radius: 36px;
+    padding: 42px;
 }
 
-/* Make calendar taller */
+/* Make calendar BIG */
 .tall-calendar[b-d7o6kdwhjr] {
-    min-height: 720px;
+    min-height: 920px;
     display: flex;
     flex-direction: column;
 }
 
-/* Header */
+/* ===============================
+   HEADER
+   =============================== */
+
 .calendar-header[b-d7o6kdwhjr] {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 22px;
+    margin-bottom: 32px;
 }
 
 .calendar-header h3[b-d7o6kdwhjr] {
-    font-size: 20px;
+    font-size: 26px;
     font-weight: 600;
 }
 
 .arrow[b-d7o6kdwhjr] {
-    font-size: 22px;
+    font-size: 28px;
     cursor: pointer;
     opacity: 0.6;
 }
 
-/* Weekdays */
+/* ===============================
+   WEEKDAYS
+   =============================== */
+
 .weekdays[b-d7o6kdwhjr] {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     text-align: center;
-    font-size: 12px;
-    letter-spacing: 0.4px;
+    font-size: 13px;
+    letter-spacing: 0.5px;
     opacity: 0.6;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
 }
 
-/* Days */
+/* ===============================
+   DAYS GRID
+   =============================== */
+
 .days[b-d7o6kdwhjr] {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 14px;
+    gap: 22px;
     flex-grow: 1;
 }
 
 .day[b-d7o6kdwhjr] {
-    height: 68px;
+    height: 92px;
     display: flex;
     align-items: center;
     justify-content: center;
-
     position: relative;
-    border-radius: 16px;
-    font-size: 15px;
+
+    border-radius: 22px;
+    font-size: 16px;
     background: #e1d9cc;
+    cursor: pointer;
 }
 
+/* Empty filler cells */
+.day.empty[b-d7o6kdwhjr] {
+    background: transparent;
+    pointer-events: none;
+}
+
+/* Has entry */
 .day.has-entry[b-d7o6kdwhjr] {
     background: #d6cdbf;
 }
 
-/* Dots */
+/* Today highlight */
+.day.today[b-d7o6kdwhjr] {
+    outline: 2px solid #7da87b;
+    outline-offset: -2px;
+    font-weight: 700;
+}
+
+/* ===============================
+   MOOD DOTS
+   =============================== */
+
 .calendar-dot[b-d7o6kdwhjr] {
     position: absolute;
-    bottom: 8px;
-    width: 6px;
-    height: 6px;
+    bottom: 10px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
 }
 
 .calendar-dot.positive[b-d7o6kdwhjr] { background: #7da87b; }
-.calendar-dot.neutral[b-d7o6kdwhjr] { background: #c4b79c; }
+.calendar-dot.neutral[b-d7o6kdwhjr]  { background: #c4b79c; }
 .calendar-dot.negative[b-d7o6kdwhjr] { background: #c27c7c; }
 
-/* Legend */
+/* ===============================
+   LEGEND
+   =============================== */
+
 .legend[b-d7o6kdwhjr] {
     display: flex;
-    gap: 20px;
-    margin-top: 22px;
-    font-size: 13px;
+    gap: 24px;
+    margin-top: 28px;
+    font-size: 14px;
 }
 
 .legend-item[b-d7o6kdwhjr] {
@@ -264,56 +490,27 @@
 }
 
 .legend-dot[b-d7o6kdwhjr] {
-    width: 8px;
-    height: 8px;
+    width: 9px;
+    height: 9px;
     border-radius: 50%;
 }
 
 .legend-dot.positive[b-d7o6kdwhjr] { background: #7da87b; }
-.legend-dot.neutral[b-d7o6kdwhjr] { background: #c4b79c; }
+.legend-dot.neutral[b-d7o6kdwhjr]  { background: #c4b79c; }
 .legend-dot.negative[b-d7o6kdwhjr] { background: #c27c7c; }
 
 .hint[b-d7o6kdwhjr] {
     font-size: 12px;
     opacity: 0.6;
-    margin-top: 12px;
+    margin-top: 14px;
 }
 
 /* ===============================
-   YEAR CARD
+   REMOVE YEAR CARD COMPLETELY
    =============================== */
 
 .year-card[b-d7o6kdwhjr] {
-    background: #f7f2ea;
-    border-radius: 30px;
-    padding: 30px;
-    text-align: center;
-}
-
-.year-card h2[b-d7o6kdwhjr] {
-    font-size: 22px;
-    margin-bottom: 16px;
-}
-
-.year-image[b-d7o6kdwhjr] {
-    width: 100%;
-    height: 360px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.year-image img[b-d7o6kdwhjr] {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    border-radius: 2000px;
-}
-
-.year-caption[b-d7o6kdwhjr] {
-    font-size: 12px;
-    opacity: 0.6;
-    margin-top: 10px;
+    display: none;
 }
 
 /* ===============================
@@ -323,10 +520,13 @@
 .right-column[b-d7o6kdwhjr] {
     display: flex;
     flex-direction: column;
-    gap: 26px;
+    gap: 28px;
 }
 
-/* Today */
+/* ===============================
+   TODAY CARD
+   =============================== */
+
 .today-card[b-d7o6kdwhjr] {
     background: #f7f2ea;
     border-radius: 28px;
@@ -379,14 +579,9 @@
     cursor: pointer;
 }
 
-/* Missed Days */
-
-
-.missed-list[b-d7o6kdwhjr] {
-    margin-top: 12px;
-    padding-left: 18px;
-    font-size: 13px;
-}
+/* ===============================
+   MISSED DAYS
+   =============================== */
 
 .missed-card[b-d7o6kdwhjr] {
     background: #f7f2ea;
@@ -429,7 +624,6 @@
     background: #c27c7c;
     border-radius: 50%;
 }
-
 /* /Components/Pages/JournalDetail.razor.rz.scp.css */
 /* ===============================
    PAGE WRAPPER (VERY WIDE)
@@ -908,6 +1102,36 @@
     border-radius: 10px;
     border: 1px solid #ddd;
     font-size: 14px;
+}
+/* Primary mood highlight */
+.pill.primary[b-3rg7ssqe1p] {
+    background: #1c1c1c;
+    color: #fff;
+}
+
+/* Secondary moods */
+.pill.secondary[b-3rg7ssqe1p] {
+    background: #d8cfc2;
+}
+
+/* Disabled moods */
+.pill.disabled[b-3rg7ssqe1p] {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+/* Mood group labels */
+.mood-group[b-3rg7ssqe1p] {
+    font-size: 12px;
+    font-weight: 600;
+    margin: 10px 0 6px;
+    color: #6f6657;
+}
+.word-count[b-3rg7ssqe1p] {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #7a6f5c;
+    text-align: right;
 }
 
 /* /Components/Pages/JournalList.razor.rz.scp.css */
