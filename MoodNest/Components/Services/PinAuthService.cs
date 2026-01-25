@@ -1,63 +1,121 @@
 using System;
-using System.IO;
+using System.Linq;
+using MoodNest.Data;
+using MoodNest.Entities;
 
 namespace MoodNest.Components.Services
 {
     public class PinAuthService
     {
-        private readonly string _pinFilePath;
-        private string _pin;
+        private readonly AppDbContext _db;
 
-        public bool IsUnlocked { get; private set; }
+        public int? CurrentUserId { get; private set; }
+        public bool IsUnlocked => CurrentUserId != null;
 
         public event Action? OnAuthChanged;
 
-        public PinAuthService()
+        public PinAuthService(AppDbContext db)
         {
-            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var dir = Path.Combine(appData, "MoodNest");
-
-            Directory.CreateDirectory(dir);
-
-            _pinFilePath = Path.Combine(dir, "pin.txt");
-
-            _pin = File.Exists(_pinFilePath)
-                ? File.ReadAllText(_pinFilePath)
-                : "1234";
-
-            SavePin(); // ensure file exists
+            _db = db;
         }
 
-        public bool VerifyPin(string pin)
-        {
-            return pin == _pin;
-        }
+        /* =======================
+           LOGIN
+        ======================== */
 
-        public bool ChangePin(string currentPin, string newPin)
+        // 🔐 Login with Username OR Email + PIN
+        public bool VerifyPin(string identifier, string pin)
         {
-            if (!VerifyPin(currentPin))
+            var user = _db.Users.FirstOrDefault(u =>
+                u.Username == identifier || u.Email == identifier);
+
+            if (user == null)
                 return false;
 
-            _pin = newPin;
-            SavePin();
+            if (!BCrypt.Net.BCrypt.Verify(pin, user.PinHash))
+                return false;
+
+            CurrentUserId = user.Id;
+            OnAuthChanged?.Invoke();
             return true;
         }
 
-        private void SavePin()
-        {
-            File.WriteAllText(_pinFilePath, _pin);
-        }
+        /* =======================
+           LOGOUT / LOCK
+        ======================== */
 
-        public void Unlock()
-        {
-            IsUnlocked = true;
-            OnAuthChanged?.Invoke();
-        }
-
+        // 🔒 Lock app
         public void Lock()
         {
-            IsUnlocked = false;
+            CurrentUserId = null;
             OnAuthChanged?.Invoke();
+        }
+
+        /* =======================
+           CURRENT USER
+        ======================== */
+
+        // ✅ Get logged-in user
+        public User? GetCurrentUser()
+        {
+            if (CurrentUserId == null)
+                return null;
+
+            return _db.Users.Find(CurrentUserId.Value);
+        }
+
+        // ✅ Update username + email
+        public bool UpdateProfile(string username, string email)
+        {
+            if (CurrentUserId == null)
+                return false;
+
+            var user = _db.Users.Find(CurrentUserId.Value);
+            if (user == null)
+                return false;
+
+            user.Username = username.Trim();
+            user.Email = email.Trim();
+
+            _db.SaveChanges();
+            return true;
+        }
+
+        /* =======================
+           PIN
+        ======================== */
+
+        // 🔁 Change PIN for current user
+        public bool ChangePin(string currentPin, string newPin)
+        {
+            if (CurrentUserId == null)
+                return false;
+
+            var user = _db.Users.Find(CurrentUserId.Value);
+            if (user == null)
+                return false;
+
+            if (!BCrypt.Net.BCrypt.Verify(currentPin, user.PinHash))
+                return false;
+
+            user.PinHash = BCrypt.Net.BCrypt.HashPassword(newPin);
+            _db.SaveChanges();
+
+            return true;
+        }
+
+        /* =======================
+           ROUTE GUARD
+        ======================== */
+
+        // ✅ Route access rules
+        public bool CanAccess(string route)
+        {
+            // Allow register + login without auth
+            if (route.StartsWith("register") || route == "")
+                return true;
+
+            return IsUnlocked;
         }
     }
 }

@@ -1,5 +1,6 @@
 @page "/calendar"
 @layout TestLayout
+@inject PinAuthService Auth
 
 @inject ICalendarService CalendarService
 @inject NavigationManager Nav
@@ -21,34 +22,27 @@
         </div>
 
         <div class="days">
-
-            @* Leading empty cells *@
-            @for (int i = 0; i < StartOffset; i++)
-            {
-                <div class="day empty"></div>
-            }
-
-            @* Actual days *@
             @foreach (var day in CalendarDays)
             {
-                <div class="day
-                     @(day.HasEntry ? "has-entry" : "")
-                     @(day.IsToday ? "today" : "")"
-                     @onclick="() => OpenDay(day)">
+                if (day.Date == DateTime.MinValue)
+                {
+                    <div class="day empty"></div>
+                }
+                else
+                {
+                    <div class="day
+                         @(day.HasEntry ? "has-entry" : "")
+                         @(day.IsToday ? "today" : "")"
+                         @onclick="() => OpenDay(day)">
 
-                    @day.Date.Day
+                        @day.Date.Day
 
-                    @if (!string.IsNullOrEmpty(day.MoodType))
-                    {
-                        <span class="calendar-dot @day.MoodType"></span>
-                    }
-                </div>
-            }
-
-            @* Trailing empty cells to complete 6x7 grid *@
-            @for (int i = 0; i < EndOffset; i++)
-            {
-                <div class="day empty"></div>
+                        @if (!string.IsNullOrEmpty(day.MoodType))
+                        {
+                            <span class="calendar-dot @day.MoodType"></span>
+                        }
+                    </div>
+                }
             }
         </div>
 
@@ -67,7 +61,7 @@
         <p class="hint">Click a date to view or write a journal entry</p>
     </div>
 
-    <!-- YEAR CARD (kept for now, styling comes later) -->
+    <!-- YEAR CARD -->
     <div class="year-card">
         <h2>@CurrentYear</h2>
         <div class="year-image">
@@ -79,7 +73,7 @@
     <!-- RIGHT COLUMN -->
     <div class="right-column">
 
-        <!-- TODAY CARD (ALWAYS REAL TODAY) -->
+        <!-- TODAY CARD -->
         <div class="today-card">
             <div class="today-header">
                 <div class="today-icon">📅</div>
@@ -96,7 +90,7 @@
             </button>
         </div>
 
-        <!-- MISSED DAYS (ONLY FOR CURRENT MONTH) -->
+        <!-- MISSED DAYS -->
         <div class="missed-card">
             <div class="missed-header">
                 <div class="missed-icon">📆</div>
@@ -132,34 +126,75 @@
     private int CurrentYear = DateTime.Today.Year;
     private int CurrentMonth = DateTime.Today.Month;
 
-    private int StartOffset;
-    private int EndOffset;
-
     private string CurrentMonthName =>
         new DateTime(CurrentYear, CurrentMonth, 1).ToString("MMMM");
 
     protected override async Task OnInitializedAsync()
     {
+        // 🔐 AUTH GUARD (VERY IMPORTANT)
+        if (!Auth.IsUnlocked)
+        {
+            Nav.NavigateTo("/", replace: true);
+            return;
+        }
+
         await LoadToday();
         await LoadCalendar();
     }
 
+
     private async Task LoadCalendar()
     {
-        CalendarDays = await CalendarService.GetMonthAsync(CurrentYear, CurrentMonth);
+        CalendarDays.Clear();
 
         var firstDay = new DateTime(CurrentYear, CurrentMonth, 1);
-        StartOffset = (int)firstDay.DayOfWeek;
+        var daysInMonth = DateTime.DaysInMonth(CurrentYear, CurrentMonth);
+        int startOffset = (int)firstDay.DayOfWeek;
 
-        int totalCells = StartOffset + CalendarDays.Count;
-        EndOffset = Math.Max(0, 42 - totalCells); // ✅ safe guard
+        var monthData = await CalendarService.GetMonthAsync(CurrentYear, CurrentMonth);
 
+        // 🔹 Leading empty cells
+        for (int i = 0; i < startOffset; i++)
+        {
+            CalendarDays.Add(new CalendarDayModel
+            {
+                Date = DateTime.MinValue
+            });
+        }
+
+        // 🔹 Actual days
+        for (int d = 1; d <= daysInMonth; d++)
+        {
+            var date = new DateTime(CurrentYear, CurrentMonth, d);
+            var entry = monthData.FirstOrDefault(e => e.Date.Date == date.Date);
+
+            CalendarDays.Add(new CalendarDayModel
+            {
+                Date = date,
+                IsToday = date.Date == DateTime.Today,
+                HasEntry = entry != null,
+                JournalId = entry?.JournalId,
+                MoodType = entry?.MoodType
+            });
+        }
+
+        // 🔹 Trailing empty cells → always reach 42
+        while (CalendarDays.Count < 42)
+        {
+            CalendarDays.Add(new CalendarDayModel
+            {
+                Date = DateTime.MinValue
+            });
+        }
+
+        // 🔹 Missed days (only past days in current month)
         MissedDays = CalendarDays
             .Where(d =>
+                d.Date != DateTime.MinValue &&
                 d.Date < DateTime.Today &&
-                !d.HasEntry &&
                 d.Date.Month == CurrentMonth &&
-                d.Date.Year == CurrentYear)
+                d.Date.Year == CurrentYear &&
+                !d.HasEntry)
             .Select(d => d.Date)
             .ToList();
     }
@@ -171,7 +206,7 @@
             DateTime.Today.Month);
 
         TodayEntry = todayMonth.FirstOrDefault(d =>
-            d.Date == DateTime.Today && d.HasEntry);
+            d.Date.Date == DateTime.Today && d.HasEntry);
     }
 
     private void OpenDay(CalendarDayModel day)

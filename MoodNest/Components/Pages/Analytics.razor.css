@@ -1,5 +1,7 @@
 .analytics-page {
     padding: 32px;
+    background: var(--bg-main);
+    color: var(--text-main);
 }
 
 .analytics-header {
@@ -8,11 +10,12 @@
 
 .analytics-header h2 {
     font-size: 26px;
+    color: var(--text-strong);
 }
 
 .subtitle {
     font-size: 13px;
-    opacity: 0.6;
+    color: var(--text-muted);
 }
 
 /* GRID SYSTEM */
@@ -32,9 +35,10 @@
 
 /* CARDS */
 .analytics-card {
-    background: #f7f2ea;
+    background: var(--bg-panel);
     border-radius: 24px;
     padding: 24px;
+    border: 1px solid var(--border-soft);
 }
 
 .analytics-card.center {
@@ -50,6 +54,7 @@
 .big-value {
     font-size: 28px;
     font-weight: 600;
+    color: var(--text-strong);
 }
 
 /* MOOD DISTRIBUTION */
@@ -62,7 +67,7 @@
 }
 
 .progress {
-    background: #e6dfd4;
+    background: var(--bg-soft);
     border-radius: 10px;
     height: 20px;
     overflow: hidden;
@@ -78,7 +83,7 @@
 }
 
 .fill.positive { background: #7da87b; }
-.fill.neutral { background: #c4b79c; color: #333; }
+.fill.neutral  { background: #c4b79c; color: #2c2c2c; }
 .fill.negative { background: #c27c7c; }
 
 /* STREAKS */
@@ -90,7 +95,7 @@
 
 .label {
     font-size: 12px;
-    opacity: 0.6;
+    color: var(--text-muted);
 }
 
 /* TAG CLOUD */
@@ -102,14 +107,15 @@
 }
 
 .tag {
-    background: #e1d9cc;
+    background: var(--pill-bg);
     padding: 6px 12px;
     border-radius: 16px;
     font-size: 13px;
+    color: var(--text-main);
 }
 
 .tag small {
-    opacity: 0.6;
+    color: var(--text-muted);
     margin-left: 6px;
 }
 
@@ -128,7 +134,7 @@
 
 .tag-bar {
     height: 10px;
-    background: #e6dfd4;
+    background: var(--bg-soft);
     border-radius: 6px;
     overflow: hidden;
 }
@@ -141,7 +147,7 @@
 .tag-name,
 .tag-count {
     font-size: 12px;
-    opacity: 0.7;
+    color: var(--text-muted);
 }
 
 /* WORD TREND */
@@ -156,12 +162,14 @@
     justify-content: space-between;
     padding: 6px 0;
     font-size: 13px;
+    color: var(--text-main);
 }
 
 .muted {
     font-size: 13px;
-    opacity: 0.6;
+    color: var(--text-muted);
 }
+
 /* PIE CHART */
 .pie-wrapper {
     display: flex;
@@ -181,6 +189,7 @@
     flex-direction: column;
     gap: 6px;
     font-size: 13px;
+    color: var(--text-main);
 }
 
 .pie-legend .dot {
@@ -192,5 +201,5 @@
 }
 
 .dot.positive { background: #7da87b; }
-.dot.neutral { background: #c4b79c; }
+.dot.neutral  { background: #c4b79c; }
 .dot.negative { background: #c27c7c; }

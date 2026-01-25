@@ -11,7 +11,6 @@ using Microsoft.Maui.Controls.Hosting;
 using MoodNest.Components.Services;
 using MoodNest.Data;
 
-
 namespace MoodNest;
 
 public static class MauiProgram
@@ -19,8 +18,6 @@ public static class MauiProgram
     public static MauiApp CreateMauiApp()
     {
         SQLitePCL.Batteries.Init();
-
-
 
         var builder = MauiApp.CreateBuilder();
 
@@ -33,13 +30,9 @@ public static class MauiProgram
 
         builder.Services.AddMauiBlazorWebView();
 
-        // Services
-        builder.Services.AddScoped<PinAuthService>();
-        builder.Services.AddScoped<IJournalService, JournalService>();
-        builder.Services.AddScoped<IJournalFilterService, JournalFilterService>();
-        builder.Services.AddScoped<ICalendarService, CalendarService>();
-        builder.Services.AddSingleton<ThemeService>();
-        builder.Services.AddScoped<JournalPdfExportService>(); // ✅ IMPORTANT
+        // ========================
+        // DATABASE CONFIGURATION
+        // ========================
 
         var dbPath = Path.Combine(
             FileSystem.AppDataDirectory,
@@ -50,11 +43,34 @@ public static class MauiProgram
             options.UseSqlite($"Data Source={dbPath}")
         );
 
+        // ========================
+        // SERVICES
+        // ========================
+
+        builder.Services.AddScoped<PinAuthService>();
+        builder.Services.AddScoped<IJournalService, JournalService>();
+        builder.Services.AddScoped<IJournalFilterService, JournalFilterService>();
+        builder.Services.AddScoped<ICalendarService, CalendarService>();
+        builder.Services.AddSingleton<ThemeService>();
+        builder.Services.AddScoped<JournalPdfExportService>();
+
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();
         builder.Logging.AddDebug();
 #endif
 
-        return builder.Build();
+        // ========================
+        // SAFE DB CREATION (FIX)
+        // ========================
+
+        var app = builder.Build();
+
+        using (var scope = app.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            db.Database.EnsureCreated();
+        }
+
+        return app;
     }
 }

@@ -1,28 +1,52 @@
 @page "/settings"
 @layout TestLayout
 
-@inject MoodNest.Components.Services.PinAuthService Auth
+@inject PinAuthService Auth
 @inject JournalPdfExportService PdfService
 @inject IJournalService JournalService
 
 <div class="settings-page">
 
-    <!-- HEADER -->
     <div class="settings-header">
         <h2>Settings</h2>
         <p class="subtitle">Customize your experience & manage your data</p>
     </div>
 
     <!-- ===============================
-         SECURITY / CHANGE PIN
+         PROFILE
+         =============================== -->
+
+    <section class="settings-card">
+        <h3>Profile</h3>
+
+        <div class="security-grid">
+            <div class="security-field">
+                <label>Username</label>
+                <input @bind="Username" />
+            </div>
+
+            <div class="security-field">
+                <label>Email</label>
+                <input type="email" @bind="Email" />
+            </div>
+
+            <button class="primary-btn" @onclick="SaveProfile">
+                Save Changes
+            </button>
+        </div>
+
+        @if (!string.IsNullOrEmpty(profileMessage))
+        {
+            <p class="security-hint">@profileMessage</p>
+        }
+    </section>
+
+    <!-- ===============================
+         SECURITY / PIN
          =============================== -->
 
     <section class="settings-card">
         <h3>Security</h3>
-
-        <p class="setting-desc">
-            Update your access PIN to keep your journal private.
-        </p>
 
         <div class="security-grid">
             <div class="security-field">
@@ -47,7 +71,7 @@
     </section>
 
     <!-- ===============================
-         EXPORT JOURNALS
+         EXPORT
          =============================== -->
 
     <section class="settings-card">
@@ -80,46 +104,43 @@
 @code {
 
     /* =======================
-       EXPORT
+       PROFILE
     ======================== */
 
-    private DateTime? ExportFrom;
-    private DateTime? ExportTo;
-    private string? exportMessage;
+    private string Username = "";
+    private string Email = "";
+    private string? profileMessage;
 
-    private async Task ExportPdf()
+    protected override void OnInitialized()
     {
-        if (!ExportFrom.HasValue || !ExportTo.HasValue)
+        var user = Auth.GetCurrentUser();
+        if (user == null) return;
+
+        Username = user.Username;
+        Email = user.Email;
+    }
+
+    private void SaveProfile()
+    {
+        if (string.IsNullOrWhiteSpace(Username) ||
+            string.IsNullOrWhiteSpace(Email))
         {
-            exportMessage = "Please select a valid date range.";
+            profileMessage = "Username and email are required.";
             return;
         }
 
-        var entries = await JournalService
-            .GetEntriesBetweenAsync(ExportFrom.Value, ExportTo.Value);
-
-        if (entries.Count == 0)
-        {
-            exportMessage = "No journal entries found in this range.";
-            return;
-        }
-
-        // ✅ CORRECT async call
-        var path = await PdfService.ExportAsync(
-            entries,
-            ExportFrom.Value,
-            ExportTo.Value
-        );
-
-        exportMessage = $"PDF exported successfully:\n{path}";
+        if (Auth.UpdateProfile(Username, Email))
+            profileMessage = "Profile updated successfully.";
+        else
+            profileMessage = "Failed to update profile.";
     }
 
     /* =======================
-       SECURITY
+       PIN
     ======================== */
 
-    private string currentPin = string.Empty;
-    private string newPin = string.Empty;
+    private string currentPin = "";
+    private string newPin = "";
     private string? pinMessage;
 
     private void ChangePin()
@@ -140,5 +161,39 @@
         {
             pinMessage = "Current PIN is incorrect.";
         }
+    }
+
+    /* =======================
+       EXPORT
+    ======================== */
+
+    private DateTime? ExportFrom;
+    private DateTime? ExportTo;
+    private string? exportMessage;
+
+    private async Task ExportPdf()
+    {
+        if (!ExportFrom.HasValue || !ExportTo.HasValue)
+        {
+            exportMessage = "Please select a date range.";
+            return;
+        }
+
+        var entries = await JournalService
+            .GetEntriesBetweenAsync(ExportFrom.Value, ExportTo.Value);
+
+        if (!entries.Any())
+        {
+            exportMessage = "No entries found in this range.";
+            return;
+        }
+
+        var path = await PdfService.ExportAsync(
+            entries,
+            ExportFrom.Value,
+            ExportTo.Value
+        );
+
+        exportMessage = $"PDF exported successfully:\n{path}";
     }
 }

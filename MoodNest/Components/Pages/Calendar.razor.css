@@ -4,11 +4,12 @@
 
 .calendar-page {
     display: grid;
-    grid-template-columns: 3fr 1.2fr; /* calendar + right column */
+    grid-template-columns: 3fr 1.2fr;
     gap: 36px;
     padding: 32px;
-    background: #f6f1e9;
+    background: var(--bg-main);
     font-family: "Inter", system-ui, sans-serif;
+    color: var(--text-main);
 }
 
 /* ===============================
@@ -16,7 +17,7 @@
    =============================== */
 
 .calendar-card {
-    background: #f7f2ea;
+    background: var(--bg-panel);
     border-radius: 36px;
     padding: 42px;
 }
@@ -42,12 +43,14 @@
 .calendar-header h3 {
     font-size: 26px;
     font-weight: 600;
+    color: var(--text-strong);
 }
 
 .arrow {
     font-size: 28px;
     cursor: pointer;
     opacity: 0.6;
+    color: var(--text-main);
 }
 
 /* ===============================
@@ -60,7 +63,7 @@
     text-align: center;
     font-size: 13px;
     letter-spacing: 0.5px;
-    opacity: 0.6;
+    color: var(--text-muted);
     margin-bottom: 20px;
 }
 
@@ -84,8 +87,9 @@
 
     border-radius: 22px;
     font-size: 16px;
-    background: #e1d9cc;
+    background: var(--bg-soft);
     cursor: pointer;
+    color: var(--text-main);
 }
 
 /* Empty filler cells */
@@ -96,7 +100,7 @@
 
 /* Has entry */
 .day.has-entry {
-    background: #d6cdbf;
+    background: color-mix(in srgb, var(--bg-soft) 80%, black 10%);
 }
 
 /* Today highlight */
@@ -131,6 +135,7 @@
     gap: 24px;
     margin-top: 28px;
     font-size: 14px;
+    color: var(--text-main);
 }
 
 .legend-item {
@@ -151,7 +156,7 @@
 
 .hint {
     font-size: 12px;
-    opacity: 0.6;
+    color: var(--text-muted);
     margin-top: 14px;
 }
 
@@ -178,7 +183,7 @@
    =============================== */
 
 .today-card {
-    background: #f7f2ea;
+    background: var(--bg-panel);
     border-radius: 28px;
     padding: 26px;
     display: flex;
@@ -196,7 +201,7 @@
 .today-icon {
     width: 42px;
     height: 42px;
-    background: #e1d9cc;
+    background: var(--bg-soft);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -207,7 +212,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #efe4e4;
+    background: var(--bg-soft);
     padding: 10px 14px;
     border-radius: 14px;
     font-size: 14px;
@@ -225,7 +230,8 @@
     padding: 14px;
     border-radius: 18px;
     border: none;
-    background: #cfc7bb;
+    background: color-mix(in srgb, var(--bg-soft) 80%, black 10%);
+    color: var(--text-main);
     cursor: pointer;
 }
 
@@ -234,7 +240,7 @@
    =============================== */
 
 .missed-card {
-    background: #f7f2ea;
+    background: var(--bg-panel);
     border-radius: 28px;
     padding: 26px;
     display: flex;
@@ -251,7 +257,7 @@
 .missed-icon {
     width: 42px;
     height: 42px;
-    background: #e1d9cc;
+    background: var(--bg-soft);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -262,7 +268,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #efe4e4;
+    background: var(--bg-soft);
     padding: 12px 16px;
     border-radius: 16px;
     font-size: 14px;

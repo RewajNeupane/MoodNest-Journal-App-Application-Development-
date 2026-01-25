@@ -4,23 +4,39 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MoodNest.Data;
+using MoodNest.Components.Services;
 
 public class CalendarService : ICalendarService
 {
     private readonly AppDbContext _context;
+    private readonly PinAuthService _auth;
 
-    public CalendarService(AppDbContext context)
+    public CalendarService(AppDbContext context, PinAuthService auth)
     {
         _context = context;
+        _auth = auth;
+    }
+
+    private int RequireUser()
+    {
+        if (_auth.CurrentUserId == null)
+            throw new InvalidOperationException("User not authenticated");
+
+        return _auth.CurrentUserId.Value;
     }
 
     public async Task<List<CalendarDayModel>> GetMonthAsync(int year, int month)
     {
+        int userId = RequireUser();
+
         var start = new DateTime(year, month, 1);
         var end = start.AddMonths(1);
 
         var entries = await _context.JournalEntries
-            .Where(e => e.CreatedAt >= start && e.CreatedAt < end)
+            .Where(e =>
+                e.UserId == userId &&
+                e.CreatedAt >= start &&
+                e.CreatedAt < end)
             .ToListAsync();
 
         var daysInMonth = DateTime.DaysInMonth(year, month);
@@ -50,19 +66,28 @@ public class CalendarService : ICalendarService
 
     public async Task<bool> HasTodayEntryAsync()
     {
+        int userId = RequireUser();
         var today = DateTime.Today;
+
         return await _context.JournalEntries
-            .AnyAsync(e => e.CreatedAt.Date == today);
+            .AnyAsync(e =>
+                e.UserId == userId &&
+                e.CreatedAt.Date == today);
     }
 
     public async Task<List<DateTime>> GetMissedDaysAsync(int year, int month)
     {
+        int userId = RequireUser();
+
         var today = DateTime.Today;
         var start = new DateTime(year, month, 1);
         var end = start.AddMonths(1);
 
         var entries = await _context.JournalEntries
-            .Where(e => e.CreatedAt >= start && e.CreatedAt < end)
+            .Where(e =>
+                e.UserId == userId &&
+                e.CreatedAt >= start &&
+                e.CreatedAt < end)
             .Select(e => e.CreatedAt.Date)
             .ToListAsync();
 

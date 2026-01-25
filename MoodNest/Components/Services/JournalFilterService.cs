@@ -13,16 +13,37 @@ namespace MoodNest.Components.Services;
 public class JournalFilterService : IJournalFilterService
 {
     private readonly AppDbContext _context;
+    private readonly PinAuthService _auth;
 
-    public JournalFilterService(AppDbContext context)
-        => _context = context;
+    public JournalFilterService(AppDbContext context, PinAuthService auth)
+    {
+        _context = context;
+        _auth = auth;
+    }
+
+    /* =======================
+       AUTH GUARD
+    ======================== */
+
+    private int RequireUser()
+    {
+        if (_auth.CurrentUserId == null)
+            throw new InvalidOperationException("User not authenticated");
+
+        return _auth.CurrentUserId.Value;
+    }
 
     public async Task<ServiceResult<List<JournalEntryDisplayModel>>>
         GetFilteredAsync(JournalFilterModel filter)
     {
         try
         {
-            var query = _context.JournalEntries.AsQueryable();
+            int userId = RequireUser();
+
+            // 🔐 USER-SCOPED QUERY (CRITICAL FIX)
+            var query = _context.JournalEntries
+                .Where(e => e.UserId == userId)
+                .AsQueryable();
 
             /* =======================
                SEARCH (TITLE + CONTENT)
@@ -43,10 +64,10 @@ public class JournalFilterService : IJournalFilterService
             ======================== */
 
             if (filter.FromDate.HasValue)
-                query = query.Where(e => e.CreatedAt >= filter.FromDate.Value);
+                query = query.Where(e => e.CreatedAt.Date >= filter.FromDate.Value.Date);
 
             if (filter.ToDate.HasValue)
-                query = query.Where(e => e.CreatedAt <= filter.ToDate.Value);
+                query = query.Where(e => e.CreatedAt.Date <= filter.ToDate.Value.Date);
 
             /* =======================
                CATEGORY
@@ -56,7 +77,6 @@ public class JournalFilterService : IJournalFilterService
             {
                 query = query.Where(e => e.Category == filter.Category);
             }
-
 
             /* =======================
                MOODS (PRIMARY + SECONDARY)
@@ -80,14 +100,13 @@ public class JournalFilterService : IJournalFilterService
             {
                 query = query.Where(e =>
                     filter.Tags.Any(t =>
-                        e.Tags != null &&
-                        e.Tags.Contains(t)
+                        e.Tags != null && e.Tags.Contains(t)
                     )
                 );
             }
 
             /* =======================
-               PROJECTION (LIST PAGE)
+               PROJECTION
             ======================== */
 
             var result = await query

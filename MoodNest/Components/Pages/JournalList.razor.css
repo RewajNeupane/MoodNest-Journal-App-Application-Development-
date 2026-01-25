@@ -4,9 +4,10 @@
 
 .journal-list-page {
     padding: 80px 110px;
-    background: #f7f3eb;
+    background: var(--bg-main);
     min-height: 100vh;
     font-family: "Inter", system-ui, sans-serif;
+    color: var(--text-main);
 }
 
 /* ===============================
@@ -23,17 +24,18 @@
 .list-header h2 {
     font-size: 34px;
     font-weight: 650;
+    color: var(--text-strong);
 }
 
 .subtitle {
     font-size: 16px;
-    color: #6b604d;
+    color: var(--text-muted);
     margin-top: 8px;
 }
 
 .sort-indicator {
     font-size: 14px;
-    color: #7a6f5c;
+    color: var(--text-muted);
 }
 
 /* ===============================
@@ -51,30 +53,27 @@
 .filters select {
     padding: 12px 16px;
     border-radius: 14px;
-    border: 1px solid #e2dbcf;
-    background: #fbf8f2;
+    border: 1px solid var(--border-input);
+    background: var(--bg-soft);
     font-size: 14px;
+    color: var(--text-main);
 }
 
-.search-input {
-    min-width: 320px;
-}
-
-.tag-input {
-    min-width: 220px;
-}
+.search-input { min-width: 320px; }
+.tag-input { min-width: 220px; }
 
 .reset-btn {
     padding: 12px 20px;
     border-radius: 999px;
     border: none;
-    background: #e9e3d8;
+    background: var(--btn-bg);
     font-weight: 600;
     cursor: pointer;
+    color: var(--text-main);
 }
 
 .reset-btn:hover {
-    background: #ded6ca;
+    background: var(--btn-bg-hover);
 }
 
 /* ===============================
@@ -92,15 +91,16 @@
     flex-direction: column;
     gap: 6px;
     font-size: 12px;
-    color: #7a6f5c;
+    color: var(--text-muted);
 }
 
 .date-label input {
     padding: 10px 12px;
     border-radius: 12px;
-    border: 1px solid #e7e0d6;
-    background: #fbf8f2;
+    border: 1px solid var(--border-soft);
+    background: var(--bg-soft);
     font-size: 14px;
+    color: var(--text-main);
 }
 
 .date-separator {
@@ -128,8 +128,8 @@
     gap: 36px;
     padding: 36px 42px;
     border-radius: 30px;
-    background: #fbf8f2;
-    border: 1px solid #e7e0d6;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-soft);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -151,11 +151,12 @@
 .timeline-date .day {
     font-size: 30px;
     font-weight: 700;
+    color: var(--text-strong);
 }
 
 .timeline-date .month {
     font-size: 13px;
-    color: #7a6f5c;
+    color: var(--text-muted);
     margin-top: 6px;
 }
 
@@ -172,12 +173,13 @@
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 10px;
+    color: var(--text-strong);
 }
 
 .timeline-content p {
     font-size: 15px;
     line-height: 1.7;
-    color: #5f5a50;
+    color: var(--text-body);
 }
 
 /* ===============================
@@ -202,15 +204,15 @@
     font-size: 13px;
     padding: 6px 12px;
     border-radius: 999px;
-    background: #ede7dc;
-    color: #4f4a40;
+    background: var(--pill-bg);
+    color: var(--text-main);
 }
 
 .pill.primary {
     font-size: 15px;
     padding: 8px 16px;
     font-weight: 600;
-    background: #e3dccf;
+    background: var(--pill-primary-bg);
     width: fit-content;
 }
 
@@ -230,16 +232,11 @@
     gap: 10px;
     flex-wrap: wrap;
     font-size: 13px;
-    color: #7a6f5c;
+    color: var(--text-muted);
 }
 
-.category {
-    font-weight: 600;
-}
-
-.tag {
-    opacity: 0.8;
-}
+.category { font-weight: 600; }
+.tag { opacity: 0.8; }
 
 /* ===============================
    ACTIONS
@@ -263,16 +260,17 @@
 }
 
 .edit-btn {
-    background: #e9e3d8;
+    background: var(--btn-bg);
+    color: var(--text-main);
 }
 
 .edit-btn:hover {
-    background: #ded6ca;
+    background: var(--btn-bg-hover);
 }
 
 .delete-btn {
     background: transparent;
-    color: #b44;
+    color: var(--danger);
 }
 
 .delete-btn:hover {
@@ -296,13 +294,14 @@
     border-radius: 999px;
     font-size: 14px;
     font-weight: 600;
-    background: #f1ece2;
+    background: var(--pagination-bg);
     border: none;
     cursor: pointer;
+    color: var(--text-main);
 }
 
 .page-btn:hover:not(:disabled) {
-    background: #e6dfd3;
+    background: var(--pagination-hover);
 }
 
 .page-btn:disabled {
@@ -312,5 +311,5 @@
 
 .page-indicator {
     font-size: 14px;
-    color: #7a6f5c;
+    color: var(--text-muted);
 }

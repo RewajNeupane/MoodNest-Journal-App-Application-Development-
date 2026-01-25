@@ -1,5 +1,6 @@
 @page "/journal"
 @layout TestLayout
+@inject PinAuthService Auth
 
 @inject IJournalService JournalService
 @inject IJournalFilterService JournalFilterService
@@ -239,9 +240,17 @@
 
     protected override async Task OnInitializedAsync()
     {
+        // 🔐 Safety: redirect if not logged in
+        if (!Auth.IsUnlocked)
+        {
+            Nav.NavigateTo("/", replace: true);
+            return;
+        }
+
         await LoadCategories();
         await ApplyFilters(resetPage: true);
     }
+
 
     /* =======================
        LOAD CATEGORY OPTIONS
@@ -375,9 +384,9 @@
         var result = await JournalService.DeleteAsync(id);
         if (!result.Success) return;
 
-        FilteredEntries.RemoveAll(e => e.Id == id);
-        await ApplyFilters();
+        await ApplyFilters(resetPage: true);
     }
+
     
     private string WithEmoji(string mood)
     {

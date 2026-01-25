@@ -5,8 +5,9 @@
 .journal-editor-page {
     display: flex;
     height: 100vh;
-    background: #f7f3eb;
+    background: var(--bg-main);
     font-family: "Inter", system-ui, sans-serif;
+    color: var(--text-main);
 }
 
 /* ===============================
@@ -16,8 +17,8 @@
 .entry-sidebar {
     width: 320px;
     padding: 32px 24px;
-    background: #fbf8f2;
-    border-right: 1px solid #e7e0d6;
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border-soft);
     overflow-y: auto;
 }
 
@@ -26,7 +27,7 @@
     padding: 14px;
     border-radius: 999px;
     border: none;
-    background: #1c1c1c;
+    background: var(--btn-primary);
     color: #fff;
     font-weight: 600;
     margin-bottom: 28px;
@@ -40,13 +41,13 @@
 .entry-meta h4 {
     font-size: 12px;
     text-transform: uppercase;
-    color: #7a6f5c;
+    color: var(--text-muted);
     margin-bottom: 8px;
 }
 
 .meta-date {
     font-size: 14px;
-    color: #1c1c1c;
+    color: var(--text-strong);
 }
 
 .hint {
@@ -72,67 +73,58 @@
 }
 
 /* ===============================
-   INTERACTIVE PILLS (MOODS + TAGS)
+   INTERACTIVE PILLS
    =============================== */
 
 .pill {
     padding: 6px 12px;
     border-radius: 999px;
-    background: #eee7dc;
+    background: var(--pill-bg);
     font-size: 13px;
-
     cursor: pointer;
     user-select: none;
-
-    transition:
-            background-color 0.15s ease,
-            transform 0.08s ease,
-            opacity 0.15s ease;
+    transition: background-color 0.15s ease, transform 0.08s ease, opacity 0.15s ease;
 }
 
-/* Hover */
 .pill:hover {
-    background: #e2dbcf;
+    background: var(--pill-hover);
 }
 
-/* Active */
 .pill.active {
-    background: #d8cfc2;
+    background: var(--pill-active);
 }
 
-/* Press feedback */
 .pill:active {
     transform: scale(0.97);
 }
 
-/* Disabled (used when secondary mood limit reached) */
 .pill.disabled {
     opacity: 0.45;
     cursor: not-allowed;
 }
 
 .pill.disabled:hover {
-    background: #eee7dc;
+    background: var(--pill-bg);
 }
 
 /* ===============================
    FORM CONTROLS
    =============================== */
 
-.dropdown {
+.dropdown,
+.tag-input,
+.custom-category-input {
     width: 100%;
-    padding: 10px;
+    padding: 10px 12px;
     border-radius: 12px;
-    border: 1px solid #ddd5c9;
-    background: #f3eee5;
+    border: 1px solid var(--border-input);
+    background: var(--bg-soft);
+    font-size: 14px;
+    color: var(--text-main);
 }
 
 .tag-input {
     margin-top: 10px;
-    width: 100%;
-    padding: 10px;
-    border-radius: 12px;
-    border: 1px solid #ddd5c9;
 }
 
 .timestamps {
@@ -159,7 +151,6 @@
     background: transparent;
     border: none;
     outline: none;
-    min-height: 0;
 }
 
 /* ===============================
@@ -176,29 +167,25 @@
 .primary {
     padding: 14px 28px;
     border-radius: 999px;
-    background: #1c1c1c;
+    background: var(--btn-primary);
     color: #fff;
     border: none;
     cursor: pointer;
-
-    transition:
-            background-color 0.15s ease,
-            transform 0.1s ease,
-            box-shadow 0.1s ease;
+    transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
 }
 
 .primary:hover {
-    background: #2a2a2a;
+    background: var(--btn-primary-hover);
 }
 
 .primary:active {
-    background: #000;
+    background: var(--btn-primary-active);
     transform: translateY(1px);
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.25);
 }
 
 .primary:focus-visible {
-    outline: 2px solid #cfc7bb;
+    outline: 2px solid var(--focus-ring);
     outline-offset: 3px;
 }
 
@@ -207,19 +194,13 @@
     border-radius: 999px;
     border: 1px solid #e0caca;
     background: transparent;
-    color: #b44;
+    color: var(--danger);
     cursor: pointer;
 }
 
 /* ===============================
-   QUILL TOOLBAR OVERRIDE
+   QUILL TOOLBAR
    =============================== */
-
-.ql-toolbar.ql-snow {
-    border: none !important;
-    padding: 0 !important;
-    background: transparent !important;
-}
 
 .ql-toolbar {
     display: flex;
@@ -227,15 +208,9 @@
     gap: 12px;
     padding: 10px 14px;
     margin-bottom: 18px;
-    background: #fbf8f2;
-    border: 1px solid #e7e0d6;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-soft);
     border-radius: 14px;
-}
-
-.ql-toolbar .ql-formats {
-    display: flex;
-    gap: 6px;
-    margin-right: 8px;
 }
 
 .ql-toolbar button {
@@ -243,8 +218,7 @@
     height: 34px;
     border-radius: 8px;
     border: none;
-    background: transparent !important;
-    font-weight: 600;
+    background: transparent;
     cursor: pointer;
 }
 
@@ -254,12 +228,6 @@
 
 .ql-toolbar button.ql-active {
     background: rgba(0,0,0,0.12);
-}
-
-.ql-toolbar .ql-stroke,
-.ql-toolbar .ql-fill {
-    stroke: none !important;
-    fill: none !important;
 }
 
 .ql-editor h1 {
@@ -278,42 +246,53 @@
     color: #aaa;
     font-size: 16px;
 }
-.custom-category-input {
-    margin-top: 10px;
-    width: 100%;
-    padding: 10px 12px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    font-size: 14px;
-}
-/* Primary mood highlight */
+
+/* ===============================
+   MOOD STYLES
+   =============================== */
+
 .pill.primary {
-    background: #1c1c1c;
+    background: var(--btn-primary);
     color: #fff;
 }
 
-/* Secondary moods */
 .pill.secondary {
-    background: #d8cfc2;
+    background: var(--pill-active);
 }
 
-/* Disabled moods */
-.pill.disabled {
-    opacity: 0.4;
-    pointer-events: none;
-}
-
-/* Mood group labels */
 .mood-group {
     font-size: 12px;
     font-weight: 600;
     margin: 10px 0 6px;
     color: #6f6657;
 }
+
 .word-count {
     margin-top: 12px;
     font-size: 13px;
-    color: #7a6f5c;
+    color: var(--text-muted);
     text-align: right;
 }
+.dark .ql-toolbar .ql-stroke {
+    stroke: #e5e5e5 !important;
+}
 
+.dark .ql-toolbar .ql-fill {
+    fill: #e5e5e5 !important;
+}
+
+.dark .ql-toolbar button:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+.dark .ql-toolbar button.ql-active {
+    background: rgba(255,255,255,0.16);
+}
+.dark .editor-container {
+    background: linear-gradient(180deg, #0f0f0f, #121212);
+    box-shadow: inset 0 0 0 1px #1f1f1f;
+}
+
+.dark .editor-canvas {
+    color: #eaeaea;
+}

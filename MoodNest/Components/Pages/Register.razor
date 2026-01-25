@@ -1,0 +1,110 @@
+@page "/register"
+@using MoodNest.Data
+@using MoodNest.Entities
+@using MoodNest.Models
+@using Microsoft.AspNetCore.Components.Forms
+@layout TestLayout
+@using BCrypt.Net
+
+
+@inject NavigationManager Nav
+@inject AppDbContext Db
+
+<div class="pin-wrapper">
+
+<div class="pin-card">
+
+    <div class="pin-content">
+
+        <span class="pin-badge">SECURE ACCESS</span>
+
+        <h2 class="card-title">Create Your Journal</h2>
+        <p class="subtitle">
+            Set up your account and choose a secure 4-digit PIN.
+        </p>
+
+        <EditForm Model="@_model" OnValidSubmit="RegisterAsync">
+            <DataAnnotationsValidator />
+
+            <div class="input-group">
+                <label>Username</label>
+                <InputText class="pin-input"
+                           placeholder="Your name"
+                           @bind-Value="_model.Username" />
+            </div>
+
+            <div class="input-group">
+                <label>Email</label>
+                <InputText type="email"
+                           class="pin-input"
+                           placeholder="you@example.com"
+                           @bind-Value="_model.Email" />
+            </div>
+
+            <div class="input-group">
+                <label>PIN</label>
+                <InputText type="password"
+                           inputmode="numeric"
+                           maxlength="4"
+                           class="pin-input pin-center"
+                           placeholder="••••"
+                           @bind-Value="_model.Pin" />
+            </div>
+
+            <div class="input-group">
+                <label>Confirm PIN</label>
+                <InputText type="password"
+                           inputmode="numeric"
+                           maxlength="4"
+                           class="pin-input pin-center"
+                           placeholder="••••"
+                           @bind-Value="_model.ConfirmPin" />
+            </div>
+
+            <button type="submit" class="pin-btn">
+                Create Account
+            </button>
+        </EditForm>
+
+        <div class="pin-footer">
+            <span>Already have an account?</span>
+            <a @onclick="@(() => Nav.NavigateTo("/"))">Unlock</a>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+</div>
+
+@code {
+    private RegisterModel _model = new();
+
+    private async Task RegisterAsync()
+    {
+        if (_model.Pin != _model.ConfirmPin)
+            return;
+
+        var exists = Db.Users.Any(u =>
+            u.Email == _model.Email || u.Username == _model.Username);
+
+        if (exists)
+            return;
+
+        var user = new User
+        {
+            Username = _model.Username,
+            Email = _model.Email,
+            PinHash = BCrypt.HashPassword(_model.Pin),
+            CreatedAt = DateTime.UtcNow
+        };
+
+        Db.Users.Add(user);
+        await Db.SaveChangesAsync();
+
+        Nav.NavigateTo("/");
+    }
+
+}

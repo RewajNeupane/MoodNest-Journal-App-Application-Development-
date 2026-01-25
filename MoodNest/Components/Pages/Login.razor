@@ -12,9 +12,17 @@
         <h1>Unlock Your Journal</h1>
 
         <p class="lock-subtitle">
-            Your journal is private. Enter your PIN to continue.
+            Your journal is private. Enter your credentials to continue.
         </p>
 
+        <!-- Username / Email -->
+        <input class="text-input"
+               placeholder="Username or Email"
+               autofocus
+               @bind="identifier"
+               @bind:event="oninput" />
+
+        <!-- PIN -->
         <input type="password"
                maxlength="4"
                class="pin-input"
@@ -33,6 +41,11 @@
             Unlock
         </button>
 
+        <p class="register-link">
+            New here?
+            <a @onclick="GoToRegister">Create an account</a>
+        </p>
+
         <p class="lock-hint">
             Too many failed attempts will temporarily lock access.
         </p>
@@ -42,25 +55,45 @@
 </div>
 
 @code {
+    private string identifier = string.Empty; // username or email
     private string enteredPin = string.Empty;
     private string errorMessage = string.Empty;
 
+    protected override void OnInitialized()
+    {
+        Auth.Lock(); // always start locked
+    }
+
     private async Task VerifyPin()
     {
-        if (Auth.VerifyPin(enteredPin))
+        if (string.IsNullOrWhiteSpace(identifier) || string.IsNullOrWhiteSpace(enteredPin))
+        {
+            errorMessage = "Please enter your username/email and PIN.";
+            return;
+        }
+
+        if (Auth.VerifyPin(identifier, enteredPin))
         {
             errorMessage = string.Empty;
+            identifier = string.Empty;
             enteredPin = string.Empty;
 
-            Auth.Unlock();
             await Task.Yield();
-
             Nav.NavigateTo("/test", replace: true);
         }
         else
         {
-            errorMessage = "Incorrect PIN. Please try again.";
+            errorMessage = "Invalid credentials. Please try again.";
             enteredPin = string.Empty;
         }
+    }
+
+    private void GoToRegister()
+    {
+        identifier = string.Empty;
+        enteredPin = string.Empty;
+        errorMessage = string.Empty;
+
+        Nav.NavigateTo("/register");
     }
 }

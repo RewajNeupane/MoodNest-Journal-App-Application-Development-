@@ -1,0 +1,175 @@
+/* ===============================
+   LAYOUT
+   =============================== */
+
+.pin-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 80px);
+}
+
+/* ===============================
+   CARD
+   =============================== */
+
+.pin-card {
+    width: 380px;
+    padding: 2.4rem 2.2rem;
+    border-radius: 28px;
+    background: #fbf8f3;
+
+    border: 1px solid rgba(0,0,0,0.04);
+    box-shadow:
+            0 25px 60px rgba(122,111,92,0.18),
+            inset 0 1px 0 rgba(255,255,255,0.6);
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+/* Inner alignment rail */
+.pin-content {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===============================
+   HEADER
+   =============================== */
+
+.pin-badge {
+    align-self: center;
+    padding: 6px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    border-radius: 999px;
+
+    background: rgba(122,111,92,0.12);
+    color: #6b604d;
+
+    margin-bottom: 18px;
+}
+
+.card-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 650;
+    margin-bottom: 6px;
+    color: #1c1c1c;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: #5f5a50;
+    margin-bottom: 22px;
+    line-height: 1.5;
+}
+
+/* ===============================
+   INPUTS
+   =============================== */
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 14px;
+}
+
+.input-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b604d;
+    margin-bottom: 6px;
+}
+
+.pin-input {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 14px;
+
+    border: none;
+    background: #f1ede6;
+
+    font-size: 14px;
+    color: #1c1c1c;
+
+    box-shadow:
+            inset 0 1px 2px rgba(0,0,0,0.06),
+            inset 0 -1px 0 rgba(255,255,255,0.5);
+
+    outline: none;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pin-input:focus {
+    background: #f6f2ea;
+    box-shadow:
+            inset 0 1px 2px rgba(0,0,0,0.08),
+            0 0 0 2px rgba(122,111,92,0.25);
+}
+
+/* PIN emphasis */
+.pin-center {
+    text-align: center;
+    letter-spacing: 12px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.pin-center::placeholder {
+    letter-spacing: 6px;
+    opacity: 0.6;
+}
+
+/* ===============================
+   BUTTON
+   =============================== */
+
+.pin-btn {
+    width: 100%;
+    margin-top: 22px;
+    padding: 15px;
+    border-radius: 999px;
+    border: none;
+
+    background: #1c1c1c;
+    color: #fff;
+
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pin-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.18);
+}
+
+/* ===============================
+   FOOTER
+   =============================== */
+
+.pin-footer {
+    margin-top: 22px;
+    font-size: 13px;
+    color: #5f5a50;
+    text-align: center;
+}
+
+.pin-footer a {
+    margin-left: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #1c1c1c;
+    text-decoration: none;
+}
+
+.pin-footer a:hover {
+    text-decoration: underline;
+}

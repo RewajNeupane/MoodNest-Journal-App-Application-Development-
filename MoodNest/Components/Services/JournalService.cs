@@ -7,7 +7,6 @@ using MoodNest.Common;
 using MoodNest.Data;
 using MoodNest.Entities;
 using MoodNest.Components.Model;
-
 using System.Text.RegularExpressions;
 
 namespace MoodNest.Components.Services;
@@ -15,9 +14,25 @@ namespace MoodNest.Components.Services;
 public class JournalService : IJournalService
 {
     private readonly AppDbContext _context;
+    private readonly PinAuthService _auth;
 
-    // Expression-bodied constructor (PDF style)
-    public JournalService(AppDbContext context) => _context = context;
+    public JournalService(AppDbContext context, PinAuthService auth)
+    {
+        _context = context;
+        _auth = auth;
+    }
+
+    /* =======================
+       AUTH GUARD
+    ======================== */
+
+    private int RequireUser()
+    {
+        if (_auth.CurrentUserId == null)
+            throw new InvalidOperationException("User not authenticated");
+
+        return _auth.CurrentUserId.Value;
+    }
 
     /* =======================
        CREATE
@@ -27,8 +42,12 @@ public class JournalService : IJournalService
     {
         try
         {
+            int userId = RequireUser();
+
             var entity = new JournalEntry
             {
+                UserId = userId,
+
                 Title = model.Title,
                 ContentHtml = model.ContentHtml,
                 PrimaryMood = model.PrimaryMood,
@@ -58,8 +77,10 @@ public class JournalService : IJournalService
     {
         try
         {
+            int userId = RequireUser();
+
             var entity = await _context.JournalEntries
-                .FirstOrDefaultAsync(e => e.Id == id);
+                .FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId);
 
             if (entity == null)
                 return ServiceResult<bool>.FailureResult("Journal entry not found");
@@ -90,8 +111,10 @@ public class JournalService : IJournalService
     {
         try
         {
+            int userId = RequireUser();
+
             var entity = await _context.JournalEntries
-                .FirstOrDefaultAsync(e => e.Id == id);
+                .FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId);
 
             if (entity == null)
                 return ServiceResult<JournalEntryViewModel>
@@ -125,8 +148,10 @@ public class JournalService : IJournalService
     {
         try
         {
+            int userId = RequireUser();
+
             var entity = await _context.JournalEntries
-                .FirstOrDefaultAsync(e => e.Id == id);
+                .FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId);
 
             if (entity == null)
                 return ServiceResult<bool>.FailureResult("Journal entry not found");
@@ -143,33 +168,28 @@ public class JournalService : IJournalService
     }
 
     /* =======================
-       GET ALL (LIST PAGE)
+       GET ALL
     ======================== */
-
-/* =======================
-   GET ALL (LIST PAGE)
-======================== */
 
     public async Task<ServiceResult<List<JournalEntryDisplayModel>>> GetAllAsync()
     {
         try
         {
+            int userId = RequireUser();
+
             var entries = await _context.JournalEntries
+                .Where(e => e.UserId == userId)
                 .OrderByDescending(e => e.CreatedAt)
                 .Select(e => new JournalEntryDisplayModel
                 {
                     Id = e.Id,
                     Title = e.Title,
-
-                    // Moods & metadata
                     PrimaryMood = e.PrimaryMood,
                     SecondaryMoods = e.SecondaryMoods,
                     Category = e.Category,
                     Tags = e.Tags,
-
-                    // Date parts (NO string slicing in UI)
                     Day = e.CreatedAt.Day,
-                    Month = e.CreatedAt.ToString("MMMM"), // January, February, etc.
+                    Month = e.CreatedAt.ToString("MMMM"),
                     Year = e.CreatedAt.Year
                 })
                 .ToListAsync();
@@ -183,14 +203,20 @@ public class JournalService : IJournalService
                 .FailureResult(ex.Message);
         }
     }
+
+    /* =======================
+       TODAY
+    ======================== */
+
     public async Task<ServiceResult<JournalEntryDisplayModel?>> GetTodayAsync()
     {
         try
         {
+            int userId = RequireUser();
             var today = DateTime.Today;
 
             var entry = await _context.JournalEntries
-                .Where(e => e.CreatedAt.Date == today)
+                .Where(e => e.UserId == userId && e.CreatedAt.Date == today)
                 .Select(e => new JournalEntryDisplayModel
                 {
                     Id = e.Id,
@@ -212,203 +238,142 @@ public class JournalService : IJournalService
             return ServiceResult<JournalEntryDisplayModel?>.FailureResult(ex.Message);
         }
     }
-    public async Task<ServiceResult<JournalStatsModel>> GetJournalStatsAsync()
-{
-    try
-    {
-        var entries = await _context.JournalEntries
-            .OrderBy(e => e.CreatedAt)
-            .ToListAsync();
 
-        if (!entries.Any())
+    /* =======================
+       STATS / ANALYTICS
+    ======================== */
+
+    public async Task<ServiceResult<JournalStatsModel>> GetJournalStatsAsync()
+    {
+        try
         {
+            int userId = RequireUser();
+
+            var entries = await _context.JournalEntries
+                .Where(e => e.UserId == userId)
+                .OrderBy(e => e.CreatedAt)
+                .ToListAsync();
+
+            if (!entries.Any())
+                return ServiceResult<JournalStatsModel>.SuccessResult(new JournalStatsModel());
+
+            var dates = entries
+                .Select(e => e.CreatedAt.Date)
+                .Distinct()
+                .OrderBy(d => d)
+                .ToList();
+
+            int longest = 1;
+            int temp = 1;
+            int current = 0;
+
+            for (int i = 1; i < dates.Count; i++)
+            {
+                if ((dates[i] - dates[i - 1]).Days == 1)
+                {
+                    temp++;
+                    longest = Math.Max(longest, temp);
+                }
+                else temp = 1;
+            }
+
+            if (dates.Last() == DateTime.Today)
+                current = temp;
+
+            int totalDays = (DateTime.Today - dates.First()).Days + 1;
+            int missed = totalDays - dates.Count;
+
+            string NormalizeMood(string mood)
+            {
+                if (string.IsNullOrWhiteSpace(mood)) return mood;
+                var parts = mood.Split(' ');
+                return parts.Length > 1 ? parts[1] : parts[0];
+            }
+
+            var moods = entries.Select(e => NormalizeMood(e.PrimaryMood)).ToList();
+
+            var moodCounts = moods
+                .GroupBy(m => m)
+                .OrderByDescending(g => g.Count())
+                .ToList();
+
+            int positive = moods.Count(m => new[] { "Happy", "Excited", "Relaxed", "Grateful", "Confident" }.Contains(m));
+            int neutral  = moods.Count(m => new[] { "Calm", "Thoughtful", "Curious", "Nostalgic", "Bored" }.Contains(m));
+            int negative = moods.Count - positive - neutral;
+
+            int total = moods.Count;
+
             return ServiceResult<JournalStatsModel>.SuccessResult(
-                new JournalStatsModel()
+                new JournalStatsModel
+                {
+                    CurrentStreak = current,
+                    LongestStreak = longest,
+                    MissedDays = Math.Max(0, missed),
+                    MostFrequentMood = moodCounts.First().Key,
+                    PositivePercentage = (int)Math.Round((double)positive / total * 100),
+                    NeutralPercentage  = (int)Math.Round((double)neutral  / total * 100),
+                    NegativePercentage = (int)Math.Round((double)negative / total * 100)
+                }
             );
         }
-
-        /* =======================
-           STREAK LOGIC (UNCHANGED)
-        ======================== */
-
-        var dates = entries
-            .Select(e => e.CreatedAt.Date)
-            .Distinct()
-            .OrderBy(d => d)
-            .ToList();
-
-        int longest = 1;
-        int current = 0;
-        int temp = 1;
-
-        for (int i = 1; i < dates.Count; i++)
+        catch (Exception ex)
         {
-            if ((dates[i] - dates[i - 1]).Days == 1)
-            {
-                temp++;
-                longest = Math.Max(longest, temp);
-            }
-            else
-            {
-                temp = 1;
-            }
+            return ServiceResult<JournalStatsModel>.FailureResult(ex.Message);
         }
-
-        if (dates.Last() == DateTime.Today)
-            current = temp;
-
-        int totalDays =
-            (DateTime.Today - dates.First()).Days + 1;
-
-        int missed = totalDays - dates.Count;
-
-        /* =======================
-           MOOD ANALYTICS (FIXED)
-        ======================== */
-
-        // Normalize mood (remove emoji if present)
-        string NormalizeMood(string mood)
-        {
-            if (string.IsNullOrWhiteSpace(mood))
-                return mood;
-
-            var parts = mood.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            return parts.Length > 1 ? parts[1] : parts[0];
-        }
-
-        var normalizedMoods = entries
-            .Select(e => NormalizeMood(e.PrimaryMood))
-            .ToList();
-
-        // Most frequent mood
-        var moodCounts = normalizedMoods
-            .GroupBy(m => m)
-            .Select(g => new
-            {
-                Mood = g.Key,
-                Count = g.Count()
-            })
-            .OrderByDescending(g => g.Count)
-            .ToList();
-
-        string? mostFrequentMood = moodCounts.First().Mood;
-
-        // Mood breakdown
-        int positive = 0;
-        int neutral = 0;
-        int negative = 0;
-
-        foreach (var mood in normalizedMoods)
-        {
-            switch (mood)
-            {
-                case "Happy":
-                case "Excited":
-                case "Relaxed":
-                case "Grateful":
-                case "Confident":
-                    positive++;
-                    break;
-
-                case "Calm":
-                case "Thoughtful":
-                case "Curious":
-                case "Nostalgic":
-                case "Bored":
-                    neutral++;
-                    break;
-
-                default:
-                    negative++;
-                    break;
-            }
-        }
-
-        int total = normalizedMoods.Count;
-
-        return ServiceResult<JournalStatsModel>.SuccessResult(
-            new JournalStatsModel
-            {
-                CurrentStreak = current,
-                LongestStreak = longest,
-                MissedDays = Math.Max(0, missed),
-
-                MostFrequentMood = mostFrequentMood,
-
-                PositivePercentage = (int)Math.Round((double)positive / total * 100),
-                NeutralPercentage  = (int)Math.Round((double)neutral  / total * 100),
-                NegativePercentage = (int)Math.Round((double)negative / total * 100)
-            }
-        );
     }
-    catch (Exception ex)
-    {
-        return ServiceResult<JournalStatsModel>
-            .FailureResult(ex.Message);
-    }
-}
+
+    /* =======================
+       TAGS / WORDS / EXPORT
+    ======================== */
+
     public async Task<List<TagStatModel>> GetTagStatsAsync()
     {
-        var entries = await _context.JournalEntries.ToListAsync();
+        int userId = RequireUser();
+
+        var entries = await _context.JournalEntries
+            .Where(e => e.UserId == userId)
+            .ToListAsync();
 
         return entries
             .Where(e => !string.IsNullOrWhiteSpace(e.Tags))
             .SelectMany(e => e.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries))
             .Select(t => t.Trim())
             .GroupBy(t => t)
-            .Select(g => new TagStatModel
-            {
-                Tag = g.Key,
-                Count = g.Count()
-            })
+            .Select(g => new TagStatModel { Tag = g.Key, Count = g.Count() })
             .OrderByDescending(g => g.Count)
             .ToList();
     }
 
     public async Task<List<WordTrendModel>> GetWordTrendsAsync()
     {
+        int userId = RequireUser();
+
         var entries = await _context.JournalEntries
+            .Where(e => e.UserId == userId)
             .OrderBy(e => e.CreatedAt)
             .ToListAsync();
 
-        return entries
-            .Select(e => new WordTrendModel
-            {
-                Date = e.CreatedAt.Date,
-                WordCount = string.IsNullOrWhiteSpace(e.ContentHtml)
-                    ? 0
-                    : StripHtml(e.ContentHtml).Split(' ', StringSplitOptions.RemoveEmptyEntries).Length
-            })
-            .ToList();
+        return entries.Select(e => new WordTrendModel
+        {
+            Date = e.CreatedAt.Date,
+            WordCount = string.IsNullOrWhiteSpace(e.ContentHtml)
+                ? 0
+                : StripHtml(e.ContentHtml).Split(' ', StringSplitOptions.RemoveEmptyEntries).Length
+        }).ToList();
     }
 
-    
+    private static string StripHtml(string html) =>
+        Regex.Replace(html ?? "", "<.*?>", string.Empty);
 
-    
-
-    private static string StripHtml(string html)
+    public async Task<List<JournalEntry>> GetEntriesBetweenAsync(DateTime from, DateTime to)
     {
-        if (string.IsNullOrWhiteSpace(html))
-            return string.Empty;
+        int userId = RequireUser();
 
-        return Regex.Replace(html, "<.*?>", string.Empty);
-    }
-    
-    public async Task<List<JournalEntry>> GetEntriesBetweenAsync(
-        DateTime from,
-        DateTime to)
-    {
         return await _context.JournalEntries
-            .Where(e => e.CreatedAt.Date >= from.Date &&
+            .Where(e => e.UserId == userId &&
+                        e.CreatedAt.Date >= from.Date &&
                         e.CreatedAt.Date <= to.Date)
             .OrderBy(e => e.CreatedAt)
             .ToListAsync();
     }
-
-
-
-    
-    
-
-    
 }

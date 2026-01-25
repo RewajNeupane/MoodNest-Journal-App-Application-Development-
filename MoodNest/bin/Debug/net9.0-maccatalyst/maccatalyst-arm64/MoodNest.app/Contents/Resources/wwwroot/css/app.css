@@ -1,6 +1,33 @@
 ﻿/* =========================
    THEME VARIABLES
    ========================= */
+:root {
+    --bg-main: #f7f3eb;
+    --bg-panel: #fbf8f2;
+    --bg-soft: #f3eee5;
+
+    --text-main: #1c1c1c;
+    --text-strong: #1c1c1c;
+    --text-muted: #7a6f5c;
+
+    --border-soft: #e7e0d6;
+    --border-input: #ddd5c9;
+
+    --pill-bg: #eee7dc;
+    --pill-hover: #e2dbcf;
+    --pill-active: #d8cfc2;
+
+    --btn-primary: #1c1c1c;
+    --btn-primary-hover: #2a2a2a;
+    --btn-primary-active: #000;
+
+    --danger: #b44;
+    --focus-ring: #cfc7bb;
+    
+    --btn-primary-text: #ffffff;
+}
+
+
 
 .light-theme {
     --bg-main: #f6f1e9;
@@ -26,6 +53,21 @@
     --text-main: #f1f1f1;
     --text-muted: #b5b5b5;
     --text-strong: #ffffff;
+    
+    --pill-bg: #2a2a2a;
+    --pill-hover: #333;
+    --pill-primary-bg: #333333;
+    --pill-active: #3a3a3a;
+
+    --btn-primary: #ffffff;
+    --btn-primary-hover: #e5e5e5;
+    --btn-primary-active: #ccc;
+    --btn-bg: #2a2a2a;
+    --btn-bg-hover: #333333;
+    --focus-ring: #555;
+    
+    --btn-primary-text: #000000;
+    --danger: #ff6b6b;
 
     --border-soft: #333;
 }

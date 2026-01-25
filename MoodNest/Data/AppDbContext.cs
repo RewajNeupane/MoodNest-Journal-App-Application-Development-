@@ -11,4 +11,7 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<JournalEntry> JournalEntries => Set<JournalEntry>();
+    
+    public DbSet<User> Users => Set<User>();
+
 }

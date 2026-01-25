@@ -34,15 +34,20 @@
 </ErrorBoundary>
 
 @code {
-
     private async Task HandleNavigationAsync(NavigationContext context)
     {
-        // Safety guard
         if (string.IsNullOrWhiteSpace(context.Path))
             return;
 
-        // 🔐 PIN lock logic preserved
-        if (!Auth.IsUnlocked && context.Path != "/")
+        // Normalize path (VERY IMPORTANT)
+        var path = "/" + context.Path.TrimStart('/');
+
+        // ✅ Always allow login & register
+        if (path == "/" || path.StartsWith("/register"))
+            return;
+
+        // 🔐 Block everything else if locked
+        if (!Auth.IsUnlocked)
         {
             Nav.NavigateTo("/", replace: true);
             return;
