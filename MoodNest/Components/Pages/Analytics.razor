@@ -109,7 +109,7 @@
                     @foreach (var tag in TagStats.Take(6))
                     {
                         <span class="tag">
-                            #@tag.Tag
+                            @tag.Tag
                             <small>@tag.Count</small>
                         </span>
                     }
@@ -120,7 +120,7 @@
                     @foreach (var tag in TagStats.Take(6))
                     {
                         <div class="tag-bar-row">
-                            <span class="tag-name">#@tag.Tag</span>
+                            <span class="tag-name">@tag.Tag</span>
                             <div class="tag-bar">
                                 <div class="tag-fill"
                                      style="width:@(tag.Count * 15)%"></div>

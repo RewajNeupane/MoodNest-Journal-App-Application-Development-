@@ -5,8 +5,9 @@
 .layout-root {
     display: flex;
     height: 100vh;
-    overflow: hidden;            /* 🔒 lock global scroll */
-    background: #f7f4ee;
+    overflow: hidden;
+    background: var(--bg-main);
+    color: var(--text-main);
     font-family: "Inter", system-ui, sans-serif;
 }
 
@@ -16,8 +17,8 @@
 
 .sidebar {
     width: 320px;
-    background: #f3eee3;
-    border-right: 1px solid #e0d8c8;
+    background: var(--bg-soft);
+    border-right: 1px solid var(--border-soft);
     display: flex;
     flex-direction: column;
 }
@@ -30,7 +31,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    background: #f7f4ee;
+    background: var(--bg-main);
 }
 
 /* ===============================
@@ -42,21 +43,28 @@
     justify-content: space-between;
     align-items: center;
     padding: 20px 40px;
+    background: var(--bg-main);
 }
 
 .page-title {
     font-size: 18px;
     font-weight: 600;
+    color: var(--text-strong);
 }
 
 /* Header buttons */
 .icon-btn {
-    background: #fdfcf9;
-    border: 1px solid #e6e1d8;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-soft);
     border-radius: 999px;
     padding: 10px 14px;
     cursor: pointer;
     margin-left: 10px;
+    color: var(--text-main);
+}
+
+.icon-btn:hover {
+    background: var(--bg-hover);
 }
 
 /* ===============================
@@ -66,7 +74,8 @@
 .content-area {
     flex: 1;
     padding: 40px 60px;
-    overflow-y: auto;            /* ✅ scroll only content */
+    overflow-y: auto;
+    background: var(--bg-main);
 }
 
 /* ===============================
@@ -76,7 +85,8 @@
 .footer {
     padding: 16px;
     font-size: 13px;
-    color: #777;
+    color: var(--text-muted);
     text-align: center;
-    border-top: 1px solid #e6e1d8;
+    border-top: 1px solid var(--border-soft);
+    background: var(--bg-main);
 }

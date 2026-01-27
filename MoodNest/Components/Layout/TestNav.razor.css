@@ -14,13 +14,14 @@
 
 .brand {
     padding: 22px 20px;
-    border-bottom: 1px solid #e0d8c8;
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--bg-soft);
 }
 
 .brand-title {
     font-size: 20px;
     font-weight: 600;
-    color: #1f1f1f;
+    color: var(--text-strong);
 }
 
 /* ===============================
@@ -50,19 +51,20 @@
     font-size: 1.05rem;
     font-weight: 500;
 
-    color: #2a2a2a;
+    color: var(--text-main);
     text-decoration: none;
 
-    transition: background 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* Hover */
 ::deep .nav-link:hover {
-    background: rgba(0, 0, 0, 0.05);
+    background: var(--bg-hover);
 }
 
 /* Active */
 ::deep .nav-link.active {
-    background: rgba(0, 0, 0, 0.08);
+    background: var(--bg-active);
     font-weight: 600;
+    color: var(--text-strong);
 }
