@@ -1,28 +1,41 @@
 @page "/"
 @layout TestLayout
+
 @inject NavigationManager Nav
 @inject MoodNest.Components.Services.PinAuthService Auth
+
+<!-- ===============================
+     LOCK SCREEN / AUTHENTICATION
+     =============================== -->
 
 <div class="lock-screen">
 
     <div class="lock-card">
 
+        <!-- Security Badge -->
         <span class="lock-badge">Secure Access</span>
 
+        <!-- Page Title -->
         <h1>Unlock Your Journal</h1>
 
+        <!-- Subtitle -->
         <p class="lock-subtitle">
             Your journal is private. Enter your credentials to continue.
         </p>
 
-        <!-- Username / Email -->
+        <!-- ===============================
+             USER IDENTIFIER INPUT
+             Accepts username or email
+             =============================== -->
         <input class="text-input"
                placeholder="Username or Email"
                autofocus
                @bind="identifier"
                @bind:event="oninput" />
 
-        <!-- PIN -->
+        <!-- ===============================
+             PIN INPUT
+             =============================== -->
         <input type="password"
                maxlength="4"
                class="pin-input"
@@ -30,6 +43,9 @@
                @bind="enteredPin"
                @bind:event="oninput" />
 
+        <!-- ===============================
+             ERROR MESSAGE
+             =============================== -->
         @if (!string.IsNullOrEmpty(errorMessage))
         {
             <div class="error-message">
@@ -37,15 +53,18 @@
             </div>
         }
 
+        <!-- Unlock Button -->
         <button class="unlock-btn" @onclick="VerifyPin">
             Unlock
         </button>
 
+        <!-- Registration Link -->
         <p class="register-link">
             New here?
             <a @onclick="GoToRegister">Create an account</a>
         </p>
 
+        <!-- Security Hint -->
         <p class="lock-hint">
             Too many failed attempts will temporarily lock access.
         </p>
@@ -55,39 +74,88 @@
 </div>
 
 @code {
-    private string identifier = string.Empty; // username or email
+
+    /* ===============================
+       STATE
+       =============================== */
+
+    /// <summary>
+    /// Username or email entered by the user.
+    /// </summary>
+    private string identifier = string.Empty;
+
+    /// <summary>
+    /// PIN entered by the user.
+    /// </summary>
     private string enteredPin = string.Empty;
+
+    /// <summary>
+    /// Error message displayed on authentication failure.
+    /// </summary>
     private string errorMessage = string.Empty;
 
+    /* ===============================
+       LIFECYCLE
+       =============================== */
+
+    /// <summary>
+    /// Ensures the application starts in a locked state
+    /// whenever the lock screen is loaded.
+    /// </summary>
     protected override void OnInitialized()
     {
-        Auth.Lock(); // always start locked
+        Auth.Lock();
     }
 
+    /* ===============================
+       AUTHENTICATION
+       =============================== */
+
+    /// <summary>
+    /// Verifies the entered PIN against the stored credentials.
+    /// Unlocks the application on success or displays
+    /// an error message on failure.
+    /// </summary>
     private async Task VerifyPin()
     {
-        if (string.IsNullOrWhiteSpace(identifier) || string.IsNullOrWhiteSpace(enteredPin))
+        // Validate required input
+        if (string.IsNullOrWhiteSpace(identifier) ||
+            string.IsNullOrWhiteSpace(enteredPin))
         {
             errorMessage = "Please enter your username/email and PIN.";
             return;
         }
 
+        // Attempt authentication
         if (Auth.VerifyPin(identifier, enteredPin))
         {
+            // Clear sensitive data on success
             errorMessage = string.Empty;
             identifier = string.Empty;
             enteredPin = string.Empty;
 
+            // Yield to UI thread before navigation
             await Task.Yield();
+
+            // Navigate to home/dashboard
             Nav.NavigateTo("/test", replace: true);
         }
         else
         {
+            // Handle invalid credentials
             errorMessage = "Invalid credentials. Please try again.";
             enteredPin = string.Empty;
         }
     }
 
+    /* ===============================
+       NAVIGATION
+       =============================== */
+
+    /// <summary>
+    /// Redirects the user to the registration page
+    /// and clears any entered authentication data.
+    /// </summary>
     private void GoToRegister()
     {
         identifier = string.Empty;

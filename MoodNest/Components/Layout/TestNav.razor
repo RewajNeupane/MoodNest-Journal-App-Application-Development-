@@ -1,40 +1,49 @@
 <div class="nav-root">
 
-    <!-- BRAND -->
+    <!-- ===============================
+         APPLICATION BRANDING
+         =============================== -->
     <div class="brand">
         <span class="brand-title">MoodNest</span>
     </div>
 
-    <!-- NAV LINKS -->
+    <!-- ===============================
+         PRIMARY NAVIGATION MENU
+         =============================== -->
     <nav class="nav-menu">
 
-        <NavLink class="nav-link" href="test" Match="NavLinkMatch.All">
+        <!-- Home / Dashboard -->
+        <NavLink class="nav-link"
+                 href="test"
+                 Match="NavLinkMatch.All">
             🏠 Home
         </NavLink>
 
+        <!-- Create or edit today's journal entry -->
         <NavLink class="nav-link" href="journaltoday">
             ✍️ Journal Entry
         </NavLink>
+
+        <!-- View personal journal history -->
         <NavLink class="nav-link" href="journal">
             📔 Journal
         </NavLink>
 
+        <!-- Calendar-based journal navigation -->
         <NavLink class="nav-link" href="calendar">
             📅 Calendar
         </NavLink>
-        
+
+        <!-- Publicly shared journal entries -->
         <NavLink class="nav-link" href="shared">
             📖 Shared Journals
         </NavLink>
-        
+
+        <!-- Application settings and preferences -->
         <NavLink class="nav-link" href="settings">
             ⚙️ Settings
         </NavLink>
-        
-        
-        
-        
-        
+
     </nav>
 
 </div>

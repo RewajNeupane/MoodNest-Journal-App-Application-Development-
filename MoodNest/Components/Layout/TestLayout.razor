@@ -1,45 +1,68 @@
 @inherits LayoutComponentBase
+
 @inject ThemeService Theme
 @inject MoodNest.Components.Services.PinAuthService Auth
 @inject NavigationManager Nav
 
+<!--
+    Root layout container.
+    Applies dynamic theme class (light / dark) to the entire application.
+-->
 <div class="@Theme.CssClass layout-root">
 
-    <!-- SIDEBAR -->
+    <!-- ===============================
+         SIDEBAR NAVIGATION
+         =============================== -->
     <aside class="sidebar">
+        <!-- Reusable navigation component -->
         <TestNav />
     </aside>
 
-    <!-- MAIN CONTENT -->
+    <!-- ===============================
+         MAIN LAYOUT AREA
+         =============================== -->
     <div class="layout-main">
 
-        <!-- HEADER -->
+        <!-- ===============================
+             TOP HEADER BAR
+             =============================== -->
         <header class="topbar">
+
+            <!-- Left section (reserved for page titles / breadcrumbs) -->
             <div class="topbar-left">
                 <span class="page-title"></span>
             </div>
 
+            <!-- Right section (actions & controls) -->
             <div class="topbar-right">
+
+                <!-- Theme toggle button -->
                 <button class="icon-btn"
                         title="Toggle theme"
                         @onclick="ToggleTheme">
                     @(Theme.IsDark ? "☀️" : "🌙")
                 </button>
 
+                <!-- Lock application button -->
                 <button class="icon-btn"
                         title="Lock"
                         @onclick="LockApp">
                     🔒
                 </button>
             </div>
+
         </header>
 
-        <!-- PAGE CONTENT -->
+        <!-- ===============================
+             PAGE CONTENT PLACEHOLDER
+             =============================== -->
         <main class="content-area">
             @Body
         </main>
 
-        <!-- FOOTER -->
+        <!-- ===============================
+             FOOTER
+             =============================== -->
         <footer class="footer">
             <p>© 2025 MoodNest · CS6004 Application Development</p>
         </footer>
@@ -49,16 +72,24 @@
 </div>
 
 @code {
+
+    /// <summary>
+    /// Toggles between light and dark themes.
+    /// Triggers a UI refresh to immediately apply the theme change.
+    /// </summary>
     private void ToggleTheme()
     {
         Theme.Toggle();
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Locks the application by clearing authentication state
+    /// and redirecting the user to the lock screen.
+    /// </summary>
     private void LockApp()
     {
         Auth.Lock();
         Nav.NavigateTo("/", replace: true);
     }
-    
 }

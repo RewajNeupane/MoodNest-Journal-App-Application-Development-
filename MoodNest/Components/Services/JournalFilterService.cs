@@ -5,16 +5,23 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MoodNest.Common;
 using MoodNest.Data;
-using MoodNest.Entities;
 using MoodNest.Components.Model;
 
 namespace MoodNest.Components.Services;
 
+/// <summary>
+/// Service responsible for filtering and retrieving journal entries
+/// based on search criteria such as text, date range, moods, tags, and category.
+/// </summary>
 public class JournalFilterService : IJournalFilterService
 {
     private readonly AppDbContext _context;
     private readonly PinAuthService _auth;
 
+    /// <summary>
+    /// Initializes the filter service with database context
+    /// and authentication service.
+    /// </summary>
     public JournalFilterService(AppDbContext context, PinAuthService auth)
     {
         _context = context;
@@ -22,9 +29,13 @@ public class JournalFilterService : IJournalFilterService
     }
 
     /* =======================
-       AUTH GUARD
-    ======================== */
+       AUTHENTICATION GUARD
+       ======================= */
 
+    /// <summary>
+    /// Ensures that a user is authenticated and returns the user ID.
+    /// Throws an exception if no user is logged in.
+    /// </summary>
     private int RequireUser()
     {
         if (_auth.CurrentUserId == null)
@@ -33,6 +44,10 @@ public class JournalFilterService : IJournalFilterService
         return _auth.CurrentUserId.Value;
     }
 
+    /// <summary>
+    /// Retrieves a filtered list of journal entries for the authenticated user
+    /// based on the provided filter criteria.
+    /// </summary>
     public async Task<ServiceResult<List<JournalEntryDisplayModel>>>
         GetFilteredAsync(JournalFilterModel filter)
     {
@@ -40,14 +55,14 @@ public class JournalFilterService : IJournalFilterService
         {
             int userId = RequireUser();
 
-            // 🔐 USER-SCOPED QUERY (CRITICAL FIX)
+            // 🔐 User-scoped base query (prevents data leakage)
             var query = _context.JournalEntries
                 .Where(e => e.UserId == userId)
                 .AsQueryable();
 
             /* =======================
-               SEARCH (TITLE + CONTENT)
-            ======================== */
+               TEXT SEARCH (TITLE + CONTENT)
+               ======================= */
 
             if (!string.IsNullOrWhiteSpace(filter.SearchText))
             {
@@ -60,8 +75,8 @@ public class JournalFilterService : IJournalFilterService
             }
 
             /* =======================
-               DATE RANGE
-            ======================== */
+               DATE RANGE FILTERING
+               ======================= */
 
             if (filter.FromDate.HasValue)
                 query = query.Where(e => e.CreatedAt.Date >= filter.FromDate.Value.Date);
@@ -70,8 +85,8 @@ public class JournalFilterService : IJournalFilterService
                 query = query.Where(e => e.CreatedAt.Date <= filter.ToDate.Value.Date);
 
             /* =======================
-               CATEGORY
-            ======================== */
+               CATEGORY FILTER
+               ======================= */
 
             if (!string.IsNullOrWhiteSpace(filter.Category))
             {
@@ -79,8 +94,8 @@ public class JournalFilterService : IJournalFilterService
             }
 
             /* =======================
-               MOODS (PRIMARY + SECONDARY)
-            ======================== */
+               MOOD FILTER (PRIMARY + SECONDARY)
+               ======================= */
 
             if (filter.Moods.Any())
             {
@@ -93,8 +108,8 @@ public class JournalFilterService : IJournalFilterService
             }
 
             /* =======================
-               TAGS
-            ======================== */
+               TAG FILTER
+               ======================= */
 
             if (filter.Tags.Any())
             {
@@ -106,8 +121,8 @@ public class JournalFilterService : IJournalFilterService
             }
 
             /* =======================
-               PROJECTION
-            ======================== */
+               PROJECTION TO DISPLAY MODEL
+               ======================= */
 
             var result = await query
                 .OrderByDescending(e => e.CreatedAt)
@@ -130,6 +145,7 @@ public class JournalFilterService : IJournalFilterService
         }
         catch (Exception ex)
         {
+            // Return controlled failure instead of throwing to the UI
             return ServiceResult<List<JournalEntryDisplayModel>>
                 .FailureResult(ex.Message);
         }

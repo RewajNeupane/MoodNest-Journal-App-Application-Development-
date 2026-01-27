@@ -3,52 +3,73 @@
 
 @inject IJournalService JournalService
 
+<!-- ===============================
+     ANALYTICS PAGE WRAPPER
+     =============================== -->
 <div class="analytics-page">
 
+    <!-- PAGE HEADER -->
     <div class="analytics-header">
         <h2>📊 Analytics & Insights</h2>
-        <p class="subtitle">Your mood patterns, writing habits, and trends</p>
+        <p class="subtitle">
+            Visual summary of mood patterns, writing consistency,
+            and journaling trends.
+        </p>
     </div>
 
-    <!-- TOP SUMMARY ROW -->
+    <!-- ===============================
+         TOP SUMMARY SECTION
+         =============================== -->
     <div class="analytics-grid three">
 
-        <!-- MOST FREQUENT MOOD -->
+        <!-- MOST FREQUENT MOOD CARD -->
         <div class="analytics-card center">
             <h5>Most Frequent Mood</h5>
             <div class="emoji">😊</div>
             <div class="big-value">@Stats.MostFrequentMood</div>
         </div>
 
-        <!-- MOOD DISTRIBUTION (PIE + BAR) -->
+        <!-- MOOD DISTRIBUTION CARD -->
         <div class="analytics-card">
             <h5>Mood Distribution</h5>
 
-            <!-- PIE CHART -->
+            <!-- PIE CHART (CSS-BASED) -->
             <div class="pie-wrapper">
                 <div class="pie-chart"
                      style="
                         background:
                         conic-gradient(
                             #7da87b 0% @Stats.PositivePercentage%,
-                            #c4b79c @Stats.PositivePercentage% @(Stats.PositivePercentage + Stats.NeutralPercentage)%,
+                            #c4b79c @Stats.PositivePercentage%
+                                     @(Stats.PositivePercentage + Stats.NeutralPercentage)%,
                             #c27c7c @(Stats.PositivePercentage + Stats.NeutralPercentage)% 100%
                         );
                      ">
                 </div>
 
+                <!-- PIE LEGEND -->
                 <div class="pie-legend">
-                    <div><span class="dot positive"></span> Positive @Stats.PositivePercentage%</div>
-                    <div><span class="dot neutral"></span> Neutral @Stats.NeutralPercentage%</div>
-                    <div><span class="dot negative"></span> Negative @Stats.NegativePercentage%</div>
+                    <div>
+                        <span class="dot positive"></span>
+                        Positive @Stats.PositivePercentage%
+                    </div>
+                    <div>
+                        <span class="dot neutral"></span>
+                        Neutral @Stats.NeutralPercentage%
+                    </div>
+                    <div>
+                        <span class="dot negative"></span>
+                        Negative @Stats.NegativePercentage%
+                    </div>
                 </div>
             </div>
 
-            <!-- BAR CHART -->
+            <!-- BAR REPRESENTATION -->
             <div class="progress-row">
                 <span>Positive</span>
                 <div class="progress">
-                    <div class="fill positive" style="width:@Stats.PositivePercentage%">
+                    <div class="fill positive"
+                         style="width:@Stats.PositivePercentage%">
                         @Stats.PositivePercentage%
                     </div>
                 </div>
@@ -57,7 +78,8 @@
             <div class="progress-row">
                 <span>Neutral</span>
                 <div class="progress">
-                    <div class="fill neutral" style="width:@Stats.NeutralPercentage%">
+                    <div class="fill neutral"
+                         style="width:@Stats.NeutralPercentage%">
                         @Stats.NeutralPercentage%
                     </div>
                 </div>
@@ -66,14 +88,15 @@
             <div class="progress-row">
                 <span>Negative</span>
                 <div class="progress">
-                    <div class="fill negative" style="width:@Stats.NegativePercentage%">
+                    <div class="fill negative"
+                         style="width:@Stats.NegativePercentage%">
                         @Stats.NegativePercentage%
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- WRITING CONSISTENCY -->
+        <!-- WRITING STREAKS CARD -->
         <div class="analytics-card center">
             <h5>Writing Consistency</h5>
 
@@ -91,10 +114,12 @@
 
     </div>
 
-    <!-- SECOND ROW -->
+    <!-- ===============================
+         SECONDARY ANALYTICS SECTION
+         =============================== -->
     <div class="analytics-grid two">
 
-        <!-- MOST USED TAGS -->
+        <!-- TAG ANALYTICS -->
         <div class="analytics-card">
             <h5>🏷️ Most Used Tags</h5>
 
@@ -104,7 +129,7 @@
             }
             else
             {
-                <!-- WORD CLOUD -->
+                <!-- TAG CLOUD -->
                 <div class="tag-cloud">
                     @foreach (var tag in TagStats.Take(6))
                     {
@@ -115,7 +140,7 @@
                     }
                 </div>
 
-                <!-- BAR CHART -->
+                <!-- TAG FREQUENCY BARS -->
                 <div class="tag-bars">
                     @foreach (var tag in TagStats.Take(6))
                     {
@@ -152,10 +177,21 @@
 </div>
 
 @code {
+    // ===============================
+    // STATE
+    // ===============================
+
     private JournalStatsModel Stats = new();
     private List<TagStatModel> TagStats = new();
     private List<WordTrendModel> WordTrends = new();
 
+    // ===============================
+    // LIFECYCLE
+    // ===============================
+
+    /// <summary>
+    /// Loads all analytics data when the page is initialized.
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         var statsResult = await JournalService.GetJournalStatsAsync();

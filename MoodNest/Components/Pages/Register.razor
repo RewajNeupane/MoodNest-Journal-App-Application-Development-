@@ -1,98 +1,132 @@
 @page "/register"
+@layout TestLayout
+
 @using MoodNest.Data
 @using MoodNest.Entities
 @using MoodNest.Models
-@using Microsoft.AspNetCore.Components.Forms
-@layout TestLayout
 @using BCrypt.Net
-
 
 @inject NavigationManager Nav
 @inject AppDbContext Db
 
+<!-- ===============================
+     USER REGISTRATION PAGE
+     =============================== -->
+
 <div class="pin-wrapper">
 
-<div class="pin-card">
+    <div class="pin-card">
 
-    <div class="pin-content">
+        <div class="pin-content">
 
-        <span class="pin-badge">SECURE ACCESS</span>
+            <!-- Security Badge -->
+            <span class="pin-badge">SECURE ACCESS</span>
 
-        <h2 class="card-title">Create Your Journal</h2>
-        <p class="subtitle">
-            Set up your account and choose a secure 4-digit PIN.
-        </p>
+            <!-- Page Title -->
+            <h2 class="card-title">Create Your Journal</h2>
 
-        <EditForm Model="@_model" OnValidSubmit="RegisterAsync">
-            <DataAnnotationsValidator />
+            <!-- Subtitle -->
+            <p class="subtitle">
+                Set up your account and choose a secure 4-digit PIN.
+            </p>
 
-            <div class="input-group">
-                <label>Username</label>
-                <InputText class="pin-input"
-                           placeholder="Your name"
-                           @bind-Value="_model.Username" />
+            <!-- ===============================
+                 REGISTRATION FORM
+                 =============================== -->
+            <EditForm Model="@_model" OnValidSubmit="RegisterAsync">
+                <DataAnnotationsValidator />
+
+                <!-- USERNAME -->
+                <div class="input-group">
+                    <label>Username</label>
+                    <InputText class="pin-input"
+                               placeholder="Your name"
+                               @bind-Value="_model.Username" />
+                </div>
+
+                <!-- EMAIL -->
+                <div class="input-group">
+                    <label>Email</label>
+                    <InputText type="email"
+                               class="pin-input"
+                               placeholder="you@example.com"
+                               @bind-Value="_model.Email" />
+                </div>
+
+                <!-- PIN -->
+                <div class="input-group">
+                    <label>PIN</label>
+                    <InputText type="password"
+                               inputmode="numeric"
+                               maxlength="4"
+                               class="pin-input pin-center"
+                               placeholder="••••"
+                               @bind-Value="_model.Pin" />
+                </div>
+
+                <!-- CONFIRM PIN -->
+                <div class="input-group">
+                    <label>Confirm PIN</label>
+                    <InputText type="password"
+                               inputmode="numeric"
+                               maxlength="4"
+                               class="pin-input pin-center"
+                               placeholder="••••"
+                               @bind-Value="_model.ConfirmPin" />
+                </div>
+
+                <!-- SUBMIT BUTTON -->
+                <button type="submit" class="pin-btn">
+                    Create Account
+                </button>
+            </EditForm>
+
+            <!-- FOOTER NAVIGATION -->
+            <div class="pin-footer">
+                <span>Already have an account?</span>
+                <a @onclick="@(() => Nav.NavigateTo("/"))">Unlock</a>
             </div>
 
-            <div class="input-group">
-                <label>Email</label>
-                <InputText type="email"
-                           class="pin-input"
-                           placeholder="you@example.com"
-                           @bind-Value="_model.Email" />
-            </div>
-
-            <div class="input-group">
-                <label>PIN</label>
-                <InputText type="password"
-                           inputmode="numeric"
-                           maxlength="4"
-                           class="pin-input pin-center"
-                           placeholder="••••"
-                           @bind-Value="_model.Pin" />
-            </div>
-
-            <div class="input-group">
-                <label>Confirm PIN</label>
-                <InputText type="password"
-                           inputmode="numeric"
-                           maxlength="4"
-                           class="pin-input pin-center"
-                           placeholder="••••"
-                           @bind-Value="_model.ConfirmPin" />
-            </div>
-
-            <button type="submit" class="pin-btn">
-                Create Account
-            </button>
-        </EditForm>
-
-        <div class="pin-footer">
-            <span>Already have an account?</span>
-            <a @onclick="@(() => Nav.NavigateTo("/"))">Unlock</a>
         </div>
 
     </div>
 
 </div>
 
-
-
-</div>
-
 @code {
+
+    /* ===============================
+       STATE
+       =============================== */
+
+    /// <summary>
+    /// Registration form model bound to user input.
+    /// Validation rules are enforced via DataAnnotations.
+    /// </summary>
     private RegisterModel _model = new();
 
+    /* ===============================
+       REGISTRATION LOGIC
+       =============================== */
+
+    /// <summary>
+    /// Handles user registration by validating uniqueness,
+    /// hashing the PIN, and persisting the user to the database.
+    /// </summary>
     private async Task RegisterAsync()
     {
+        // Extra safety check (already enforced by validation)
         if (_model.Pin != _model.ConfirmPin)
             return;
 
+        // Prevent duplicate users by username or email
         var exists = Db.Users.Any(u =>
             u.Email == _model.Email || u.Username == _model.Username);
 
         if (exists)
             return;
 
+        // Create new user entity with hashed PIN
         var user = new User
         {
             Username = _model.Username,
@@ -101,10 +135,11 @@
             CreatedAt = DateTime.UtcNow
         };
 
+        // Persist user to database
         Db.Users.Add(user);
         await Db.SaveChangesAsync();
 
+        // Redirect to lock screen after successful registration
         Nav.NavigateTo("/");
     }
-
 }

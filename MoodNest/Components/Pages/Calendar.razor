@@ -1,46 +1,55 @@
 @page "/calendar"
 @layout TestLayout
-@inject PinAuthService Auth
 
+@inject PinAuthService Auth
 @inject ICalendarService CalendarService
 @inject NavigationManager Nav
 
+<!-- ===============================
+     CALENDAR PAGE
+     =============================== -->
 <div class="calendar-page">
 
-    <!-- CALENDAR CARD -->
+    <!-- ===============================
+         MONTH VIEW CALENDAR CARD
+         =============================== -->
     <div class="calendar-card tall-calendar">
 
+        <!-- MONTH NAVIGATION HEADER -->
         <div class="calendar-header">
             <span class="arrow" @onclick="PrevMonth">‹</span>
             <h3>@CurrentMonthName @CurrentYear</h3>
             <span class="arrow" @onclick="NextMonth">›</span>
         </div>
 
+        <!-- WEEKDAY LABELS -->
         <div class="weekdays">
             <span>S</span><span>M</span><span>T</span>
             <span>W</span><span>T</span><span>F</span><span>S</span>
         </div>
 
+        <!-- CALENDAR GRID -->
         <div class="days">
             @foreach (var day in CalendarDays)
             {
+                <!-- Placeholder cells for alignment -->
                 if (day.Date == DateTime.MinValue)
                 {
                     <div class="day empty"></div>
                 }
                 else
                 {
+                    <!-- Individual day cell -->
                     <div class="day
                         @(day.HasEntry ? "has-entry" : "")
                         @(day.IsToday ? "today" : "")
                         @(!day.HasEntry && !day.IsToday ? "disabled" : "")"
                          @onclick="() => OpenDay(day)">
 
-
-                        
-
+                        <!-- Day number -->
                         @day.Date.Day
 
+                        <!-- Mood indicator dot -->
                         @if (!string.IsNullOrEmpty(day.MoodType))
                         {
                             <span class="calendar-dot @day.MoodType"></span>
@@ -50,6 +59,7 @@
             }
         </div>
 
+        <!-- MOOD LEGEND -->
         <div class="legend">
             <div class="legend-item">
                 <span class="legend-dot positive"></span> Positive
@@ -62,22 +72,30 @@
             </div>
         </div>
 
-        <p class="hint">Click a date to view or write a journal entry</p>
+        <p class="hint">
+            Click a date to view or write a journal entry
+        </p>
     </div>
 
-    <!-- YEAR CARD -->
+    <!-- ===============================
+         YEAR SUMMARY CARD
+         =============================== -->
     <div class="year-card">
         <h2>@CurrentYear</h2>
         <div class="year-image">
             <img src="/images/flower.png" alt="Year illustration" />
         </div>
-        <p class="year-caption">Year overview of journal entries</p>
+        <p class="year-caption">
+            Year overview of journal entries
+        </p>
     </div>
 
-    <!-- RIGHT COLUMN -->
+    <!-- ===============================
+         RIGHT SIDEBAR
+         =============================== -->
     <div class="right-column">
 
-        <!-- TODAY CARD -->
+        <!-- TODAY STATUS CARD -->
         <div class="today-card">
             <div class="today-header">
                 <div class="today-icon">📅</div>
@@ -86,15 +104,20 @@
 
             <div class="today-status">
                 <span class="status-dot @(TodayEntry != null ? "positive" : "negative")"></span>
-                @(TodayEntry != null ? "Today’s entry written" : "Today’s entry not written")
+                @(TodayEntry != null
+                    ? "Today’s entry written"
+                    : "Today’s entry not written")
             </div>
 
+            <!-- Shortcut to today’s journal -->
             <button class="today-btn" @onclick="GoToToday">
-                ✍️ @(TodayEntry != null ? "Edit Today’s Entry" : "Write Today’s Entry")
+                ✍️ @(TodayEntry != null
+                    ? "Edit Today’s Entry"
+                    : "Write Today’s Entry")
             </button>
         </div>
 
-        <!-- MISSED DAYS -->
+        <!-- MISSED DAYS CARD -->
         <div class="missed-card">
             <div class="missed-header">
                 <div class="missed-icon">📆</div>
@@ -123,19 +146,47 @@
 
 @code {
 
+    // ===============================
+    // STATE
+    // ===============================
+
+    /// <summary>
+    /// Collection representing the 6×7 calendar grid.
+    /// Includes placeholder cells for alignment.
+    /// </summary>
     private List<CalendarDayModel> CalendarDays = new();
+
+    /// <summary>
+    /// Journal entry corresponding to today, if it exists.
+    /// </summary>
     private CalendarDayModel? TodayEntry;
+
+    /// <summary>
+    /// List of past dates in the current month
+    /// where no journal entry was written.
+    /// </summary>
     private List<DateTime> MissedDays = new();
 
     private int CurrentYear = DateTime.Today.Year;
     private int CurrentMonth = DateTime.Today.Month;
 
+    /// <summary>
+    /// Display-friendly month name (e.g., January).
+    /// </summary>
     private string CurrentMonthName =>
         new DateTime(CurrentYear, CurrentMonth, 1).ToString("MMMM");
 
+    // ===============================
+    // LIFECYCLE
+    // ===============================
+
+    /// <summary>
+    /// Ensures authentication and loads
+    /// calendar data on page initialization.
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        // 🔐 AUTH GUARD (VERY IMPORTANT)
+        // 🔐 Authentication guard
         if (!Auth.IsUnlocked)
         {
             Nav.NavigateTo("/", replace: true);
@@ -146,7 +197,14 @@
         await LoadCalendar();
     }
 
+    // ===============================
+    // DATA LOADING
+    // ===============================
 
+    /// <summary>
+    /// Builds the monthly calendar grid and
+    /// calculates missed days.
+    /// </summary>
     private async Task LoadCalendar()
     {
         CalendarDays.Clear();
@@ -157,7 +215,7 @@
 
         var monthData = await CalendarService.GetMonthAsync(CurrentYear, CurrentMonth);
 
-        // 🔹 Leading empty cells
+        // Leading placeholder cells
         for (int i = 0; i < startOffset; i++)
         {
             CalendarDays.Add(new CalendarDayModel
@@ -166,7 +224,7 @@
             });
         }
 
-        // 🔹 Actual days
+        // Actual calendar days
         for (int d = 1; d <= daysInMonth; d++)
         {
             var date = new DateTime(CurrentYear, CurrentMonth, d);
@@ -182,7 +240,7 @@
             });
         }
 
-        // 🔹 Trailing empty cells → always reach 42
+        // Trailing placeholders to maintain 42 cells
         while (CalendarDays.Count < 42)
         {
             CalendarDays.Add(new CalendarDayModel
@@ -191,7 +249,7 @@
             });
         }
 
-        // 🔹 Missed days (only past days in current month)
+        // Identify missed days (past only)
         MissedDays = CalendarDays
             .Where(d =>
                 d.Date != DateTime.MinValue &&
@@ -203,6 +261,9 @@
             .ToList();
     }
 
+    /// <summary>
+    /// Loads today's journal entry, if present.
+    /// </summary>
     private async Task LoadToday()
     {
         var todayMonth = await CalendarService.GetMonthAsync(
@@ -213,31 +274,42 @@
             d.Date.Date == DateTime.Today && d.HasEntry);
     }
 
+    // ===============================
+    // NAVIGATION LOGIC
+    // ===============================
+
+    /// <summary>
+    /// Handles calendar day clicks:
+    /// - Opens journal detail if entry exists
+    /// - Opens editor if today has no entry
+    /// - Ignores past empty dates
+    /// </summary>
     private void OpenDay(CalendarDayModel day)
     {
-        // 🚫 Ignore empty placeholder cells
+        // Ignore placeholder cells
         if (day.Date == DateTime.MinValue)
             return;
 
-        // ✅ If entry exists → open journal detail
+        // Entry exists → open detail view
         if (day.HasEntry && day.JournalId.HasValue)
         {
             Nav.NavigateTo($"/journal/{day.JournalId.Value}");
             return;
         }
 
-        // ✅ If today and NO entry → open editor
+        // Today with no entry → open editor
         if (day.IsToday)
         {
             Nav.NavigateTo("/journaltoday");
             return;
         }
 
-        // 🚫 Past date with no entry → do nothing
+        // Past date with no entry → do nothing
     }
 
-
-
+    /// <summary>
+    /// Navigates to today's journal entry or editor.
+    /// </summary>
     private void GoToToday()
     {
         if (TodayEntry != null)
@@ -246,6 +318,9 @@
             Nav.NavigateTo("/journaltoday");
     }
 
+    /// <summary>
+    /// Navigates to the previous month.
+    /// </summary>
     private async Task PrevMonth()
     {
         if (--CurrentMonth == 0)
@@ -256,6 +331,9 @@
         await LoadCalendar();
     }
 
+    /// <summary>
+    /// Navigates to the next month.
+    /// </summary>
     private async Task NextMonth()
     {
         if (++CurrentMonth == 13)

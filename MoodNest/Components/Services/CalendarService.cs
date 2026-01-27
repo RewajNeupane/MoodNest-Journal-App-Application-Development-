@@ -6,17 +6,29 @@ using Microsoft.EntityFrameworkCore;
 using MoodNest.Data;
 using MoodNest.Components.Services;
 
+/// <summary>
+/// Service responsible for providing calendar-related data
+/// such as monthly entries, today status, and missed days.
+/// </summary>
 public class CalendarService : ICalendarService
 {
     private readonly AppDbContext _context;
     private readonly PinAuthService _auth;
 
+    /// <summary>
+    /// Initializes the calendar service with database context
+    /// and authentication service.
+    /// </summary>
     public CalendarService(AppDbContext context, PinAuthService auth)
     {
         _context = context;
         _auth = auth;
     }
 
+    /// <summary>
+    /// Ensures a user is authenticated and returns the user ID.
+    /// Throws an exception if the user is not logged in.
+    /// </summary>
     private int RequireUser()
     {
         if (_auth.CurrentUserId == null)
@@ -25,6 +37,10 @@ public class CalendarService : ICalendarService
         return _auth.CurrentUserId.Value;
     }
 
+    /// <summary>
+    /// Returns calendar data for a specific month, including
+    /// entry presence, mood type, and journal ID.
+    /// </summary>
     public async Task<List<CalendarDayModel>> GetMonthAsync(int year, int month)
     {
         int userId = RequireUser();
@@ -32,6 +48,7 @@ public class CalendarService : ICalendarService
         var start = new DateTime(year, month, 1);
         var end = start.AddMonths(1);
 
+        // Fetch all journal entries for the given month
         var entries = await _context.JournalEntries
             .Where(e =>
                 e.UserId == userId &&
@@ -44,6 +61,7 @@ public class CalendarService : ICalendarService
 
         var result = new List<CalendarDayModel>();
 
+        // Build calendar day models
         for (int d = 1; d <= daysInMonth; d++)
         {
             var date = new DateTime(year, month, d);
@@ -64,6 +82,10 @@ public class CalendarService : ICalendarService
         return result;
     }
 
+    /// <summary>
+    /// Checks whether the authenticated user has already
+    /// written a journal entry today.
+    /// </summary>
     public async Task<bool> HasTodayEntryAsync()
     {
         int userId = RequireUser();
@@ -75,6 +97,10 @@ public class CalendarService : ICalendarService
                 e.CreatedAt.Date == today);
     }
 
+    /// <summary>
+    /// Returns a list of past dates in the given month
+    /// where no journal entry was written.
+    /// </summary>
     public async Task<List<DateTime>> GetMissedDaysAsync(int year, int month)
     {
         int userId = RequireUser();
@@ -83,6 +109,7 @@ public class CalendarService : ICalendarService
         var start = new DateTime(year, month, 1);
         var end = start.AddMonths(1);
 
+        // Fetch all entry dates for the month
         var entries = await _context.JournalEntries
             .Where(e =>
                 e.UserId == userId &&
@@ -93,6 +120,7 @@ public class CalendarService : ICalendarService
 
         var missed = new List<DateTime>();
 
+        // Identify days before today without entries
         for (var d = start; d < end && d < today; d = d.AddDays(1))
         {
             if (!entries.Contains(d))
@@ -102,6 +130,10 @@ public class CalendarService : ICalendarService
         return missed;
     }
 
+    /// <summary>
+    /// Maps a primary mood string to a simplified
+    /// mood category for UI visualization.
+    /// </summary>
     private string ResolveMoodType(string mood)
     {
         return mood switch

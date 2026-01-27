@@ -5,36 +5,45 @@
 @inject JournalPdfExportService PdfService
 @inject IJournalService JournalService
 
+<!-- ===============================
+     SETTINGS PAGE
+     =============================== -->
+
 <div class="settings-page">
 
+    <!-- PAGE HEADER -->
     <div class="settings-header">
         <h2>Settings</h2>
         <p class="subtitle">Customize your experience & manage your data</p>
     </div>
 
     <!-- ===============================
-         PROFILE
+         PROFILE SETTINGS
          =============================== -->
-
     <section class="settings-card">
         <h3>Profile</h3>
 
         <div class="security-grid">
+
+            <!-- USERNAME -->
             <div class="security-field">
                 <label>Username</label>
                 <input @bind="Username" />
             </div>
 
+            <!-- EMAIL -->
             <div class="security-field">
                 <label>Email</label>
                 <input type="email" @bind="Email" />
             </div>
 
+            <!-- SAVE PROFILE -->
             <button class="primary-btn" @onclick="SaveProfile">
                 Save Changes
             </button>
         </div>
 
+        <!-- PROFILE FEEDBACK MESSAGE -->
         @if (!string.IsNullOrEmpty(profileMessage))
         {
             <p class="security-hint">@profileMessage</p>
@@ -42,28 +51,32 @@
     </section>
 
     <!-- ===============================
-         SECURITY / PIN
+         SECURITY / PIN SETTINGS
          =============================== -->
-
     <section class="settings-card">
         <h3>Security</h3>
 
         <div class="security-grid">
+
+            <!-- CURRENT PIN -->
             <div class="security-field">
                 <label>Current PIN</label>
                 <input type="password" maxlength="4" @bind="currentPin" />
             </div>
 
+            <!-- NEW PIN -->
             <div class="security-field">
                 <label>New PIN</label>
                 <input type="password" maxlength="4" @bind="newPin" />
             </div>
 
+            <!-- CHANGE PIN -->
             <button class="primary-btn" @onclick="ChangePin">
                 Change PIN
             </button>
         </div>
 
+        <!-- PIN FEEDBACK MESSAGE -->
         @if (!string.IsNullOrEmpty(pinMessage))
         {
             <p class="security-hint">@pinMessage</p>
@@ -71,28 +84,32 @@
     </section>
 
     <!-- ===============================
-         EXPORT
+         EXPORT SETTINGS
          =============================== -->
-
     <section class="settings-card">
         <h3>Export Journals</h3>
 
         <div class="export-grid">
+
+            <!-- DATE RANGE: FROM -->
             <div class="export-field">
                 <label>From</label>
                 <input type="date" @bind="ExportFrom" />
             </div>
 
+            <!-- DATE RANGE: TO -->
             <div class="export-field">
                 <label>To</label>
                 <input type="date" @bind="ExportTo" />
             </div>
 
+            <!-- EXPORT BUTTON -->
             <button class="export-btn" @onclick="ExportPdf">
                 Export as PDF
             </button>
         </div>
 
+        <!-- EXPORT FEEDBACK MESSAGE -->
         @if (!string.IsNullOrEmpty(exportMessage))
         {
             <p class="export-hint">@exportMessage</p>
@@ -104,13 +121,27 @@
 @code {
 
     /* =======================
-       PROFILE
-    ======================== */
+       PROFILE STATE
+       ======================== */
 
+    /// <summary>
+    /// Editable username field.
+    /// </summary>
     private string Username = "";
+
+    /// <summary>
+    /// Editable email field.
+    /// </summary>
     private string Email = "";
+
+    /// <summary>
+    /// Feedback message for profile updates.
+    /// </summary>
     private string? profileMessage;
 
+    /// <summary>
+    /// Initializes profile data from the authenticated user.
+    /// </summary>
     protected override void OnInitialized()
     {
         var user = Auth.GetCurrentUser();
@@ -120,6 +151,9 @@
         Email = user.Email;
     }
 
+    /// <summary>
+    /// Saves updated profile information via the authentication service.
+    /// </summary>
     private void SaveProfile()
     {
         if (string.IsNullOrWhiteSpace(Username) ||
@@ -136,13 +170,27 @@
     }
 
     /* =======================
-       PIN
-    ======================== */
+       PIN MANAGEMENT
+       ======================== */
 
+    /// <summary>
+    /// Current PIN entered by the user.
+    /// </summary>
     private string currentPin = "";
+
+    /// <summary>
+    /// New PIN to replace the existing one.
+    /// </summary>
     private string newPin = "";
+
+    /// <summary>
+    /// Feedback message for PIN changes.
+    /// </summary>
     private string? pinMessage;
 
+    /// <summary>
+    /// Updates the user's PIN after validation.
+    /// </summary>
     private void ChangePin()
     {
         if (newPin.Length != 4)
@@ -164,13 +212,27 @@
     }
 
     /* =======================
-       EXPORT
-    ======================== */
+       EXPORT FUNCTIONALITY
+       ======================== */
 
+    /// <summary>
+    /// Start date for journal export.
+    /// </summary>
     private DateTime? ExportFrom;
+
+    /// <summary>
+    /// End date for journal export.
+    /// </summary>
     private DateTime? ExportTo;
+
+    /// <summary>
+    /// Feedback message for export operations.
+    /// </summary>
     private string? exportMessage;
 
+    /// <summary>
+    /// Exports journal entries within the selected date range as a PDF.
+    /// </summary>
     private async Task ExportPdf()
     {
         if (!ExportFrom.HasValue || !ExportTo.HasValue)

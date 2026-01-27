@@ -3,34 +3,42 @@
 @inject NavigationManager Nav
 @inject IJournalService JournalService
 
+<!-- ===============================
+     DASHBOARD PAGE
+     =============================== -->
 
 <div class="dashboard">
 
-    <!-- LEFT: STATS & ANALYTICS -->
+    <!-- ===============================
+         LEFT SECTION: STATISTICS & ANALYTICS
+         =============================== -->
     <div class="stats-grid">
 
+        <!-- CURRENT STREAK -->
         <div class="stat-card">
             <h4>🔥 Current Streak</h4>
             <p class="stat-value">@Stats.CurrentStreak Days</p>
         </div>
 
+        <!-- LONGEST STREAK -->
         <div class="stat-card">
             <h4>🏆 Longest Streak</h4>
             <p class="stat-value">@Stats.LongestStreak Days</p>
         </div>
 
+        <!-- MISSED DAYS -->
         <div class="stat-card">
             <h4>❌ Missed Days</h4>
             <p class="stat-value">@Stats.MissedDays</p>
         </div>
 
+        <!-- MOST FREQUENT MOOD -->
         <div class="stat-card">
             <h4>😊 Most Frequent Mood</h4>
             <p class="stat-value">@Stats.MostFrequentMood</p>
         </div>
 
-
-        <!-- QUICK ANALYTICS -->
+        <!-- MOOD DISTRIBUTION SUMMARY -->
         <div class="stat-card wide">
             <h4>📊 Mood Breakdown</h4>
 
@@ -50,28 +58,34 @@
             </ul>
         </div>
 
-
     </div>
 
-    <!-- RIGHT: HERO + SHORTCUTS -->
+    <!-- ===============================
+         RIGHT SECTION: HERO & QUICK ACTIONS
+         =============================== -->
     <div class="dashboard-hero">
 
+        <!-- PAGE BADGE -->
         <span class="badge">Dashboard</span>
 
+        <!-- HERO IMAGE -->
         <img src="images/sunflower.png"
              alt="Sunflower"
              class="hero-image" />
 
+        <!-- HERO HEADING -->
         <h1>
             Reflect on your <br />
             <span>thoughts & moods</span>
         </h1>
 
+        <!-- INTRODUCTORY DESCRIPTION -->
         <p class="subtitle">
             A simple daily habit to understand yourself better,
             track emotional patterns, and grow mindfully over time.
         </p>
 
+        <!-- QUICK NAVIGATION ACTIONS -->
         <div class="quick-actions">
             <button class="primary" @onclick="GoToToday">
                 ✍️ Today’s Entry
@@ -91,8 +105,23 @@
 </div>
 
 @code {
+
+    /* =======================
+       STATE
+       ======================== */
+
+    /// <summary>
+    /// Aggregated journal statistics for the dashboard.
+    /// </summary>
     private JournalStatsModel Stats = new();
 
+    /* =======================
+       LIFECYCLE
+       ======================== */
+
+    /// <summary>
+    /// Loads dashboard statistics on page initialization.
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         var result = await JournalService.GetJournalStatsAsync();
@@ -102,8 +131,22 @@
         }
     }
 
+    /* =======================
+       NAVIGATION ACTIONS
+       ======================== */
+
+    /// <summary>
+    /// Navigates to today's journal editor.
+    /// </summary>
     void GoToToday() => Nav.NavigateTo("/journaltoday");
+
+    /// <summary>
+    /// Navigates to the calendar view.
+    /// </summary>
     void GoToCalendar() => Nav.NavigateTo("/calendar");
+
+    /// <summary>
+    /// Navigates to the analytics page.
+    /// </summary>
     void GoToAnalytics() => Nav.NavigateTo("/analytics");
 }
-

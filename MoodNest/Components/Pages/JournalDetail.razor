@@ -1,49 +1,72 @@
 @page "/journal/{Id:int}"
 @layout TestLayout
-@using MoodNest.Components.Services
 
+@using MoodNest.Components.Services
 @inject IJournalService JournalService
+
+<!-- ===============================
+     JOURNAL DETAIL PAGE
+     =============================== -->
 
 @if (_model == null)
 {
+    <!-- Fallback message when entry is not found -->
     <p class="not-found">Journal entry not found.</p>
 }
 else
 {
     <div class="journal-detail-page">
 
+        <!-- ===============================
+             PAGE HEADER
+             =============================== -->
         <header class="detail-header">
+
+            <!-- Journal title -->
             <h1>@(_model.Title ?? "Untitled Entry")</h1>
 
+            <!-- Metadata row -->
             <div class="meta-row">
                 <span class="date">@_createdAtText</span>
                 <span class="pill primary">@_model.PrimaryMood</span>
             </div>
         </header>
 
+        <!-- ===============================
+             INFORMATION GRID
+             =============================== -->
         <section class="info-grid">
 
+            <!-- MOODS BLOCK -->
             <div class="info-block">
                 <h4>Moods</h4>
                 <div class="pill-group">
-                    <span class="pill primary">@WithEmoji(_model.PrimaryMood)</span>
 
+                    <!-- Primary mood -->
+                    <span class="pill primary">
+                        @WithEmoji(_model.PrimaryMood)
+                    </span>
+
+                    <!-- Secondary moods -->
                     @if (!string.IsNullOrWhiteSpace(_model.SecondaryMoods))
                     {
                         @foreach (var mood in _model.SecondaryMoods.Split(','))
                         {
-                            <span class="pill">@WithEmoji(mood)</span>
+                            <span class="pill">
+                                @WithEmoji(mood)
+                            </span>
                         }
                     }
-
                 </div>
             </div>
 
+            <!-- CATEGORY BLOCK -->
             <div class="info-block">
                 <h4>Category</h4>
                 <p>@_model.Category</p>
             </div>
 
+            <!-- TAGS BLOCK -->
             <div class="info-block">
                 <h4>Tags</h4>
                 <div class="tag-group">
@@ -61,6 +84,7 @@ else
                 </div>
             </div>
 
+            <!-- TIMELINE BLOCK -->
             <div class="info-block">
                 <h4>Timeline</h4>
                 <p>
@@ -71,6 +95,9 @@ else
 
         </section>
 
+        <!-- ===============================
+             JOURNAL CONTENT
+             =============================== -->
         <article class="journal-content">
             @((MarkupString)_model.ContentHtml)
         </article>
@@ -79,7 +106,15 @@ else
 }
 
 @code {
-    
+
+    // ===============================
+    // MOOD EMOJI MAP
+    // ===============================
+
+    /// <summary>
+    /// Maps mood labels to corresponding emoji icons
+    /// for improved visual readability.
+    /// </summary>
     private readonly Dictionary<string, string> MoodEmojis = new()
     {
         ["Happy"] = "😊",
@@ -101,6 +136,10 @@ else
         ["Anxious"] = "😬"
     };
 
+    /// <summary>
+    /// Returns a mood label prefixed with its emoji,
+    /// if a matching mapping exists.
+    /// </summary>
     private string WithEmoji(string mood)
     {
         if (string.IsNullOrWhiteSpace(mood))
@@ -111,14 +150,43 @@ else
             : mood;
     }
 
+    // ===============================
+    // ROUTE PARAMETERS
+    // ===============================
 
-    [Parameter] public int Id { get; set; }
+    /// <summary>
+    /// Journal entry identifier passed via route.
+    /// </summary>
+    [Parameter]
+    public int Id { get; set; }
 
+    // ===============================
+    // STATE
+    // ===============================
+
+    /// <summary>
+    /// View model containing full journal entry details.
+    /// </summary>
     private JournalEntryViewModel? _model;
 
+    /// <summary>
+    /// Formatted creation date string.
+    /// </summary>
     private string _createdAtText = string.Empty;
+
+    /// <summary>
+    /// Formatted update date string.
+    /// </summary>
     private string _updatedAtText = string.Empty;
 
+    // ===============================
+    // LIFECYCLE
+    // ===============================
+
+    /// <summary>
+    /// Loads the journal entry corresponding to the
+    /// provided route identifier.
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         var result = await JournalService.GetByIdAsync(Id);
@@ -128,7 +196,10 @@ else
 
         _model = result.Data;
 
-        _createdAtText = _model.CreatedAt.ToString("dddd, MMMM dd yyyy");
-        _updatedAtText = _model.UpdatedAt.ToString("dddd, MMMM dd yyyy");
+        _createdAtText = _model.CreatedAt
+            .ToString("dddd, MMMM dd yyyy");
+
+        _updatedAtText = _model.UpdatedAt
+            .ToString("dddd, MMMM dd yyyy");
     }
 }
