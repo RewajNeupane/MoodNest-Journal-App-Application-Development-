@@ -1,0 +1,133 @@
+@page "/shared/{Id:int}"
+@layout TestLayout
+
+@inject IJournalService JournalService
+
+@if (_model == null)
+{
+    <p class="not-found">Journal entry not found or is private.</p>
+}
+else
+{
+    <div class="journal-detail-page">
+
+        <header class="detail-header">
+            <h1>@(_model.Title ?? "Untitled Entry")</h1>
+
+            <div class="meta-row">
+                <span class="date">@_createdAtText</span>
+                <span class="pill primary">@WithEmoji(_model.PrimaryMood)</span>
+                <span class="author">by @_author</span>
+            </div>
+        </header>
+
+        <section class="info-grid">
+
+            <div class="info-block">
+                <h4>Moods</h4>
+                <div class="pill-group">
+                    <span class="pill primary">@WithEmoji(_model.PrimaryMood)</span>
+
+                    @if (!string.IsNullOrWhiteSpace(_model.SecondaryMoods))
+                    {
+                        @foreach (var mood in _model.SecondaryMoods.Split(','))
+                        {
+                            <span class="pill">@WithEmoji(mood)</span>
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="info-block">
+                <h4>Category</h4>
+                <p>@_model.Category</p>
+            </div>
+
+            <div class="info-block">
+                <h4>Tags</h4>
+                <div class="tag-group">
+                    @if (!string.IsNullOrWhiteSpace(_model.Tags))
+                    {
+                        @foreach (var tag in _model.Tags.Split(','))
+                        {
+                            <span class="tag">@tag</span>
+                        }
+                    }
+                    else
+                    {
+                        <span class="muted">No tags</span>
+                    }
+                </div>
+            </div>
+
+            <div class="info-block">
+                <h4>Timeline</h4>
+                <p>
+                    Published: <strong>@_createdAtText</strong><br />
+                    Updated: <strong>@_updatedAtText</strong>
+                </p>
+            </div>
+
+        </section>
+
+        <article class="journal-content">
+            @((MarkupString)_model.ContentHtml)
+        </article>
+
+    </div>
+}
+@code {
+
+    [Parameter] public int Id { get; set; }
+
+    private JournalEntryViewModel? _model;
+    private string _author = string.Empty;
+
+    private string _createdAtText = string.Empty;
+    private string _updatedAtText = string.Empty;
+
+    private readonly Dictionary<string, string> MoodEmojis = new()
+    {
+        ["Happy"] = "😊",
+        ["Excited"] = "🤩",
+        ["Relaxed"] = "😌",
+        ["Grateful"] = "🙏",
+        ["Confident"] = "💪",
+        ["Calm"] = "😐",
+        ["Thoughtful"] = "🤔",
+        ["Curious"] = "🧐",
+        ["Nostalgic"] = "🕰️",
+        ["Bored"] = "😶",
+        ["Sad"] = "😔",
+        ["Angry"] = "😠",
+        ["Stressed"] = "😫",
+        ["Lonely"] = "😞",
+        ["Anxious"] = "😬"
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await JournalService.GetPublicByIdAsync(Id);
+
+        if (!result.Success || result.Data == null)
+            return;
+
+        _model = result.Data;
+
+        _createdAtText = _model.CreatedAt.ToString("dddd, MMMM dd yyyy");
+        _updatedAtText = _model.UpdatedAt.ToString("dddd, MMMM dd yyyy");
+
+        // OPTIONAL: include author in ViewModel if you want
+        _author = result.Data.Author ?? "Unknown";
+    }
+
+    private string WithEmoji(string mood)
+    {
+        if (string.IsNullOrWhiteSpace(mood))
+            return mood;
+
+        return MoodEmojis.TryGetValue(mood.Trim(), out var emoji)
+            ? $"{emoji} {mood}"
+            : mood;
+    }
+}

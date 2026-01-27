@@ -280,3 +280,9 @@
     background: #c27c7c;
     border-radius: 50%;
 }
+.day.disabled {
+    pointer-events: none;
+    opacity: 0.35;
+    cursor: default;
+}
+

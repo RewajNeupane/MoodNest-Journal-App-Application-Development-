@@ -31,4 +31,7 @@ public class JournalEntry
 
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+    
+    public bool IsPublic { get; set; } = false;
+
 }

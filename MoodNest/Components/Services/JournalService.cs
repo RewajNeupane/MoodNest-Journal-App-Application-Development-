@@ -54,6 +54,7 @@ public class JournalService : IJournalService
                 SecondaryMoods = model.SecondaryMoods,
                 Category = model.Category,
                 Tags = model.Tags,
+                IsPublic = model.IsPublic,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now
             };
@@ -91,6 +92,7 @@ public class JournalService : IJournalService
             entity.SecondaryMoods = model.SecondaryMoods;
             entity.Category = model.Category;
             entity.Tags = model.Tags;
+            entity.IsPublic = model.IsPublic;
             entity.UpdatedAt = DateTime.Now;
 
             await _context.SaveChangesAsync();
@@ -376,4 +378,51 @@ public class JournalService : IJournalService
             .OrderBy(e => e.CreatedAt)
             .ToListAsync();
     }
+    public async Task<List<JournalEntryDisplayModel>> GetPublicJournalsAsync()
+    {
+        return await _context.JournalEntries
+            .Where(e => e.IsPublic)
+            .Include(e => e.User)
+            .OrderByDescending(e => e.CreatedAt)
+            .Select(e => new JournalEntryDisplayModel
+            {
+                Id = e.Id,
+                Title = e.Title,
+                PrimaryMood = e.PrimaryMood,
+                Category = e.Category,
+                Tags = e.Tags,
+                Day = e.CreatedAt.Day,
+                Month = e.CreatedAt.ToString("MMMM"),
+                Year = e.CreatedAt.Year,
+                Author = e.User.Username   // 🔥 add this property
+            })
+            .ToListAsync();
+    }
+    public async Task<ServiceResult<JournalEntryViewModel>> GetPublicByIdAsync(int id)
+    {
+        var entry = await _context.JournalEntries
+            .Include(e => e.User)
+            .FirstOrDefaultAsync(e => e.Id == id && e.IsPublic);
+
+        if (entry == null)
+            return ServiceResult<JournalEntryViewModel>
+                .FailureResult("Public journal not found");
+
+        return ServiceResult<JournalEntryViewModel>.SuccessResult(
+            new JournalEntryViewModel
+            {
+                Title = entry.Title,
+                ContentHtml = entry.ContentHtml,
+                PrimaryMood = entry.PrimaryMood,
+                SecondaryMoods = entry.SecondaryMoods,
+                Category = entry.Category,
+                Tags = entry.Tags,
+                CreatedAt = entry.CreatedAt,
+                UpdatedAt = entry.UpdatedAt,
+                Author = entry.User.Username 
+                
+            }
+        );
+    }
+
 }

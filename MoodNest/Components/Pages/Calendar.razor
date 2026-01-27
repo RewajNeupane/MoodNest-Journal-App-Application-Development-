@@ -31,9 +31,13 @@
                 else
                 {
                     <div class="day
-                         @(day.HasEntry ? "has-entry" : "")
-                         @(day.IsToday ? "today" : "")"
+                        @(day.HasEntry ? "has-entry" : "")
+                        @(day.IsToday ? "today" : "")
+                        @(!day.HasEntry && !day.IsToday ? "disabled" : "")"
                          @onclick="() => OpenDay(day)">
+
+
+                        
 
                         @day.Date.Day
 
@@ -211,11 +215,28 @@
 
     private void OpenDay(CalendarDayModel day)
     {
+        // 🚫 Ignore empty placeholder cells
+        if (day.Date == DateTime.MinValue)
+            return;
+
+        // ✅ If entry exists → open journal detail
         if (day.HasEntry && day.JournalId.HasValue)
-            Nav.NavigateTo($"/journal/{day.JournalId}");
-        else
-            Nav.NavigateTo($"/journaltoday?date={day.Date:yyyy-MM-dd}");
+        {
+            Nav.NavigateTo($"/journal/{day.JournalId.Value}");
+            return;
+        }
+
+        // ✅ If today and NO entry → open editor
+        if (day.IsToday)
+        {
+            Nav.NavigateTo("/journaltoday");
+            return;
+        }
+
+        // 🚫 Past date with no entry → do nothing
     }
+
+
 
     private void GoToToday()
     {

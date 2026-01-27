@@ -68,6 +68,27 @@
                        @bind:event="oninput" />
             }
         </div>
+        
+        <!-- VISIBILITY -->
+        <div class="entry-meta">
+            <h4>Visibility</h4>
+
+            <label class="visibility-toggle">
+                <input type="checkbox" @bind="IsPublic" />
+                <span class="slider"></span>
+
+                <span class="visibility-label">
+                    @(IsPublic ? "Public 🌍" : "Private 🔒")
+                </span>
+            </label>
+
+            <p class="hint">
+                @(IsPublic
+                    ? "Anyone can read this journal"
+                    : "Only you can see this journal")
+            </p>
+        </div>
+
 
         <!-- TAGS -->
         <div class="entry-meta">
@@ -151,6 +172,8 @@
 
     private DateTime CreatedAt = DateTime.Now;
     private DateTime UpdatedAt = DateTime.Now;
+    private bool IsPublic = false;
+
 
     private string TodayLabel => DateTime.Now.ToString("dddd, MMMM dd");
 
@@ -248,6 +271,8 @@
         if (!result.Success || result.Data == null) return;
 
         var model = result.Data;
+        IsPublic = model.IsPublic;
+
 
         // Load moods
         SelectedMoods.Clear();
@@ -386,7 +411,9 @@
             PrimaryMood = SelectedMoods[0],
             SecondaryMoods = string.Join(",", SelectedMoods.Skip(1)),
             Category = resolvedCategory,
-            Tags = string.Join(",", SelectedTags)
+            Tags = string.Join(",", SelectedTags),
+            IsPublic = IsPublic
+
         };
 
         var result = IsEdit

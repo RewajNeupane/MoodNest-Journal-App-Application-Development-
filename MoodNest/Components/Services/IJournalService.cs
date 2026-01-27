@@ -23,6 +23,8 @@ public interface IJournalService
 
     Task<List<JournalEntry>> GetEntriesBetweenAsync(DateTime from, DateTime to);
 
+    Task<List<JournalEntryDisplayModel>> GetPublicJournalsAsync();
+    Task<ServiceResult<JournalEntryViewModel>> GetPublicByIdAsync(int id);
 
 
 

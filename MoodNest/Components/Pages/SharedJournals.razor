@@ -1,0 +1,191 @@
+@page "/shared"
+@layout TestLayout
+
+@inject IJournalService JournalService
+@inject NavigationManager Nav
+
+<div class="journal-list-page">
+
+    <!-- HEADER -->
+    <div class="list-header">
+        <div>
+            <h2>Public Journals</h2>
+            <p class="subtitle">Thoughts shared by the community</p>
+        </div>
+
+        <span class="sort-indicator">
+            Sorted by <strong>Latest first</strong>
+        </span>
+    </div>
+
+    <!-- JOURNAL LIST -->
+    <div class="timeline">
+
+        @if (!Entries.Any())
+        {
+            <p>No public journals yet.</p>
+        }
+        else
+        {
+            @foreach (var entry in Entries)
+            {
+                <div class="timeline-entry">
+
+                    <div class="timeline-main clickable"
+                         @onclick="() => Open(entry.Id)">
+
+                        <!-- DATE -->
+                        <div class="timeline-date">
+                            <span class="day">@entry.Day</span>
+                            <span class="month">@entry.Month</span>
+                        </div>
+
+                        <!-- CONTENT -->
+                        <div class="timeline-content">
+                            <h4>@entry.Title</h4>
+                            <p class="author">by @entry.Author</p>
+                        </div>
+
+                        <!-- INFO -->
+                        <div class="timeline-info">
+
+                            <div class="pill primary">
+                                @WithEmoji(entry.PrimaryMood)
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(entry.SecondaryMoods))
+                            {
+                                <div class="secondary-moods">
+                                    @foreach (var mood in entry.SecondaryMoods.Split(','))
+                                    {
+                                        <span class="pill">@WithEmoji(mood)</span>
+                                    }
+                                </div>
+                            }
+
+                            <div class="meta-line">
+                                <span class="category">@entry.Category</span>
+
+                                @if (!string.IsNullOrWhiteSpace(entry.Tags))
+                                {
+                                    @foreach (var tag in entry.Tags.Split(','))
+                                    {
+                                        <span class="tag">@tag</span>
+                                    }
+                                }
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- 🚫 NO ACTION BUTTONS -->
+                </div>
+            }
+        }
+
+    </div>
+    @if (TotalPages > 1)
+    {
+        <div class="pagination">
+            <button class="page-btn"
+                    disabled="@(CurrentPage == 1)"
+                    @onclick="PrevPage">
+                ‹ Prev
+            </button>
+
+            <span class="page-indicator">
+                Page <strong>@CurrentPage</strong> of <strong>@TotalPages</strong>
+            </span>
+
+            <button class="page-btn"
+                    disabled="@(CurrentPage == TotalPages)"
+                    @onclick="NextPage">
+                Next ›
+            </button>
+        </div>
+    }
+
+
+</div>
+
+@code {
+    private const int PageSize = 5;
+    private int CurrentPage = 1;
+    private int TotalPages = 1;
+
+    private List<JournalEntryDisplayModel> AllEntries = new();
+
+
+    private List<JournalEntryDisplayModel> Entries = new();
+
+    private readonly Dictionary<string, string> MoodEmojis = new()
+    {
+        ["Happy"] = "😊",
+        ["Excited"] = "🤩",
+        ["Relaxed"] = "😌",
+        ["Grateful"] = "🙏",
+        ["Confident"] = "💪",
+
+        ["Calm"] = "😐",
+        ["Thoughtful"] = "🤔",
+        ["Curious"] = "🧐",
+        ["Nostalgic"] = "🕰️",
+        ["Bored"] = "😶",
+
+        ["Sad"] = "😔",
+        ["Angry"] = "😠",
+        ["Stressed"] = "😫",
+        ["Lonely"] = "😞",
+        ["Anxious"] = "😬"
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        AllEntries = await JournalService.GetPublicJournalsAsync();
+
+        TotalPages = Math.Max(
+            1,
+            (int)Math.Ceiling(AllEntries.Count / (double)PageSize)
+        );
+
+        ApplyPagination();
+    }
+    private void ApplyPagination()
+    {
+        Entries = AllEntries
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
+    }
+    private void NextPage()
+    {
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+            ApplyPagination();
+        }
+    }
+
+    private void PrevPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
+            ApplyPagination();
+        }
+    }
+
+
+    private void Open(int id)
+        => Nav.NavigateTo($"/shared/{id}");
+
+    private string WithEmoji(string mood)
+    {
+        if (string.IsNullOrWhiteSpace(mood))
+            return mood;
+
+        return MoodEmojis.TryGetValue(mood, out var emoji)
+            ? $"{emoji} {mood}"
+            : mood;
+    }
+}

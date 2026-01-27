@@ -28,4 +28,10 @@ public class JournalEntryViewModel
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
+    
+    public bool IsPublic { get; set; } = false;
+    
+    public string? Author { get; set; }
+
+
 }
